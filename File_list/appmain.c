@@ -15,7 +15,7 @@
 BYTE bTXBuffer[1024];
 BYTE bBuffer[1024];
 BYTE bRXBuffer[1024];
-BYTE bIPaddress[]="197.34.110.199";
+BYTE bIPaddress[]="197.34.97.23";
 
 /** 
 ** The main entry of the terminal application 
@@ -73,7 +73,7 @@ USHORT send_get_request(){
 		return 255;
 		CTOS_LCDTPrint("\nfe khapth");	
 	}
-	strcpy(bTXBuffer,"GET /public/hello.html HTTP/1.0\r\nContent-Type: text/plain; charset=utf-8\r\nAccept: */*\r\nAccept-Language: en-US,en;q=0.8,ar;q=0.6,es;q=0.4\r\n\r\n");
+	strcpy(bTXBuffer,"GET /localiiswebsite/Default2.aspx HTTP/1.0\r\nContent-Type: text/plain; charset=utf-8\r\nAccept: */*\r\nAccept-Language: en-US,en;q=0.8,ar;q=0.6,es;q=0.4\r\n\r\n");
 	ulBuffLen=strlen(bTXBuffer);
 	usret=GPRS_send(bTXBuffer,ulBuffLen);
 	if(usret!=d_OK)return usret;
@@ -107,7 +107,7 @@ int main(int argc,char *argv[])
 	    	CTOS_LCDTClearDisplay();
     		CTOS_LCDTPrintXY(1, 1, "KBD:1");
 	    	//gprs_session();
-		    	GPRS_connect("197.34.110.199",80);
+		    	GPRS_connect(bIPaddress,80);
 				CTOS_LCDTPrint("\nconnection Done");
 	    		send_file_list();
 	    		ulBuffLen=1024;
@@ -120,7 +120,7 @@ int main(int argc,char *argv[])
 	    	CTOS_LCDTClearDisplay();
     		CTOS_LCDTPrintXY(1, 1, "KBD:2");
 	    	//gprs_session();
-	    		GPRS_connect("197.34.110.199",80);
+	    		GPRS_connect(bIPaddress,80);
 				CTOS_LCDTPrint("\nconnection Done");
 	    		send_get_request();
 	    		ulBuffLen=1024;
