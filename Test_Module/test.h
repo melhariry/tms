@@ -337,7 +337,7 @@ USHORT SystemTest(BYTE *baFileName)
             
     CTOS_LCDTPrintXY(1, 1, "Please wait system testing is running\n");
 
-	BYTE baBuffer[250],str[50];
+	BYTE baBuffer[150],str[10];
 	USHORT ret;
 	ULONG ulHandle;
 	strcpy(baFileName,"test_result.txt");
@@ -350,8 +350,8 @@ USHORT SystemTest(BYTE *baFileName)
     }
 	
     //retrieve system memory info 
-     ULONG * ulUsedDiskSize, * ulTotalDiskSize, *ulUsedRamSize, *ulTotalRamSize;
-    ret = CTOS_SystemMemoryStatus (ulUsedDiskSize ,ulTotalDiskSize,ulUsedRamSize,ulTotalRamSize );
+    ULONG  ulUsedDiskSize,  ulTotalDiskSize, ulUsedRamSize, ulTotalRamSize;
+    ret = CTOS_SystemMemoryStatus (&ulUsedDiskSize ,&ulTotalDiskSize,&ulUsedRamSize,&ulTotalRamSize );
 	//Test failed 
 	if(ret != d_OK)
 	{
@@ -365,24 +365,27 @@ USHORT SystemTest(BYTE *baFileName)
 		strcpy(baBuffer,"System memory Info:\n");
         
         strcat(baBuffer,"total disk space size: ");
-        sprintf(str , "%lu\n" , *ulTotalDiskSize);
+        sprintf(str , "%lu\n" , ulTotalDiskSize);
         strcat(baBuffer,str);
         memset(str, 0 , sizeof(str));
         
         strcat(baBuffer,"used disk space size: ");
-        sprintf(str , "%lu\n" , *ulUsedDiskSize);
+        sprintf(str , "%lu\n" , ulUsedDiskSize);
         strcat(baBuffer,str);
         memset(str, 0 , sizeof(str));
         
+        
          strcat(baBuffer,"total Ram space size: ");
-         sprintf(str , "%lu\n" , *ulTotalRamSize);
+         sprintf(str , "%lu\n" , ulTotalRamSize);
          strcat(baBuffer,str);
          memset(str, 0 , sizeof(str)); 
+         
         
          strcat(baBuffer,"used Ram space size: ");
-         sprintf(str , "%lu\n" , *ulUsedRamSize);
+         sprintf(str , "%lu\n" , ulUsedRamSize);
          strcat(baBuffer,str);
-         memset(str, 0 , sizeof(str)); 	
+         memset(str, 0 , sizeof(str));
+         	
 	}
 	ret=FileWrite(baBuffer,"test_result.txt");
 	memset(baBuffer,0,sizeof baBuffer);
