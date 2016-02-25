@@ -40,7 +40,7 @@ int main(int argc,char *argv[])
 	BYTE key;
     BYTE baFileName[30];  
 
-	//SystemTest(baFileName);
+	SystemTest(baFileName);
 	strcpy(baFileName,"test_result.txt");
 
 	usBufferLen=1024;
@@ -50,7 +50,7 @@ int main(int argc,char *argv[])
 	
 	usBufferLen=1024;
 	GPRS_recieve(bRXBuffer,&usBufferLen);
-	CTOS_LCDTPrint(bRXBuffer);
+    CTOS_LCDTPrint(bRXBuffer);
     CTOS_KBDGet(&key);
 	
 	exit(0);

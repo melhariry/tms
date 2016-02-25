@@ -22,6 +22,12 @@ BYTE * test_errormsg(USHORT ret)
     switch(ret)
     {
         
+        case d_SYSTEM_INVALID_PARA:
+            return "System Invalid Parameter";
+        case d_SYSTEM_HALT_FAULT:
+            return "System HALT FAULT";
+        case d_SYSTEM_SYS_PARA_ABSENT:
+            return "System SYS Parameter Absent";
         case d_CRYPTO_INVALID_PARA:
             return "CRYPTO Invalid Parameter";
             break;
@@ -331,7 +337,7 @@ USHORT SystemTest(BYTE *baFileName)
             
     CTOS_LCDTPrintXY(1, 1, "Please wait system testing is running\n");
 
-	BYTE baBuffer[100];
+	BYTE baBuffer[150],str[10];
 	USHORT ret;
 	ULONG ulHandle;
 	strcpy(baFileName,"test_result.txt");
@@ -343,6 +349,49 @@ USHORT SystemTest(BYTE *baFileName)
         return ret;
     }
 	
+    //retrieve system memory info 
+    ULONG  ulUsedDiskSize,  ulTotalDiskSize, ulUsedRamSize, ulTotalRamSize;
+    ret = CTOS_SystemMemoryStatus (&ulUsedDiskSize ,&ulTotalDiskSize,&ulUsedRamSize,&ulTotalRamSize );
+	//Test failed 
+	if(ret != d_OK)
+	{
+		
+		strcpy(baBuffer,"Retrieve System Memory INFO FAILED. Error msg: ");	
+		strcat(baBuffer,test_errormsg(ret))	;
+		strcat(baBuffer,"\n");
+	}
+	else
+	{
+		strcpy(baBuffer,"System memory Info:\n");
+        
+        strcat(baBuffer,"total disk space size: ");
+        sprintf(str , "%lu\n" , ulTotalDiskSize);
+        strcat(baBuffer,str);
+        memset(str, 0 , sizeof(str));
+        
+        strcat(baBuffer,"used disk space size: ");
+        sprintf(str , "%lu\n" , ulUsedDiskSize);
+        strcat(baBuffer,str);
+        memset(str, 0 , sizeof(str));
+        
+        
+         strcat(baBuffer,"total Ram space size: ");
+         sprintf(str , "%lu\n" , ulTotalRamSize);
+         strcat(baBuffer,str);
+         memset(str, 0 , sizeof(str)); 
+         
+        
+         strcat(baBuffer,"used Ram space size: ");
+         sprintf(str , "%lu\n" , ulUsedRamSize);
+         strcat(baBuffer,str);
+         memset(str, 0 , sizeof(str));
+         	
+	}
+	ret=FileWrite(baBuffer,"test_result.txt");
+	memset(baBuffer,0,sizeof baBuffer);
+	sprintf(baBuffer,"\nMemory test write=%04x\n",ret);
+	CTOS_LCDTPrint(baBuffer);
+    
 	//test Crypto
 	ret = CryptoTest();
 	//Test failed 
