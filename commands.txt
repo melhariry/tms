@@ -1,0 +1,10 @@
+file commands:
+update_file file_name1,filename2,....;
+delete_file filename1,filename2,.....;
+put_file    fullPath1,fullPath2,.....;
+test health:
+test;
+Apps:
+update_apps appname1.cap,appnmae2.cap,....;
+list_apps;
+list_files;
