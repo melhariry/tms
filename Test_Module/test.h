@@ -12,69 +12,6 @@
 *==========================================*/
 #define d_BUFF_SIZE 128 //Buffer Size
 /* ==================================================================
- * FUNCTION NAME: test_errormsg
- * DESCRIPTION: return error message 
- * RETURN: byte array :error message.
- * NOTES: none.
- * ================================================================ */ 
-BYTE * test_errormsg(USHORT ret)
-{
-    switch(ret)
-    {
-        
-        case d_SYSTEM_INVALID_PARA:
-            return "System Invalid Parameter";
-        case d_SYSTEM_HALT_FAULT:
-            return "System HALT FAULT";
-        case d_SYSTEM_SYS_PARA_ABSENT:
-            return "System SYS Parameter Absent";
-        case d_CRYPTO_INVALID_PARA:
-            return "CRYPTO Invalid Parameter";
-            break;
-        case d_CRYPTO_HAL_FAULT:
-            return "CRYPTO HAL Fault";
-            break;
-        case d_CRYPTO_RNG_TIMEOUT:
-            return "CRYPTO RNG TimeOut";
-            break;
-        case d_TIMER_INVALID_PARA:
-            return "Timer Invalid Parameter";
-            break;
-        case d_TIMER_HAL_FAULT:
-            return "Timer HAL Fault";
-            break;
-        case d_RTC_INVALID_PARA:
-            return "RTC Invalid Parameter";
-            break;
-        case d_RTC_HAL_FAULT:
-            return "RTC HAL Fault";
-            break;
-        case d_PRINTER_HEAD_OVERHEAT:
-            return "Printer HEAD OverHeat";
-            break;
-        case d_PRINTER_PAPER_OUT:
-            return "Printer is out of paper";
-            break;
-        case d_BUZZER_INVALID_PARA:
-            return "Buzzer Invalid Parameter";
-            break;
-        case d_BUZZER_HAL_FAULT:
-            return "Buzzer HAL Fault";
-            break;
-        case d_LED_INVALID_PARA:
-            return "LED Invalid Parameter";
-            break;
-        case d_LED_HAL_FAULT:
-            return "LED HAL Fault";
-            break;
-        case d_BKLIT_NOT_SUPPORT:
-            return "BKLIT Not Supported";
-            break;
-        default:
-            return "Other Error !!";
-    }
-}
-/* ==================================================================
 * FUNCTION NAME: ith
 * DESCRIPTION:
 * RETURN: 1 Byte
@@ -335,13 +272,15 @@ USHORT SystemTest(BYTE *baFileName)
 {
 	CTOS_LCDTClearDisplay();
             
-    CTOS_LCDTPrintXY(1, 1, "Please wait system testing is running\n");
+    CTOS_LCDTPrintXY(1, 1, "Please wait\n system testing is running\n");
 
-	BYTE baBuffer[150],str[10];
+	BYTE baBuffer[40],str[10];
 	USHORT ret;
 	ULONG ulHandle;
 	strcpy(baFileName,"test_result.txt");
+    //delete the file if exists
 	ret=DeleteFile(baFileName);
+    //create new file
 	ret=NewFile(baFileName,&ulHandle,0,d_FA_PUBLIC);//flash
 	if(ret!=d_OK)
     {
@@ -349,162 +288,115 @@ USHORT SystemTest(BYTE *baFileName)
         return ret;
     }
 	
+    ///////////////////////////////////////////////////Test begins here/////////////////////////////////////////////////////////
     //retrieve system memory info 
     ULONG  ulUsedDiskSize,  ulTotalDiskSize, ulUsedRamSize, ulTotalRamSize;
     ret = CTOS_SystemMemoryStatus (&ulUsedDiskSize ,&ulTotalDiskSize,&ulUsedRamSize,&ulTotalRamSize );
+    
+    strcpy(baBuffer,"memory ");
+    sprintf(str,"%04x",ret);
+    strcat(baBuffer,str);
+    memset(str,0,sizeof(str));
 	//Test failed 
-	if(ret != d_OK)
+	if(ret == d_OK)
 	{
-		
-		strcpy(baBuffer,"Retrieve System Memory INFO FAILED. Error msg: ");	
-		strcat(baBuffer,test_errormsg(ret))	;
-		strcat(baBuffer,"\n");
-	}
-	else
-	{
-		strcpy(baBuffer,"System memory Info:\n");
-        
-        strcat(baBuffer,"total disk space size: ");
-        sprintf(str , "%lu\n" , ulTotalDiskSize);
+        sprintf(str , ",%lu" , ulTotalDiskSize);
         strcat(baBuffer,str);
         memset(str, 0 , sizeof(str));
         
-        strcat(baBuffer,"used disk space size: ");
-        sprintf(str , "%lu\n" , ulUsedDiskSize);
+        sprintf(str , ",%lu" , ulUsedDiskSize);
         strcat(baBuffer,str);
         memset(str, 0 , sizeof(str));
         
-        
-         strcat(baBuffer,"total Ram space size: ");
-         sprintf(str , "%lu\n" , ulTotalRamSize);
+         sprintf(str , ",%lu" , ulTotalRamSize);
          strcat(baBuffer,str);
          memset(str, 0 , sizeof(str)); 
          
-        
-         strcat(baBuffer,"used Ram space size: ");
-         sprintf(str , "%lu\n" , ulUsedRamSize);
+         sprintf(str , ",%lu;\n" , ulUsedRamSize);
          strcat(baBuffer,str);
          memset(str, 0 , sizeof(str));
          	
 	}
+    else
+    {
+        strcat(baBuffer,";\n");
+    }
+    
+    //write memory test results to file
 	ret=FileWrite(baBuffer,"test_result.txt");
 	memset(baBuffer,0,sizeof baBuffer);
-	sprintf(baBuffer,"\nMemory test write=%04x\n",ret);
-	CTOS_LCDTPrint(baBuffer);
     
 	//test Crypto
 	ret = CryptoTest();
-	//Test failed 
-	if(ret != d_OK)
-	{
-		
-		strcpy(baBuffer,"CRYPTO TEST FAILED. Error msg: ");	
-		strcat(baBuffer,test_errormsg(ret))	;
-		strcat(baBuffer,"\n");
-
-
-	}
-	else
-	{
-		strcpy(baBuffer,"CRYPTO TEST PASSED\n");	
-	}
-	//write: 
-	//ret=FileWrite(baBuffer,ulHandle);
+    strcpy(baBuffer,"crypto ");
+    sprintf(str,"%04x;\n",ret);
+    strcat(baBuffer,str);
+    memset(str,0,sizeof(str));
+    
+    //write Crypto test result to file
 	ret=FileWrite(baBuffer,"test_result.txt");
 	memset(baBuffer,0,sizeof baBuffer);
-	sprintf(baBuffer,"\ncrypto write=%04x\n",ret);
-	CTOS_LCDTPrint(baBuffer);
 	
 
 	//test printer
 	ret = PrinterTest();
-	//Test failed 
-	if(ret != d_OK)
-	{
-		strcpy(baBuffer,"PRINTER TEST FAILED. Error msg: ");	
-		strcat(baBuffer,test_errormsg(ret));
-		strcat(baBuffer,"\n");
-	}
-	else
-	{
-		strcpy(baBuffer,"PRINTER TEST PASSED\n");
-	}
-	//ret=FileWrite(baBuffer,ulHandle);
+	strcpy(baBuffer,"printer ");
+    sprintf(str,"%04x;\n",ret);
+    strcat(baBuffer,str);
+    memset(str,0,sizeof(str));
+    
+	//write printer test result to file 
 	ret=FileWrite(baBuffer,"test_result.txt");
 	memset(baBuffer,0,sizeof baBuffer);
-	sprintf(baBuffer,"\nret write=%04x\n",ret);
-	CTOS_LCDTPrint(baBuffer);
-	//test timer 
+	
+    
+    //test timer 
 	ret = TimerTest();
-	//Test failed 
-	if(ret != d_OK)
-	{
-		strcpy(baBuffer,"TIMER TEST FAILED. Error msg: ");	
-		strcat(baBuffer,test_errormsg(ret));
-		strcat(baBuffer,"\n");
-	}
-	else
-	{
-		strcpy(baBuffer,"Timer TEST PASSED\n");
-	}
-	//ret=FileWrite(baBuffer,ulHandle);
+	strcpy(baBuffer,"timer ");
+    sprintf(str,"%04x;\n",ret);
+    strcat(baBuffer,str);
+    memset(str,0,sizeof(str));
+    
+	//write timer test result to file
 	ret=FileWrite(baBuffer,"test_result.txt");
 	memset(baBuffer,0,sizeof baBuffer);
-	sprintf(baBuffer,"\nret write=%04x\n",ret);
-	CTOS_LCDTPrint(baBuffer);
+    
 	//test RTC
 	ret = RTCTest();
-	//Test failed 
-	if(ret != d_OK)
-	{
-		strcpy(baBuffer,"RTC TEST FAILED. Error msg: ");	
-		strcat(baBuffer,test_errormsg(ret));	
-		strcat(baBuffer,"\n");
-	}
-	else
-	{
-		strcpy(baBuffer,"RTC TEST PASSED\n");
-	}
-	//ret=FileWrite(baBuffer,ulHandle);
+	strcpy(baBuffer,"rtc ");
+    sprintf(str,"%04x;\n",ret);
+    strcat(baBuffer,str);
+    memset(str,0,sizeof(str));
+	
+	//write Rtc test result to file
 	ret=FileWrite(baBuffer,"test_result.txt");
 	memset(baBuffer,0,sizeof baBuffer);
-	sprintf(baBuffer,"\nret write=%04x\n",ret);
-	CTOS_LCDTPrint(baBuffer);
+ 
+    
 	//test Buzzer
 	ret = BuzzerTest();
-	//Test failed 
-	if(ret != d_OK)
-	{
-		strcpy(baBuffer,"BUZZER TEST FAILED. Error msg: ");	
-		strcat(baBuffer,test_errormsg(ret))	;
-	}
-	else
-	{
-		strcpy(baBuffer,"BUZZER TEST PASSED\n");
-	}
-	//ret=FileWrite(baBuffer,ulHandle);
+	strcpy(baBuffer,"buzzer ");
+    sprintf(str,"%04x;\n",ret);
+    strcat(baBuffer,str);
+    memset(str,0,sizeof(str));
+    
+	//write buzzer test result to file
 	ret=FileWrite(baBuffer,"test_result.txt");
 	memset(baBuffer,0,sizeof baBuffer);
-	sprintf(baBuffer,"\nret write=%04x\n",ret);
-	CTOS_LCDTPrint(baBuffer);
+    
+    
 	//test LED
 	ret = LEDTest();
-	//Test failed 
-	if(ret != d_OK)
-	{
-		strcpy(baBuffer,"LED TEST FAILED. Error msg: ");	
-		strcat(baBuffer,test_errormsg(ret));
-		strcat(baBuffer,"\n");	
-	}
-	else
-	{
-		strcpy(baBuffer,"LED TEST PASSED\n");
-	}
-	//ret=FileWrite(baBuffer,ulHandle);
+	strcpy(baBuffer,"led ");
+    sprintf(str,"%04x;\n",ret);
+    strcat(baBuffer,str);
+    memset(str,0,sizeof(str));
+    
+	//write LED test result to file
 	ret=FileWrite(baBuffer,"test_result.txt");
 	memset(baBuffer,0,sizeof baBuffer);
-	sprintf(baBuffer,"\nret write=%04x\n",ret);
-	CTOS_LCDTPrint(baBuffer);
+    
+    
 	//close file
 	CTOS_FileClose(ulHandle);
 	//clear LCD display
