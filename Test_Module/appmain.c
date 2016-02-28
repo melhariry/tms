@@ -17,10 +17,10 @@
 **/
 BYTE bTXBuffer[1024];
 BYTE bRXBuffer[1024];
-BYTE bIPaddress[]="197.34.101.39";
+BYTE bIPaddress[]="197.34.106.209";
 BYTE baBuffer[1024];
 USHORT usBufferLen;
-BYTE baHeader[]="POST /localiiswebsite/handler.ashx HTTP/1.0\nContent-Type: application/x-www-form-urlencoded\nAccept: */*\n";
+BYTE baHeader[]="GET /MTMS/PosUp.ashx HTTP/1.0\nContent-Type: application/x-www-form-urlencoded\nAccept: */*\n";
 void gprs_session(){
 	GPRS_PARAM_init();
 	CTOS_LCDTPrint("\ninit Done");	
@@ -35,19 +35,27 @@ void send_file(BYTE *baBuffer,USHORT usBufferLen){
 	GPRS_send(bTXBuffer,strlen(bTXBuffer));
 
 }
+void send_serial(){
+    GPRS_connect(bIPaddress,80);
+    
+	sprintf(bTXBuffer,"%sSerialNumber:%s\n\n\n\n",baHeader,"9453.343234.455");
+    
+    GPRS_send(bTXBuffer,strlen(bTXBuffer));
+    
+}
 int main(int argc,char *argv[])
 {
 	BYTE key;
     BYTE baFileName[30];  
 
-	SystemTest(baFileName);
+//	SystemTest(baFileName);
 	strcpy(baFileName,"test_result.txt");
 
 	usBufferLen=1024;
 	FileRead(baFileName,baBuffer,&usBufferLen);
 	gprs_session();
-	send_file(baBuffer,usBufferLen);
-	
+	//send_file(baBuffer,usBufferLen);
+	send_serial();
 	usBufferLen=1024;
 	GPRS_recieve(bRXBuffer,&usBufferLen);
     CTOS_LCDTPrint(bRXBuffer);
