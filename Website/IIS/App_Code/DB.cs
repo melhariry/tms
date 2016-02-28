@@ -36,7 +36,7 @@ public class DB
         }
     }
 
-    public bool CreatePosRecord(string serialNumber, string vendor, string model, decimal lat, decimal lng, Int64 diskCapacity, Int64 ramSize)
+    public bool CreatePosRecord(string serialNumber, string vendor, string model, string ip, Int64 diskCapacity, Int64 ramSize, out int PosId)
     {
         try
         {
@@ -46,16 +46,16 @@ public class DB
             cmd.Parameters.AddWithValue("@SerialNumber", serialNumber);
             cmd.Parameters.AddWithValue("@Vendor", vendor);
             cmd.Parameters.AddWithValue("@Model", model);
-            cmd.Parameters.AddWithValue("@LocationLat", lat);
-            cmd.Parameters.AddWithValue("@LocationLng", lng);
+            cmd.Parameters.AddWithValue("@LastConnectionIP", ip);
             cmd.Parameters.AddWithValue("@TotalDiskCapacity", diskCapacity);
             cmd.Parameters.AddWithValue("@TotalRamSize", ramSize);
-            SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
-            rowCount.Direction = ParameterDirection.ReturnValue;
+            SqlParameter Id = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            Id.Direction = ParameterDirection.ReturnValue;
             Conn.Open();
             cmd.ExecuteNonQuery();
             Conn.Close();
-            if (Int32.Parse(rowCount.Value.ToString()) == 1)
+            PosId = Int32.Parse((Id.Value.ToString()));
+            if ( PosId != -1)
                 return true;
             else
                 return false;

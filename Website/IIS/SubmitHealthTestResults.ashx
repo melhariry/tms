@@ -12,7 +12,7 @@ public class SubmitHealthTestResults : IHttpHandler
         {
             DB db = new DB();
             if (db.SubmitHealthTestResults(
-                context.Request.Params["SerialNumber"],
+                context.Request.Headers["SerialNumber"],
                 Int32.Parse(context.Request.Params["Crypto"]),
                 Int32.Parse(context.Request.Params["Printer"]),
                 Int32.Parse(context.Request.Params["Timer"]),

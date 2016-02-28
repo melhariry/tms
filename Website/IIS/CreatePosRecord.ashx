@@ -2,6 +2,9 @@
 
 using System;
 using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.IO;
 using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
@@ -14,19 +17,24 @@ public class CreatePosRecord : IHttpHandler
         try
         {
             DB db = new DB();
+            int PosId = -1;
             if(db.CreatePosRecord(
-                context.Request.Params["SerialNumber"],
+                context.Request.Headers["SerialNumber"],
                 context.Request.Params["Vendor"],
                 context.Request.Params["Model"],
-                Decimal.Parse(context.Request.Params["LocationLat"]),
-                Decimal.Parse(context.Request.Params["LocationLng"]),
+                context.Request.Params["LastConnectionIp"],
                 Int64.Parse(context.Request.Params["TotalDiskCapacity"]),
-                Int64.Parse(context.Request.Params["TotalRamSize"])
+                Int64.Parse(context.Request.Params["TotalRamSize"]),
+                out PosId
                 ))
             {
+                //string path = context.Server.MapPath("~\\") + "App_Data\\Pos\\" + PosId;
+                //Directory.CreateDirectory(path);
+                //if (!File.Exists(path+"\\CommandFile.txt"))
+                //    File.CreateText(path + "\\CommandFile.txt");
+
                 context.Response.StatusCode = 200;
-                //send file
-                context.Response.Write("StartHealthTest");
+                context.Response.Write("Success");
             }
             else
             {
