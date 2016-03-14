@@ -1,0 +1,7 @@
+memory 0000,ulTotalDiskSize,ulUsedDiskSize,ulTotalRamSize,ulUsedRamSize; OR memory error_code;
+crypto return_code;
+printer return_code;
+timer return_code;
+rtc return_code;
+buzzer return_code;
+led return_code;
