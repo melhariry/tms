@@ -1,0 +1,10 @@
+delete_file file0,file1,file2;
+delete_app ap1,ap0,ap2;
+put_file file0,file1,file2;
+put_app ap1,ap0,ap2;
+update_app ap0;
+test;
+list_apps;
+list_files;
+
+
