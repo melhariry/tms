@@ -7,6 +7,20 @@ using System.Data.SqlClient;
 using System.Configuration;
 
 public class PosUp : IHttpHandler {
+
+    protected string getUserIP()
+    {
+        string VisitorsIPAddr = string.Empty;
+        if (HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"] != null)
+        {
+            VisitorsIPAddr = HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"].ToString();
+        }
+        else if (HttpContext.Current.Request.UserHostAddress.Length != 0)
+        {
+            VisitorsIPAddr = HttpContext.Current.Request.UserHostAddress;
+        }
+        return VisitorsIPAddr;
+    }
     
     public void ProcessRequest (HttpContext context) {
         context.Response.ContentType = "text/plain";
@@ -17,12 +31,29 @@ public class PosUp : IHttpHandler {
             {
                 context.Response.StatusCode = 200;
                 //send file
-                context.Response.Write("StartHealthTest");
+                context.Response.Write("Success");
             }
             else
             {
-                context.Response.StatusCode = 200;
-                context.Response.Write("CreatePosRecord");
+                //Model is set to empty and disk size, memory size is set to zero mo2aqattan
+                int PosId = -1;
+                if (db.CreatePosRecord(
+                    context.Request.Headers["SerialNumber"],
+                    context.Request.Params["Vendor"],
+                    "",
+                    getUserIP(),
+                    0,0,
+                    out PosId
+                    ))
+                {
+                    context.Response.StatusCode = 200;
+                    context.Response.Write("Welcome to the family!");
+                }
+                else
+                {
+                    context.Response.StatusCode = 500;
+                    context.Response.StatusDescription = "An error occurred while creating record"; 
+                }
             }
         }
         catch (Exception EX)

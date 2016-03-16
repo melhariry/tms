@@ -12,8 +12,8 @@
 /*========================================*
 * D E F I N E S *
 *========================================*/
-#define PPP_TO_MS 25000 //45000ms
-#define CONNECT_TO_MS 5000 // 5000ms
+#define PPP_TO_MS 15000 //45000ms
+#define CONNECT_TO_MS 3000 // 5000ms
 #define CONNECT_RETRY 2
 
 #define SIZE_SENDBUFF 1024
@@ -112,7 +112,7 @@ USHORT pollStatusResult(DWORD* dwStatus)
 		*dwStatus=status;
 		if (usret == 0x2321) //keep polling status
 		{
-			CTOS_Delay(2000);//sleep
+			CTOS_Delay(200);//sleep
 			continue;
 		}
 		else

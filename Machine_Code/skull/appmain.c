@@ -12,10 +12,11 @@
 #include "files.h"
 #include "httpclient.h"
 #include "util.h"
+#include "parser.h"
 
 
 // constants
-BYTE bIPaddress[]="197.34.106.209";
+BYTE bIPaddress[]="197.34.104.248";
 
 
 
@@ -32,7 +33,9 @@ BYTE baRXBuffer[1024];
 BYTE baSerialNumber[40];
 USHORT usBufferLen=1024;
 
-
+char   paramlist[10][50];
+int paramLen;
+USHORT usCmdstatus;
 
 void gprs_session(){
 	GPRS_PARAM_init();
@@ -43,17 +46,37 @@ void gprs_session(){
 }
 void hello()
 {
+	BYTE key2;
 	gprs_session();
 	GetSerialNumber(baSerialNumber);
-	sprintf(baExtraParam,"SerialNumber:%s",baSerialNumber);
+	sprintf(baExtraParam,"SerialNumber:%s\nVendor:%s",baSerialNumber,"Castles");
     HTTP_BuildHeader(baHeader,"/MTMS/PosUp.ashx","GET",baExtraParam);
     HTTP_BuildMessage(baMessage,baHeader,"");
 	GPRS_connect(bIPaddress,80);
 	GPRS_send(baMessage,strlen(baMessage));
-	usBufferLen=1024;
-	GPRS_recieve(baRXBuffer,&usBufferLen);
-	HTTP_GetReply(baReply,baRXBuffer);
-	CTOS_LCDTPrint(baReply);
+	CTOS_LCDTPrint(baMessage);
+	CTOS_KBDGet(&key);
+	do{
+		usBufferLen=1024;
+		GPRS_recieve(baRXBuffer,&usBufferLen);
+		HTTP_GetReply(baReply,baRXBuffer);
+		
+		parser(baReply,paramlist,&paramLen);
+		CTOS_LCDTPrint(paramlist[0]);
+		CTOS_KBDGet(&key2);
+		usCmdstatus=execute(paramlist, paramLen);
+
+		sprintf(baExtraParam,"CMD:%s\nResponse:%d",paramlist[0],usCmdstatus);
+		
+    	HTTP_BuildHeader(baHeader,"/MTMS/PosUp.ashx","GET",baExtraParam);
+    	HTTP_BuildMessage(baMessage,baHeader,"");
+    	CTOS_LCDTPrint(baMessage);
+    	CTOS_KBDGet(&key2);
+		GPRS_connect(bIPaddress,80);
+		GPRS_send(baMessage,strlen(baMessage));
+	}while(usCmdstatus!=0xFF);
+	GPRS_disconnect();
+	GPRS_close();
 	//CTOS_LCDTPrint(baRXBuffer);
 
 }
@@ -63,12 +86,12 @@ int main(int argc,char *argv[])
 	// TODO: Add your program here //
 	CTOS_LCDTClearDisplay();
 	hello();
-	///HTTP_GetReply(baReply,"abc 101 OK\r\ncontent:10\r\n\r\nMSG\r\n");
+
 	 
 	 
 	 
 	
-	CTOS_LCDTPrint(baReply);	
+	//CTOS_LCDTPrint(baReply);	
 
 
 

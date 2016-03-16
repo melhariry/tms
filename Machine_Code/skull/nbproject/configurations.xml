@@ -7,6 +7,7 @@
       <itemPath>GPRS.h</itemPath>
       <itemPath>files.h</itemPath>
       <itemPath>httpclient.h</itemPath>
+      <itemPath>parser.h</itemPath>
       <itemPath>test.h</itemPath>
       <itemPath>util.h</itemPath>
     </logicalFolder>
