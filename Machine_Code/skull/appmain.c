@@ -16,25 +16,31 @@
 
 
 // constants
-BYTE bIPaddress[]="197.34.104.248";
+//BYTE bIPaddress[]="197.34.110.15";
 
 
 
 /** 
 ** The main entry of the terminal application 
 **/
-BYTE baHeader[200];
+/*BYTE baHeader[200];
 BYTE baExtraParam[200];
 BYTE baMessage[300];
-BYTE baResponse[400];
+BYTE baResponse[100];
+BYTE baPayload[100];
 BYTE baReply[400];
-BYTE baTXBuffer[1024];
+*/
+/*BYTE baTXBuffer[1024];
 BYTE baRXBuffer[1024];
-BYTE baSerialNumber[40];
+//BYTE baSerialNumber[40];
 USHORT usBufferLen=1024;
+*/
 
-char   paramlist[10][50];
+char paramlist[10][50];
 int paramLen;
+struct command cmdList[40];
+int cmdLen;
+
 USHORT usCmdstatus;
 
 void gprs_session(){
@@ -46,35 +52,47 @@ void gprs_session(){
 }
 void hello()
 {
+	int i,j;
 	BYTE key2;
 	gprs_session();
 	GetSerialNumber(baSerialNumber);
-	sprintf(baExtraParam,"SerialNumber:%s\nVendor:%s",baSerialNumber,"Castles");
+	sprintf(baExtraParam,"SerialNumber:%s\n",baSerialNumber);
     HTTP_BuildHeader(baHeader,"/MTMS/PosUp.ashx","GET",baExtraParam);
-    HTTP_BuildMessage(baMessage,baHeader,"");
 	GPRS_connect(bIPaddress,80);
+	GPRS_send(baHeader,strlen(baHeader));
+	CTOS_LCDTPrint(baHeader);
+	CTOS_KBDGet(&key);
+	usBufferLen=1024;
+	GPRS_recieve(baRXBuffer,&usBufferLen);
+	HTTP_GetReply(baReply,baRXBuffer);
+	
+	
+	parser(baReply,cmdList,&cmdLen);
+	memset(baResponse,0,sizeof baResponse);
+	for(i=0;i<cmdLen;++i){
+		usCmdstatus=execute(cmdList[i].paramlist,cmdList[i].paramLen);
+		sprintf(baResponse,"%s\n&%s=%d",baResponse,cmdList[i].paramlist[0],usCmdstatus);
+        for(j=0;j<cmdList[i].paramLen;++j){
+	        CTOS_LCDTPrint(cmdList[i].paramlist[j]);
+	        CTOS_LCDTPrint(" ");
+        }
+        CTOS_LCDTPrint("\n");
+    }
+   
+    
+    /*sprintf(baExtraParam,"SerialNumber:%s\nContent-Length: %d",baSerialNumber,strlen(baResponse));
+    HTTP_BuildHeader(baHeader,"/MTMS/CreatePosRecord.ashx","POST",baExtraParam);
+    HTTP_BuildMessage(baMessage,baHeader,baResponse);
+    CTOS_KBDGet(&key2);
+	GPRS_connect(bIPaddress,80);
+
 	GPRS_send(baMessage,strlen(baMessage));
 	CTOS_LCDTPrint(baMessage);
 	CTOS_KBDGet(&key);
-	do{
-		usBufferLen=1024;
-		GPRS_recieve(baRXBuffer,&usBufferLen);
-		HTTP_GetReply(baReply,baRXBuffer);
-		
-		parser(baReply,paramlist,&paramLen);
-		CTOS_LCDTPrint(paramlist[0]);
-		CTOS_KBDGet(&key2);
-		usCmdstatus=execute(paramlist, paramLen);
+	*/
 
-		sprintf(baExtraParam,"CMD:%s\nResponse:%d",paramlist[0],usCmdstatus);
-		
-    	HTTP_BuildHeader(baHeader,"/MTMS/PosUp.ashx","GET",baExtraParam);
-    	HTTP_BuildMessage(baMessage,baHeader,"");
-    	CTOS_LCDTPrint(baMessage);
-    	CTOS_KBDGet(&key2);
-		GPRS_connect(bIPaddress,80);
-		GPRS_send(baMessage,strlen(baMessage));
-	}while(usCmdstatus!=0xFF);
+	
+
 	GPRS_disconnect();
 	GPRS_close();
 	//CTOS_LCDTPrint(baRXBuffer);
@@ -82,12 +100,21 @@ void hello()
 }
 int main(int argc,char *argv[])
 {
-	BYTE key;  
+	int i=0,j;
+    BYTE key;  
 	// TODO: Add your program here //
 	CTOS_LCDTClearDisplay();
 	hello();
-
-	 
+	/*parser("delete_files f1,f2,f3;\ndelete_files f4,f5,f6;CreatePosRecord;list_apps;list_files;",cmdList,&cmdLen);
+    for(i=0;i<cmdLen;++i){
+        for(j=0;j<cmdList[i].paramLen;++j){
+        CTOS_LCDTPrint(cmdList[i].paramlist[j]);
+        CTOS_LCDTPrint(" ");
+        }
+        CTOS_LCDTPrint("\n");
+    }*/
+	
+    
 	 
 	 
 	

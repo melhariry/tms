@@ -12,12 +12,20 @@
 /*========================================*
 * D E F I N E S *
 *========================================*/
-#define PPP_TO_MS 15000 //45000ms
-#define CONNECT_TO_MS 3000 // 5000ms
+#define PPP_TO_MS 35000 //45000ms
+#define CONNECT_TO_MS 4000 // 5000ms
 #define CONNECT_RETRY 2
 
 #define SIZE_SENDBUFF 1024
 #define SIZE_RECVBUFF 1024
+
+
+BYTE baTXBuffer[1024];
+BYTE baRXBuffer[1024];
+//BYTE baSerialNumber[40];
+USHORT usBufferLen=1024;
+
+BYTE bIPaddress[]="197.34.110.15";
 
 struct GPRS_PARAM{
 	BYTE iSocket; //TCP socket descriptor
@@ -88,7 +96,7 @@ USHORT pollStatusResultLCD(BYTE *func, USHORT theRTN)
 		CTOS_LCDTPrintXY(1, 4, str);
 		if (usret == 0x2321) //keep polling status
 		{
-			CTOS_Delay(2000);
+			CTOS_Delay(400);
 			continue;
 		}
 		else

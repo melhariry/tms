@@ -5,6 +5,39 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "httpclient.h"
+#include "GPRS.h"
+
+
+struct command
+{
+	BYTE paramlist[10][50];
+	USHORT paramLen;
+};
+
+USHORT create_pos_record()
+{
+    USHORT ret;
+    ULONG  ulUsedDiskSize,  ulTotalDiskSize, ulUsedRamSize, ulTotalRamSize;
+    ret = CTOS_SystemMemoryStatus (&ulUsedDiskSize ,&ulTotalDiskSize,&ulUsedRamSize,&ulTotalRamSize );
+    memset(baResponse,0,sizeof baResponse);
+    sprintf(baResponse,"Vendor=Castles&TotalDiskCapacity=%d&TotalRamSize=%d",ulTotalDiskSize,ulTotalRamSize);
+
+    sprintf(baExtraParam,"SerialNumber:%s\nContent-Length: %d",baSerialNumber,strlen(baResponse));
+    HTTP_BuildHeader(baHeader,"/MTMS/CreatePosRecord.ashx","POST",baExtraParam);
+
+    HTTP_BuildMessage(baMessage,baHeader,baResponse);
+    GPRS_connect(bIPaddress,80);
+
+	GPRS_send(baMessage,strlen(baMessage));
+	CTOS_LCDTClearDisplay();
+	CTOS_LCDTPrint(baMessage);
+	CTOS_KBDGet(&key);
+	return ret;
+    //Vendor,TotalDiskCapacity,TotalRamSize
+
+
+}
 USHORT put_files(char files_ist[][50], int listLen)
 {
     int i;
@@ -125,6 +158,10 @@ USHORT execute(char paramlist[][50], int paramLen)
 	{
 		return list_files();
 	}
+	else if (strcmp(paramlist[0], "CreatePosRecord") == 0)
+	{
+		return create_pos_record();
+	}
 	else if (strcmp(paramlist[0], "eoc") == 0)
 	{
 		return 0xFF;
@@ -132,7 +169,7 @@ USHORT execute(char paramlist[][50], int paramLen)
 	//return true;
 
 }
-void parser(IN char *cmdBuffer,OUT char paramlist[][50],OUT int* paramLen)
+void parser2(IN char *cmdBuffer,OUT char paramlist[][50],OUT int* paramLen)
 {
 	char *token = strtok(cmdBuffer, " ,");
 
@@ -146,29 +183,34 @@ void parser(IN char *cmdBuffer,OUT char paramlist[][50],OUT int* paramLen)
 
 	
 }
-void parser2(IN char *cmdBuffer,OUT char paramlist[][50],OUT int* paramLen)
+void parser(IN BYTE *cmdBuffer,OUT struct command cmdlist[],OUT USHORT* cmdLen)
 {
 	char cmdstr[100];
+	BYTE kk;
 	int cr = 0;
 	char cmd[100];
 	cr = strtoken(cmdstr, cmdBuffer + cr, ";");
-
-
+	
+	*cmdLen=0;
+	USHORT usCmdLen=0;
 	while (cr<strlen(cmdBuffer))
 	{
-		//printf("cr=%d\n",cr);
-		printf("%s\n", cmdstr);
 		char tmpstr[100];
 		strcpy(tmpstr, cmdstr);
 		char *token = strtok(tmpstr, " ,\n\r");
 
-		*paramLen = 0;
+		cmdlist[usCmdLen].paramLen=0;
+
+
 		while (token)
 		{
-			strcpy(paramlist[(*paramLen)++], token);
+			strcpy(cmdlist[usCmdLen].paramlist[(cmdlist[usCmdLen].paramLen)++], token);
+
 			token = strtok(NULL, " ,");
 		}
 		//execute(paramlist, paramLen);
+		usCmdLen++;
+		*cmdLen=usCmdLen;
 		cr += strtoken(cmdstr, cmdBuffer + cr, ";");
 
 	}
