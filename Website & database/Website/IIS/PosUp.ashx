@@ -27,34 +27,14 @@ public class PosUp : IHttpHandler {
         try
         {
             DB db = new DB();
-            if (db.PosExists(context.Request.Headers["SerialNumber"]))
+            context.Response.StatusCode = 200;
+            if (db.PosExists(context.Request.Headers["SerialNumber"],getUserIP()))
             {
-                context.Response.StatusCode = 200;
-                //send file
+                //send commands
                 context.Response.Write("Success");
             }
             else
-            {
-                //Model is set to empty and disk size, memory size is set to zero mo2aqattan
-                int PosId = -1;
-                if (db.CreatePosRecord(
-                    context.Request.Headers["SerialNumber"],
-                    context.Request.Params["Vendor"],
-                    "",
-                    getUserIP(),
-                    0,0,
-                    out PosId
-                    ))
-                {
-                    context.Response.StatusCode = 200;
-                    context.Response.Write("Welcome to the family!");
-                }
-                else
-                {
-                    context.Response.StatusCode = 500;
-                    context.Response.StatusDescription = "An error occurred while creating record"; 
-                }
-            }
+                context.Response.Write("CreatePosRecord; ");
         }
         catch (Exception EX)
         {

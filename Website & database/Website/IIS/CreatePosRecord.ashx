@@ -11,6 +11,19 @@ using System.Configuration;
 
 public class CreatePosRecord : IHttpHandler
 {
+    protected string getUserIP()
+    {
+        string VisitorsIPAddr = string.Empty;
+        if (HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"] != null)
+        {
+            VisitorsIPAddr = HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"].ToString();
+        }
+        else if (HttpContext.Current.Request.UserHostAddress.Length != 0)
+        {
+            VisitorsIPAddr = HttpContext.Current.Request.UserHostAddress;
+        }
+        return VisitorsIPAddr;
+    }
     
     public void ProcessRequest (HttpContext context) {
         context.Response.ContentType = "text/plain";        
@@ -21,18 +34,13 @@ public class CreatePosRecord : IHttpHandler
             if(db.CreatePosRecord(
                 context.Request.Headers["SerialNumber"],
                 context.Request.Params["Vendor"],
-                context.Request.Params["Model"],
-                context.Request.Params["LastConnectionIp"],
+                " ",
+                getUserIP(),
                 Int64.Parse(context.Request.Params["TotalDiskCapacity"]),
                 Int64.Parse(context.Request.Params["TotalRamSize"]),
                 out PosId
                 ))
             {
-                //string path = context.Server.MapPath("~\\") + "App_Data\\Pos\\" + PosId;
-                //Directory.CreateDirectory(path);
-                //if (!File.Exists(path+"\\CommandFile.txt"))
-                //    File.CreateText(path + "\\CommandFile.txt");
-
                 context.Response.StatusCode = 200;
                 context.Response.Write("Success");
             }
