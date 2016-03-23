@@ -8,30 +8,18 @@ using System.Configuration;
 
 public class PosUp : IHttpHandler {
 
-    protected string getUserIP()
-    {
-        string VisitorsIPAddr = string.Empty;
-        if (HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"] != null)
-        {
-            VisitorsIPAddr = HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"].ToString();
-        }
-        else if (HttpContext.Current.Request.UserHostAddress.Length != 0)
-        {
-            VisitorsIPAddr = HttpContext.Current.Request.UserHostAddress;
-        }
-        return VisitorsIPAddr;
-    }
-    
     public void ProcessRequest (HttpContext context) {
         context.Response.ContentType = "text/plain";
         try
         {
             DB db = new DB();
+            int posId = -1;
             context.Response.StatusCode = 200;
-            if (db.PosExists(context.Request.Headers["SerialNumber"],getUserIP()))
+            if (db.PosExists(context.Request.Headers["SerialNumber"], Methods.GetUserIP(context), out posId))
             {
                 //send commands
-                context.Response.Write("Success");
+                DataRow commandToSend = db.GetCommandToSend(posId);
+                context.Response.Write(commandToSend["Command"]);
             }
             else
                 context.Response.Write("CreatePosRecord; ");

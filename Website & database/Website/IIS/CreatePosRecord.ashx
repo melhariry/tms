@@ -11,20 +11,7 @@ using System.Configuration;
 
 public class CreatePosRecord : IHttpHandler
 {
-    protected string getUserIP()
-    {
-        string VisitorsIPAddr = string.Empty;
-        if (HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"] != null)
-        {
-            VisitorsIPAddr = HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"].ToString();
-        }
-        else if (HttpContext.Current.Request.UserHostAddress.Length != 0)
-        {
-            VisitorsIPAddr = HttpContext.Current.Request.UserHostAddress;
-        }
-        return VisitorsIPAddr;
-    }
-    
+
     public void ProcessRequest (HttpContext context) {
         context.Response.ContentType = "text/plain";        
         try
@@ -34,8 +21,8 @@ public class CreatePosRecord : IHttpHandler
             if(db.CreatePosRecord(
                 context.Request.Headers["SerialNumber"],
                 context.Request.Params["Vendor"],
-                " ",
-                getUserIP(),
+                "Vega3000",
+                Methods.GetUserIP(context),
                 Int64.Parse(context.Request.Params["TotalDiskCapacity"]),
                 Int64.Parse(context.Request.Params["TotalRamSize"]),
                 out PosId

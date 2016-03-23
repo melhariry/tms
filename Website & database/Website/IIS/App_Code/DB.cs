@@ -13,7 +13,7 @@ public class DB
 {
     SqlConnection Conn = new SqlConnection(ConfigurationManager.ConnectionStrings["DbConnectionString"].ToString());
     
-    public bool PosExists(string posSerialNumber)
+    public bool PosExists(string posSerialNumber, string posLastConnectionIp, out int posId)
     {
         try
         {
@@ -22,10 +22,14 @@ public class DB
             SqlDataAdapter adapter = new SqlDataAdapter(cmd);
             DataTable table = new DataTable();
             cmd.Parameters.AddWithValue("@PosSerialNumber", posSerialNumber);
+            cmd.Parameters.AddWithValue("@LastConnectionIp", posLastConnectionIp);
+            SqlParameter id = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            id.Direction = ParameterDirection.ReturnValue;
             Conn.Open();
             adapter.Fill(table);
             Conn.Close();
-            if (table.Rows.Count == 1)
+            posId = Convert.ToInt32(id.Value);
+            if (posId != 0)
                 return true;
             else
                 return false;
@@ -99,4 +103,70 @@ public class DB
         }
     }
 
+    public DataTable GetTerminals()
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("GetTerminals", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            return table;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+    }
+
+    public DataRow GetCommandToSend(int posId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("GetCommandToSend", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@PosId", posId);
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            DataRow row = null;
+            if (table.Rows.Count > 0)
+                row = table.Rows[0];
+            return row;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+    }
+
+    public bool UpdateCommandToSend(int id, int command)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("UpdateCommandToSend", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+
+            cmd.Parameters.AddWithValue("@Id", id);
+            cmd.Parameters.AddWithValue("@Command", command);
+            SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            rowCount.Direction = ParameterDirection.ReturnValue;
+            Conn.Open();
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+            if (Convert.ToInt32(rowCount.Value) == 1)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+    }
 }
