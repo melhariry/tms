@@ -1,19 +1,33 @@
 #ifndef  PARSER_H
 #define  PARSER_H
-
+/*========================================*
+* I N C L U D E S *
+*========================================*/
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
+/*========================================*
+* I N C L U D E S *
+*========================================*/
 #include "httpclient.h"
 #include "GPRS.h"
+#include "common.h"
+/*========================================*
+* D E F I N E S *
+*========================================*/
 
 
+
+/*==========================================*
+* P U B L I C *
+*==========================================*/
 struct command
 {
 	BYTE paramlist[10][50];
 	USHORT paramLen;
 };
+
 
 USHORT create_pos_record()
 {
@@ -26,8 +40,8 @@ USHORT create_pos_record()
     sprintf(baExtraParam,"SerialNumber:%s\nContent-Length: %d",baSerialNumber,strlen(baResponse));
     HTTP_BuildHeader(baHeader,"/MTMS/CreatePosRecord.ashx","POST",baExtraParam);
 
-    HTTP_BuildMessage(baMessage,baHeader,baResponse);
-    GPRS_connect(bIPaddress,80);
+    HTTP_BuildRequest(baMessage,baHeader,baResponse);
+    //GPRS_connect(bIPaddress,80);
 
 	GPRS_send(baMessage,strlen(baMessage));
 	CTOS_LCDTClearDisplay();

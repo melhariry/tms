@@ -1,5 +1,28 @@
+/**
+  ******************************************************************************
+  * file          communication.h
+  * author        
+  * component     communication
+  * description   header file of communication
+  *               communication module provides the Terminal abstraction layer of 
+  *               communication with TMS 
+  ******************************************************************************
+  * copyright POS_GP_TEAM_2016
+  *
+  ******************************************************************************
+  */
+/* Define to prevent recursive inclusions ------------------------------------*/
+
+
 #ifndef GPRS_H
 #define GPRS_H
+
+
+
+
+
+
+
 /*========================================*
 * I N C L U D E S *
 *========================================*/
@@ -9,169 +32,148 @@
 #include <unistd.h>
 #include <ctosapi.h>
 
+/*==========================================*
+****************P U B L I C ****************
+*==========================================*/
+
+/*==========================================*
+* D E F I N E S *
+*==========================================*/
+	
+
 /*========================================*
 * D E F I N E S *
 *========================================*/
-#define PPP_TO_MS 35000 //45000ms
-#define CONNECT_TO_MS 4000 // 5000ms
+#define PPP_TO_MS 35000 ,//45000ms
+#define CONNECT_TO_MS 4000 ,// 5000ms
 #define CONNECT_RETRY 2
 
 #define SIZE_SENDBUFF 1024
 #define SIZE_RECVBUFF 1024
+/*==========================================*
+* C O N S T A N T S *
+*==========================================*/
 
-
-BYTE baTXBuffer[1024];
-BYTE baRXBuffer[1024];
-//BYTE baSerialNumber[40];
-USHORT usBufferLen=1024;
-
-BYTE bIPaddress[]="197.34.110.15";
-
-struct GPRS_PARAM{
-	BYTE iSocket; //TCP socket descriptor
-	BYTE baLocalIP[4] ;
-	BYTE baRemotelIP[4]; //Host IP Address 
-	USHORT usPort;
-	char APN[26] ;//= "internet.vodafone.net";
-	USHORT usSendLen;
-	USHORT usRecvLen;
-	BYTE baSendBuf[1024]; //Send buffer
-	BYTE baRecvBuf[1100]; //Receive buffer
-	
-	
-
-
-
-}stGPRSParam;
-void setHostIP(BYTE *baHOST){
-	int i;
-	for(i=0;i<4;++i){
-		stGPRSParam.baRemotelIP[i]=baHOST[i];
-	}
-}
-void GPRS_PARAM_init(void){
-	stGPRSParam.usPort=80;
-
-	strcpy(stGPRSParam.baLocalIP,"\x00\x00\x00\x00");
-	strcpy(stGPRSParam.APN,"internet.vodafone.net");//Vodafone
-}
-
-
-//Utility function
-void util_strncpy(BYTE *dest,const BYTE *source,ULONG ulLen){
-	ULONG i;
-	for(i=0;i<ulLen;++i){
-		dest[i]=source[i];
-	}
-	dest[i++]='\r';
-	dest[i++]='\n';
-	dest[i]='\0';
-}
-
-
-/*===================================================================
-* FUNCTION NAME: pollStatusResult
-* DESCRIPTION: Show the status and return value of GPRSStatus and return until not
-get IO_PROCESSING state.
-* RETURN: The return value of GPRSStatus
- * * NOTES: none
-*==================================================================*/
-USHORT pollStatusResultLCD(BYTE *func, USHORT theRTN)
+/*==========================================*
+* T Y P E S *
+*==========================================*/
+typedef enum
 {
-	BYTE key , str[17];
-    
-	USHORT usret;
-	DWORD status;
-	CTOS_LCDTClearDisplay ();
-	CTOS_LCDTPrintXY(1, 1, func);
-	memset(str, 0 , sizeof(str));
-	CTOS_LCDTPrintXY(1, 2, str);
-	status = 0;
-	while (1)
-	{
-		usret = CTOS_TCP_GPRSStatus(&status);
-		sprintf(str , "Return:%04x " , usret);
-		CTOS_LCDTPrintXY(1, 3, str);
-		sprintf(str , "Status:%x " , status);
-		CTOS_LCDTPrintXY(1, 4, str);
-		if (usret == 0x2321) //keep polling status
-		{
-			CTOS_Delay(400);
-			continue;
-		}
-		else
-			break;
-	}
-	return usret;
-}
-USHORT pollStatusResult(DWORD* dwStatus)
+	GPRS_ESTABLISHED,
+	GPRS_ESTABLISHING,
+	GPRS_CONNECTING,
+	GPRS_SENDING,
+	GPRS_RECEIVING,
+	GPRS_DISCONNECTING,
+	GPRS_ONHOOKING,
+	GPRS_UNKNOWN
+} enuGprsStateType;
+
+typedef enum
 {
-	BYTE key , str[17];
-    
-	USHORT usret;
-	DWORD status;
-	
-	status = 0;
-	while (1)
-	{
-		usret = CTOS_TCP_GPRSStatus(&status);
-		sprintf(str , "Return:%04x " , usret);
-		sprintf(str , "Status:%x " , status);
-		*dwStatus=status;
-		if (usret == 0x2321) //keep polling status
-		{
-			CTOS_Delay(200);//sleep
-			continue;
-		}
-		else
-			break;
-	}
+	d_TCP_IO_PROCESSING,//2321h
+	d_TCP_IO_BUSY,//2322h
+	d_TCP_URL_NOT_FOUND,//2370h
+	d_TCP_PING_FAILED,//2371h
+	d_TCP_PPP_CONNECTION_TERMINATED,//2372h
+	d_TCP_SOCKET_FULL,//2380h
+	d_TCP_CONNECTION_NOT_ESTABLISHED,//2381h
+	d_TCP_BAD_FCS,//2382h
+	d_TCP_PPP_TIMEOUT,//2383h
+	d_TCP_PROTOCOL_ERROR,//2384h
+	d_TCP_LENGTH_ERROR,//2385h
+	d_TCP_PPP_SEND_TIMEOUT,//2386h
+	d_TCP_PPP_SEND_ERROR,//2387h
+	d_TCP_SOCKET_FAILED,//2388h
+	d_TCP_SOCKET_IO_MODE_FAILED,//2389h
+	d_TCP_RX_RECEIVE_TIMEOUT,//238Ah
+	d_TCP_INVALID_PARA,//238Bh
+	d_TCP_CONNECT_TIMEOUT,//2390h
+	d_TCP_DISCONNECT_FAIL,//2391h
+	d_TCP_RESET,//2392h
+	d_TCP_SEQNENCE_INCORRECT,//2393h
+	d_TCP_NO_SERVER,//2394h
+	d_TCP_RETRANSMISSION,//2395h
+	d_TCP_PROTOCOL,//2396h
+	d_TCP_IP_FORMAT_WRONG,//2397h
+	d_TCP_FORMAT_WRONG,//2398h
+	d_TCP_SEND_TIMEOUT,//2399h
+	d_TCP_NO_ACK,//239Ah
+	d_TCP_BUF_FULL,//239Bh
+	d_TCP_RECEIVE_NON_UDP_PACKAGE,//239Ch
+	d_TCP_IP_ADDRESS_NOT_EXIST,//239Dh
+	d_TCP_RECEIVE_DATA_FAILED,//239Eh
+	d_TCP_SEND_DATA_FAILED,//239Fh
+	d_TCP_LCP_TIMEOUT,//23A0h
+	d_TCP_LCP_ACK,//23A1h
+	d_TCP_LCP_NAK,//23A2h
+	d_TCP_LCP_REJECT,//23A3h
+	d_TCP_LCP_CODE_REJECT,//23A4h
+	d_TCP_LCP_PROTO_REJECT,//23A5h
+	d_TCP_LCP_TERM_REJECT,//23A6h
+	d_TCP_PEER_LCP_ACK,//23A7h
+	d_TCP_PEER_LCP_NAK,//23A8h
+	d_TCP_PEER_LCP_REJ,//23A9h
+	d_TCP_PEER_LCP_CODE_REJECT,//23AAh
+	d_TCP_PEER_LCP_PROTO_REJECT,//23ABh
+	d_TCP_PEER_LCP_TERM_REQUEST,//23ACh
+	d_TCP_PEER_LCP_TERM_ACK,//23ADh
+	d_TCP_SEND_EPIPE_FAILED,//23AEh
+	d_TCP_RECEIVE_EPIPE_FAILED,//23AFh
+	d_TCP_CHAP_TIMEOUT,//23B0h
+	d_TCP_CHAP_RESPONSE,//23B1h
+	d_TCP_CHAP_CODE_REJECT,//23B2h
+	d_TCP_PEER_CHAP_SUCCESS,//23B3h
+	d_TCP_PEER_CHAP_AUTH_FAIL,//23B4h
+	d_TCP_IPCP_TIMEOUT,//23C0h
+	d_TCP_IPCP_ACK,//23C1h
+	d_TCP_IPCP_REJECT,//23C2h
+	d_TCP_IPCP_CODE_REJECT,//23C3h
+	d_TCP_IPCP_PROTO_REJECT,//23C4h
+	d_TCP_PEER_IPCP_ACK,//23C5h
+	d_TCP_PEER_IPCP_NAK,//23C6h
+	d_TCP_IPCP_TOSS,//23C7h
+	d_TCP_PEER_IPCP_REJ,//23C8h
+	d_TCP_CCP_REJECT,//23CAh
+	d_TCP_BIND_FAILED,//23CBh
+	d_TCP_CHANNEL_TYPE_FAILED,//23E0h
+	d_TCP_CHANNEL_OFFLINE,//23E1h
+	d_TCP_GPRS_AUTH_SETTING_FAILED,//23E2h
+	d_TCP_GSM_OPEN_FAILED,//23E3h
+	d_TCP_GPRS_ATTACH_FAILED,//23E4h
+	d_TCP_GPRS_PPP_CONNECT_FAILED,//23E5h
+	d_TCP_GPRS_IS_CONNECTED,//23E6h
+	d_TCP_USER_INTERRUPT//23FFh
+} enuGprsErrorType;
+/*==========================================*
+* V A R I A B L E S *
+*==========================================*/
 
-	return usret;
-}
-USHORT GPRS_open(){
-	USHORT ret;
-	CTOS_TCP_GPRSInit();
-	ret = CTOS_PPP_SetTO(PPP_TO_MS);
-	ret = pollStatusResultLCD("PPP_TO_MS .....1??", ret);
-	if(ret!=d_OK)return ret;
-	ret = CTOS_TCP_GPRSOpen(stGPRSParam.baLocalIP ,stGPRSParam.APN ,"" ,"");
-	ret = pollStatusResultLCD("GPRS Open.....2??", ret);
-	return ret;
-}
-USHORT GPRS_connect(BYTE *caIP,USHORT usPort){
-	USHORT usrtn;
-	/* Set TCP connecting timeout (ms) and retry time */
-	usrtn = CTOS_TCP_SetConnectTO(CONNECT_TO_MS);
-	usrtn = CTOS_TCP_SetRetryCounter(CONNECT_RETRY);
-	usrtn = CTOS_TCP_GPRSConnectURL(&stGPRSParam.iSocket ,caIP,usPort);
-	usrtn = pollStatusResultLCD("GPRS Connect ", usrtn);
-	if (usrtn != d_OK) return usrtn;
-	return d_OK;
-}
-USHORT GPRS_send(BYTE *baSendBuf,USHORT usSendLen){
-	USHORT usrtn;
-	usrtn = CTOS_TCP_GPRSTx(stGPRSParam.iSocket ,baSendBuf ,usSendLen);
-	usrtn = pollStatusResultLCD("GPRS Tx", usrtn);
-	return usrtn;
-}
-USHORT GPRS_recieve(BYTE *baRecvBuf,USHORT *usRecvLen){
-	USHORT usrtn;
-	usrtn = CTOS_TCP_GPRSRx(stGPRSParam.iSocket ,baRecvBuf ,usRecvLen);
-	usrtn = pollStatusResultLCD("GPRS Rx", usrtn);
-	return usrtn;
-}
-USHORT GPRS_disconnect(){
-	USHORT usrtn;
-	usrtn = CTOS_TCP_GPRSDisconnect(stGPRSParam.iSocket);
-	usrtn = pollStatusResultLCD("GPRS Disconnect", usrtn);
-	return usrtn;
-}
-USHORT GPRS_close(){
-	USHORT usrtn;
-	usrtn = CTOS_TCP_GPRSClose();
-	usrtn = pollStatusResultLCD("GPRS Close", usrtn);
-	return usrtn;
-}
+/*==========================================*
+* M A C R O S *
+*==========================================*/
 
+/*==========================================*
+* F U N C T I O N S*
+*==========================================*/
+	USHORT gprsOpen();
+	USHORT gprsConnect(BYTE *caIP,USHORT usPort);
+	USHORT gprsSend(BYTE *baSendBuf,USHORT usSendLen);
+	USHORT gprsRecieve(BYTE *baRecvBuf,USHORT *usRecvLen);
+	USHORT gprsDisconnect();
+	USHORT gprsClose();
+
+/*
+	void setHostIP(BYTE *baHOST);
+	void GPRS_PARAM_init(void);
+	void util_strncpy(BYTE *dest,const BYTE *source,ULONG ulLen);
+	USHORT pollStatusResultLCD(BYTE *func, USHORT theRTN);
+	USHORT pollStatusResult(DWORD* dwStatus);
+	USHORT GPRS_open();
+	USHORT GPRS_connect(BYTE *caIP,USHORT usPort);
+	USHORT GPRS_send(BYTE *baSendBuf,USHORT usSendLen);
+	USHORT GPRS_recieve(BYTE *baRecvBuf,USHORT *usRecvLen);
+	USHORT GPRS_disconnect();
+	USHORT GPRS_close();
+*/
 #endif

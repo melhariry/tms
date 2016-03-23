@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><configurationDescriptor version="84">
+  <logicalFolder displayName="root" kind="ROOT" name="root" projectFiles="true">
+    <logicalFolder displayName="Header Files" name="HeaderFiles" projectFiles="true">
+    </logicalFolder>
+    <logicalFolder displayName="Resource Files" name="ResourceFiles" projectFiles="true">
+    </logicalFolder>
+    <logicalFolder displayName="Source Files" name="SourceFiles" projectFiles="true">
+      <itemPath>appmain.c</itemPath>
+    </logicalFolder>
+    <logicalFolder displayName="Important Files" name="ExternalFiles" projectFiles="false">
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>NbMakefile</projectmakefile>
+  <confs>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>Gnueabi|Cygwin</compilerSet>
+        <dependencyChecking>false</dependencyChecking>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+          <commandlineTool>arm-brcm-linux-gnueabi-gcc</commandlineTool>
+          <incDir>
+            <pElem>C:/Program Files/Castles/VEGA3000/include</pElem>
+            <pElem>C:/Program Files (x86)/Castles/VEGA3000/include</pElem>
+          </incDir>
+          <commandLine>"-I${SDKV3INC}" -fsigned-char -Wundef -Wstrict-prototypes -Wno-trigraphs -Wimplicit -Wformat</commandLine>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+          <commandlineTool>arm-brcm-linux-gnueabi-g++</commandlineTool>
+          <incDir>
+            <pElem>C:/Program Files/Castles/VEGA3000/include</pElem>
+            <pElem>C:/Program Files (x86)/Castles/VEGA3000/include</pElem>
+          </incDir>
+          <commandLine>"-I${SDKV3INC}" -fsigned-char -Wundef -Wno-trigraphs -Wimplicit -Wformat</commandLine>
+        </ccTool>
+        <linkerTool>
+          <output>dist/V3/App/gprsTestModule</output>
+          <commandlineTool>arm-brcm-linux-gnueabi-g++</commandlineTool>
+          <linkerLibItems>
+            <linkerLibLibItem>caethernet</linkerLibLibItem>
+            <linkerLibLibItem>cafont</linkerLibLibItem>
+            <linkerLibLibItem>cafs</linkerLibLibItem>
+            <linkerLibLibItem>cakms</linkerLibLibItem>
+            <linkerLibLibItem>calcd</linkerLibLibItem>
+            <linkerLibLibItem>camodem</linkerLibLibItem>
+            <linkerLibLibItem>capmodem</linkerLibLibItem>
+            <linkerLibLibItem>caprt</linkerLibLibItem>
+            <linkerLibLibItem>cartc</linkerLibLibItem>
+            <linkerLibLibItem>cauart</linkerLibLibItem>
+            <linkerLibLibItem>cauldpm</linkerLibLibItem>
+            <linkerLibLibItem>causbh</linkerLibLibItem>
+            <linkerLibLibItem>cagsm</linkerLibLibItem>
+            <linkerLibLibItem>cabarcode</linkerLibLibItem>
+            <linkerLibLibItem>pthread</linkerLibLibItem>
+            <linkerLibLibItem>dl</linkerLibLibItem>
+            <linkerLibLibItem>caclvw</linkerLibLibItem>
+            <linkerLibLibItem>catls</linkerLibLibItem>
+            <linkerLibLibItem>ctosapi</linkerLibLibItem>
+            <linkerLibLibItem>crypto</linkerLibLibItem>
+            <linkerLibLibItem>curl</linkerLibLibItem>
+            <linkerLibLibItem>ssl</linkerLibLibItem>
+            <linkerLibLibItem>z</linkerLibLibItem>
+            <linkerLibLibItem>freetype</linkerLibLibItem>
+          </linkerLibItems>
+          <commandLine>-L . "-L${SDKV3LIB}" "-L${SDKV3LIBN}"</commandLine>
+        </linkerTool>
+      </compileType>
+    </conf>
+    <conf name="Debug" type="1">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>Gnueabi|Cygwin</compilerSet>
+        <dependencyChecking>false</dependencyChecking>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <commandlineTool>arm-brcm-linux-gnueabi-gcc</commandlineTool>
+          <incDir>
+            <pElem>C:/Program Files/Castles/VEGA3000/include</pElem>
+            <pElem>C:/Program Files (x86)/Castles/VEGA3000/include</pElem>
+          </incDir>
+          <commandLine>"-I${SDKV3INC}" -fsigned-char -Wundef -Wstrict-prototypes -Wno-trigraphs -Wimplicit -Wformat</commandLine>
+        </cTool>
+        <ccTool>
+          <commandlineTool>arm-brcm-linux-gnueabi-g++</commandlineTool>
+          <incDir>
+            <pElem>C:/Program Files/Castles/VEGA3000/include</pElem>
+            <pElem>C:/Program Files (x86)/Castles/VEGA3000/include</pElem>
+          </incDir>
+          <commandLine>"-I${SDKV3INC}" -fsigned-char -Wundef -Wno-trigraphs -Wimplicit -Wformat</commandLine>
+        </ccTool>
+        <linkerTool>
+          <output>dist/V3/Debug/gprsTestModule</output>
+          <commandlineTool>arm-brcm-linux-gnueabi-g++</commandlineTool>
+          <linkerLibItems>
+            <linkerLibLibItem>caethernet</linkerLibLibItem>
+            <linkerLibLibItem>cafont</linkerLibLibItem>
+            <linkerLibLibItem>cafs</linkerLibLibItem>
+            <linkerLibLibItem>cakms</linkerLibLibItem>
+            <linkerLibLibItem>calcd</linkerLibLibItem>
+            <linkerLibLibItem>camodem</linkerLibLibItem>
+            <linkerLibLibItem>capmodem</linkerLibLibItem>
+            <linkerLibLibItem>caprt</linkerLibLibItem>
+            <linkerLibLibItem>cartc</linkerLibLibItem>
+            <linkerLibLibItem>cauart</linkerLibLibItem>
+            <linkerLibLibItem>cauldpm</linkerLibLibItem>
+            <linkerLibLibItem>causbh</linkerLibLibItem>
+            <linkerLibLibItem>cagsm</linkerLibLibItem>
+            <linkerLibLibItem>cabarcode</linkerLibLibItem>
+            <linkerLibLibItem>pthread</linkerLibLibItem>
+            <linkerLibLibItem>dl</linkerLibLibItem>
+            <linkerLibLibItem>caclvw</linkerLibLibItem>
+            <linkerLibLibItem>catls</linkerLibLibItem>
+            <linkerLibLibItem>ctosapi</linkerLibLibItem>
+            <linkerLibLibItem>crypto</linkerLibLibItem>
+            <linkerLibLibItem>curl</linkerLibLibItem>
+            <linkerLibLibItem>ssl</linkerLibLibItem>
+            <linkerLibLibItem>z</linkerLibLibItem>
+            <linkerLibLibItem>freetype</linkerLibLibItem>
+          </linkerLibItems>
+          <commandLine>-L . "-L${SDKV3LIB}" "-L${SDKV3LIBN}"</commandLine>
+        </linkerTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>
