@@ -2,6 +2,20 @@
 /*========================================*
 * Machine utilities 
 *========================================*/
+void split(IN BYTE* baStr,BYTE* baDelimiters,OUT BYTE *tokens[],USHORT* usNoToken)
+{
+	
+	USHORT i=0;
+	tokens[i]=strtok(baStr,baDelimiters);
+	while(tokens[i])
+	{
+		++i;
+		tokens[i]=strtok(NULL,baDelimiters);
+
+	}
+	*usNoToken=i;
+
+}
 /* ==================================================================
 * FUNCTION NAME: unpack
 * DESCRIPTION:

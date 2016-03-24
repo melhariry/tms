@@ -52,6 +52,8 @@
 * P R O T O T Y P E S *
 *==========================================*/
 USHORT manTest(void);
+USHORT manAppList(void);
+USHORT manFileList(void);
 
 
 #endif

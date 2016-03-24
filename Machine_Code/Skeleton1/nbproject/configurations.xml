@@ -8,6 +8,7 @@
       <itemPath>common.h</itemPath>
       <itemPath>communication.h</itemPath>
       <itemPath>execute.h</itemPath>
+      <itemPath>files.h</itemPath>
       <itemPath>httpclient.h</itemPath>
       <itemPath>manager.h</itemPath>
       <itemPath>test.h</itemPath>

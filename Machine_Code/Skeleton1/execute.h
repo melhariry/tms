@@ -51,7 +51,8 @@
 * P R O T O T Y P E S *
 *==========================================*/
 USHORT  exeSystemTest(BYTE* baTestResult);
-
+USHORT  exeListApps(BYTE* baAppList);
+USHORT  exeListFiles(BYTE* baFileList);
 
 
 #endif

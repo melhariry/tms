@@ -44,8 +44,8 @@
 /*==========================================*
 * V A R I A B L E S *
 *==========================================*/
-BYTE baResponse[1024];
-BYTE baStr[1024];
+BYTE baResponse[3*1024];
+BYTE baStr[3*1024];
 /*==========================================*
 * M A C R O S *
 *==========================================*/
@@ -61,3 +61,20 @@ USHORT manTest()
 
 }
 
+USHORT manAppList()
+{
+  BYTE key;
+  //max 50 apps xD
+  USHORT usResult = exeListApps(baStr);
+  sprintf(baResponse,"cmd=listApp%s\n",baStr);
+  usResult=commSendTms(baResponse);
+}
+
+USHORT manFileList()
+{
+   BYTE key;
+  //max 50 apps xD
+  USHORT usResult = exeListFiles(baStr);
+  sprintf(baResponse,"cmd=listFiles%s\n",baStr);
+ // usResult=commSendTms(baResponse); 
+}

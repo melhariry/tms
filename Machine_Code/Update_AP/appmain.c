@@ -72,6 +72,11 @@ int main(int argc,char *argv[])
     BYTE out[1000];
     ULONG ulHandle,ulBuffLen;
     USHORT ret,usFileNo;
+    //execl("/bin/su","su", "appdebug","123456",NULL);
+    getlogin_r(out, 1000);
+    CTOS_LCDTClearDisplay();
+    CTOS_LCDTPrint(out);
+    CTOS_KBDGet(&key);
     chdir("/home");
     ls();
     chdir("/home/ap");

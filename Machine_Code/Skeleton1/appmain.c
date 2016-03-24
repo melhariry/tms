@@ -20,7 +20,8 @@ int main(int argc,char *argv[])
 	// TODO: Add your program here //
 	CTOS_LCDTClearDisplay();
             
-        usRet=manTest();
+        usRet=manFileList();
+        CTOS_KBDGet(&key);
         if(usRet){
         	CTOS_LCDTPrint("not ok");
         }

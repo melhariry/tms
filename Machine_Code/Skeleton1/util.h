@@ -49,6 +49,7 @@
 /*==========================================*
 * F U N C T I O N S *
 *==========================================*/
+void split(IN BYTE* baStr,BYTE* baDelimiters,OUT BYTE *tokens[],USHORT* usNoToken);
 void unpack(OUT char* pStr, IN BYTE* pData, IN USHORT Len, IN char* pSpilt);
 USHORT GetSerialNumber(OUT BYTE * SerialNumber);
 USHORT GetGPRSIP(OUT BYTE * GPRSIP);
