@@ -11,7 +11,15 @@
     <form id="CommandsForm" runat="server">
     <div id="CommandsDiv" runat="server">
     </div>
+    <h2>File List</h2>
+    <asp:GridView ID="FileListGrid" runat="server" OnDataBound="FileListGrid_DataBound">
+        <Columns>
+            <asp:BoundField HeaderText="Select" />
+        </Columns>
+    </asp:GridView>
     <asp:Button ID="Submit" runat="server" Text="Submit" OnClick="Submit_Click" />
+    <asp:FileUpload ID="FileUpload1" runat="server" />
+    <asp:Button ID="Test" runat="server" Text="Test FTP" OnClick="Test_Click" />
     </form>
 </body>
 </html>

@@ -169,4 +169,70 @@ public class DB
             throw (EX);
         }
     }
+
+    public DataRow GetCommandParameters(string serialNumber)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("GetCommandParameters", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@SerialNumber", serialNumber);
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            DataRow row = null;
+            if (table.Rows.Count > 0)
+                row = table.Rows[0];
+            return row;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+    }
+
+    public DataRow GetTerminalInfo(int posId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("GetTerminalInfo", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@PosId", posId);
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            DataRow row = null;
+            if (table.Rows.Count > 0)
+                row = table.Rows[0];
+            return row;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+    }
+
+    public DataTable GetTerminalFileList(int posId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("GetTerminalFileList", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@PosId", posId);
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            return table;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+    }
 }

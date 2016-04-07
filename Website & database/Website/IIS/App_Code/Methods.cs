@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Net;
 
 /// <summary>
 /// Summary description for Methods
@@ -20,5 +21,13 @@ public static class Methods
 
         return VisitorsIPAddr;
     }
-    
+
+    public static void CreateFtpDirectory(string serialNumber)
+    {
+        WebRequest request = WebRequest.Create("ftp://localhost/MTMS_FTP/Terminals/" + serialNumber + "/");
+        request.Method = WebRequestMethods.Ftp.MakeDirectory;
+        request.Credentials = new NetworkCredential("MTMS_FTP", "1234");
+        FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+        response.Close();
+    }
 }

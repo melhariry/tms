@@ -9,9 +9,11 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Configuration;
 
+
 public class CreatePosRecord : IHttpHandler
 {
-
+    
+    
     public void ProcessRequest (HttpContext context) {
         context.Response.ContentType = "text/plain";        
         try
@@ -28,6 +30,7 @@ public class CreatePosRecord : IHttpHandler
                 out PosId
                 ))
             {
+                Methods.CreateFtpDirectory(context.Request.Headers["SerialNumber"]);
                 context.Response.StatusCode = 200;
                 context.Response.Write("Success");
             }
