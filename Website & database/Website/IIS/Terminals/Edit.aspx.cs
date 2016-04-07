@@ -75,7 +75,7 @@ public partial class Terminals_Show : System.Web.UI.Page
 
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpDirectory + fileName);
             request.Method = WebRequestMethods.Ftp.UploadFile;
-            request.Credentials = new NetworkCredential("anonymous", "ibrahim@mail.com");
+            request.Credentials = new NetworkCredential("MTMS_FTP", "1234");
             request.ContentLength = fileBytes.Length;
             request.KeepAlive = false;
 
