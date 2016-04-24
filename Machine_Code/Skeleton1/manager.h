@@ -51,9 +51,14 @@
 /*==========================================*
 * P R O T O T Y P E S *
 *==========================================*/
+USHORT manUp(void);
 USHORT manTest(void);
 USHORT manAppList(void);
 USHORT manFileList(void);
-
+USHORT manDeleteFile(void);
+USHORT manPushFile(void);
+USHORT manPullFile(void);
+USHORT manRecieveFile(void);
+USHORT manOpenFTP(void);
 
 #endif

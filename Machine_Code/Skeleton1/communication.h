@@ -30,7 +30,12 @@
 /*==========================================*
 * D E F I N E S *
 *==========================================*/
-	
+	//Path index
+  #define PATH_POSUP 0
+  #define PATH_CREATE_POS_RECORD 1
+  #define PATH_SUBMIT_COMMAND_RESULT 2
+  #define PATH_REQUEST_COMMAND_PARAMETERS 3
+
 /*==========================================*
 * C O N S T A N T S *
 *==========================================*/
@@ -50,8 +55,8 @@
 /*==========================================*
 * P R O T O T Y P E S *
 *==========================================*/
-void commPingTms(void);
-USHORT commSendTms(BYTE *baMessage);
-
+USHORT commInit(void);
+USHORT commClose(void);
+USHORT commSendTms(IN BYTE *baMessage,IN USHORT usPathIndex);
 
 #endif

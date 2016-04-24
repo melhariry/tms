@@ -96,10 +96,6 @@ void ls(BYTE *pathname,BYTE* baNames,BOOL app)
       strcat(baNames,files[i-1]->d_name);
       strcat(baNames,"\n");
     }
- 
-    
-  
-  
 }
 USHORT  exeListApps(BYTE* baAppList)
 {
@@ -119,7 +115,7 @@ USHORT  exeListApps(BYTE* baAppList)
     sscanf(tokens[i],"%d",&index);
     CTOS_APGet(index,&appInfo);
     memset(baTemp,0,sizeof baTemp);
-    sprintf(baTemp,"&name=%s&version=%x%x&com=%s",appInfo.baName,appInfo.baVersion[0],appInfo.baVersion[1],appInfo.baCompany);
+    sprintf(baTemp,"&name=%s&version=0x%x%x&com=%s",appInfo.baName,appInfo.baVersion[0],appInfo.baVersion[1],appInfo.baCompany);
     strcpy(baAppList,baTemp);
 
   }
@@ -134,24 +130,58 @@ USHORT  exeListFiles(BYTE* baFileList)
   USHORT usRet;
   int i;
   BYTE baTemp[100];
-  ULONG hamada;
-  NewFile("private",&hamada,d_STORAGE_FLASH,d_FA_PRIVATE);
+  
   //List the attributes of all files //
   usRet = CTOS_FileDirAttrib(stAttrib, &usFileNo);
   memset(baFileList,0, sizeof baFileList);
   for (i=0; i<usFileNo; i++)
   {
     memset(baTemp,0,sizeof baTemp);
-    CTOS_FileGetSize(stAttrib[i].Filename,&stAttrib[i].Filesize);
-    sprintf(baTemp,"&name=%s\n&attribute=%d\n&size=%ld\n",stAttrib[i].Filename,stAttrib[i].FileAttrib,stAttrib[i].Filesize);
-    strcpy(baFileList,baTemp);
+    CTOS_FileGetSize(stAttrib[i].Filename,&stAttrib[i].Filesize); 
+    sprintf(baTemp,"&name=%s&attribute=%d&size=%ld",stAttrib[i].Filename,stAttrib[i].FileAttrib,stAttrib[i].Filesize);
+    // sprintf(baTemp,"\n&name=%s\n&attribute=%d\n&size=%ld\n",stAttrib[i].Filename,stAttrib[i].FileAttrib,stAttrib[i].Filesize);
+    //sprintf(baTemp,"name=%s\n",stAttrib[i].Filename);    
+    strcat(baFileList,baTemp);
+    //}
   }
-  
+  //CTOS_LCDTPrint(baFileList);
   return 0;
 }
 
 
+/*USHORT  exeDeleteFiles(IN BYTE * fileNames[],IN int length, OUT USHORT  deleteResults[])
+{
 
+  int i;
+  USHORT usret=0;
+  for(i =0;i<length; ++i)
+  {
+     usret=usret<<1;
+     deleteResults[i] = DeleteFile(fileNames[i]);    
+     usret|=deleteResults[i]?1:0;
+  }
+  //CTOS_LCDTPrint("\n");
+
+  return usret;
+}*/
+USHORT  exeDeleteFiles(IN BYTE * fileNames[],IN int length, OUT BYTE deleteResults[])
+{
+
+  int i;
+  USHORT usret=0,usfile;
+  BYTE baTemp[100];
+  for(i =0;i<length; ++i)
+  {
+     usret=usret<<1;
+     usfile= DeleteFile(fileNames[i]);    
+     usret|=usfile?1:0;
+     sprintf(baTemp,"&name=%s&state=%x",fileNames[i],usfile);
+     strcat(deleteResults,baTemp);
+  }
+  //CTOS_LCDTPrint("\n");
+
+  return usret;
+}
 
 
 USHORT  exeSystemTest(BYTE* baTestResult)
@@ -196,7 +226,7 @@ USHORT  exeSystemTest(BYTE* baTestResult)
   }
     
     //write memory test results to file
-    strcat(baTestResult , baBuffer);
+  strcat(baTestResult , baBuffer);
   memset(baBuffer,0,sizeof baBuffer);
     
   //test Crypto

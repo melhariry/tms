@@ -32,7 +32,7 @@
 * D E F I N E S *
 *========================================*/
 #define PPP_TO_MS 35000 //45000ms
-#define CONNECT_TO_MS 4000 // 5000ms
+#define CONNECT_TO_MS 5000 // 5000ms
 #define CONNECT_RETRY 2
 
 #define SIZE_SENDBUFF 1024
@@ -104,6 +104,7 @@ USHORT pollStatusResultLCD(BYTE *func, USHORT theRTN)
 		else
 			break;
 	}
+	CTOS_LCDTPrint("poll end\n");
 	return usret;
 }
 USHORT pollStatusResult()
@@ -186,6 +187,19 @@ USHORT gprsOpen()
 	return ret;
 	
 	
+}
+USHORT gprsConnectSocket(BYTE* bsocket,BYTE *baIP,USHORT usPort)
+{
+	USHORT usrtn;
+
+	usrtn = CTOS_TCP_GPRSConnectURL(bsocket ,baIP,usPort);
+    #ifdef DEBUG_LCD
+	usrtn = pollStatusResultLCD("GPRS Connect sock ", usrtn);
+	#else
+	usrtn=pollStatusResult();
+	#endif
+	if (usrtn != d_OK) return usrtn;
+	return d_OK;
 }
 USHORT gprsConnect(BYTE *baIP,USHORT usPort)
 {

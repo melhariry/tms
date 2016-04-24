@@ -73,6 +73,7 @@ typedef enum
 	enuGprsStateType gprsGetState(void);
 	USHORT gprsOpen(void);
 	USHORT gprsConnect(BYTE *caIP,USHORT usPort);
+	USHORT gprsConnectSocket(BYTE* bsocket,BYTE *baIP,USHORT usPort);
 	USHORT gprsSend(BYTE *baSendBuf,USHORT usSendLen);
 	USHORT gprsRecieve(BYTE *baRecvBuf,USHORT *usRecvLen);
 	USHORT gprsDisconnect(void);

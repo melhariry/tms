@@ -50,9 +50,10 @@
 /*==========================================*
 * P R O T O T Y P E S *
 *==========================================*/
-USHORT  exeSystemTest(BYTE* baTestResult);
 USHORT  exeListApps(BYTE* baAppList);
 USHORT  exeListFiles(BYTE* baFileList);
-
+//USHORT  exeDeleteFiles(IN BYTE * fileNames[],IN int length,OUT USHORT  deleteResults[]);
+USHORT  exeDeleteFiles(IN BYTE * fileNames[],IN int length,OUT BYTE  deleteResults[]);
+USHORT  exeSystemTest(BYTE* baTestResult);
 
 #endif

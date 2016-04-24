@@ -1,4 +1,12 @@
 #include "util.h"
+ #include <sys/types.h>
+ #include <sys/stat.h>
+ #include <sys/socket.h>
+ #include <sys/un.h>
+ #include <netinet/in.h>
+ #include <arpa/inet.h>
+#include <errno.h>
+
 /*========================================*
 * Machine utilities 
 *========================================*/
@@ -62,12 +70,70 @@ USHORT GetGPRSIP(OUT BYTE * GPRSIP)
 }
 
 
+char * sock_addr(int s,char *buf,size_t bufsiz) 
+{
+	char line[100];
+    int z;         /* Status return code */
+    struct sockaddr_in adr_inet;/* AF_INET */
+    int len_inet;  /* length */
+/*
+ * Obtain the address of the socket:
+ */
+    len_inet = sizeof adr_inet;
+    z = getsockname(s, (struct sockaddr *)&adr_inet, &len_inet);
+    if ( z == -1 ) {
+    	CTOS_LCDTPrint("\n");
+    	strcpy(line,strerror(errno));
+    	CTOS_LCDTPrint(line+20);
+       return NULL; /* Failed */
+    }
+/*
+ * Convert address into a string
+ * form that can be displayed:
+ */
+    snprintf(buf,bufsiz, "%s:%u",
+    inet_ntoa(adr_inet.sin_addr),
+    (unsigned)ntohs(adr_inet.sin_port));
+    CTOS_LCDTPrint(buf);
+    return buf;
+ }
+
+USHORT utilGetPort(BYTE socket)
+{
+	
+	USHORT usPort=1,z;
+
+	struct sockaddr addr;
+	BYTE line[100];
+	USHORT addrLen=sizeof(addr);
+	sock_addr(socket,line,&addrLen);
+return 233;
+	z=getsockname ( socket, (struct sockaddr *)&addr, &addrLen );
+	sscanf(addr.sa_data,".*:%d",&usPort);
+	/*addr.sa_data[0]+='0';
+	addr.sa_data[1]+='0';
+	addr.sa_data[2]+='0';
+	addr.sa_data[3]+='0';
+	addr.sa_data[4]+='0';
+	addr.sa_data[5]+='0';
+	addr.sa_data[6]+='0';
+	addr.sa_data[7]+='0';*/
+	//CTOS_LCDTPrint(addr.sa_data);
+	//CTOS_LCDTPrint((struct sockaddr_in *)&addr)->sin_port);
+	return usPort;
+}
+
 
 
 /*========================================*
-* string utilities 
+* string utilities s
 *========================================*/
-
+void utilPrintI(ULONG x)
+{
+	char str[20];
+	sprintf(str,"%d",x);
+	CTOS_LCDTPrint(str);
+}
 
 BYTE ith(BYTE hex_digit)
 {

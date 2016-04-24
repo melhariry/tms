@@ -205,13 +205,13 @@ USHORT NewFile(BYTE *pbaFileName, ULONG *pulHandle,BYTE bStorageType,BYTE bAttri
 //=================================================
 USHORT DeleteFile(BYTE *pbaFileName)
 {
-    ULONG ulFileSize;
-    ret = CTOS_FileGetSize(pbaFileName,&ulFileSize);
-    if(ulFileSize > 0)
+    //ULONG ulFileSize;
+   // ret = CTOS_FileGetSize(pbaFileName,&ulFileSize);
+    //if(ulFileSize > 0)
         /* Delete selected file */
         return CTOS_FileDelete(pbaFileName);
-    else
-        return d_FS_FILE_NOT_FOUND;
+    //else
+    //    return d_FS_FILE_NOT_FOUND;
 }  
 //=========================================
 /*USHORT FileWrite(BYTE *pbaString,ULONG ulHandle){
