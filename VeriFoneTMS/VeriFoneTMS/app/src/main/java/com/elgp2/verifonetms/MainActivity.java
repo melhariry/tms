@@ -1,6 +1,5 @@
 package com.elgp2.verifonetms;
 
-import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +10,14 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.elgp2.verifonetms.Execute;
+import com.elgp2.verifonetms.R;
+import com.elgp2.verifonetms.models.AppInfo;
+import com.elgp2.verifonetms.models.FileInfo;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        execute =new Execute();
+        execute =new Execute(getApplicationContext());
 
         appsList =(ListView) findViewById(R.id.apps_list);
 
@@ -43,20 +49,7 @@ public class MainActivity extends AppCompatActivity {
         listAppsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                List<PackageInfo> apps;
-                apps= execute.getInstalledApps(getApplicationContext());
-                //add apps info to listView
-                ArrayList<String> apps_info=new ArrayList<String>();
-                for(PackageInfo appInfo : apps){
-                    String temp="";
-                    temp+=("app_name:"+appInfo.packageName+"\n");
-                    temp+=("version_name:"+appInfo.versionName+"\n");
-
-                    apps_info.add(temp);
-                }
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),android.R.layout.simple_list_item_1,apps_info);
-                appsList.setAdapter(adapter);
+                Toast.makeText(getApplicationContext(),"fokak b2a XD",Toast.LENGTH_SHORT).show();
             }
         });
     }
