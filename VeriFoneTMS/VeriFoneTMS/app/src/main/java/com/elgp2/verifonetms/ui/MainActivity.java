@@ -1,9 +1,10 @@
-package com.elgp2.verifonetms;
+package com.elgp2.verifonetms.ui;
 
 import android.content.pm.PackageInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
     /*Button to list all installed apps*/
     private Button listAppsButton;
+    /*Tag for debugging*/
+    private final String Tag = "MainActivity";
     private Execute execute;
     /*ListView to show a list of installed apps*/
     private ListView appsList;
@@ -49,7 +52,30 @@ public class MainActivity extends AppCompatActivity {
         listAppsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"fokak b2a XD",Toast.LENGTH_SHORT).show();
+                if(execute.createPublicFile("myFolder1/myFolder2","myFile3.txt")) {
+                    Log.d(Tag, "myFile1 successfully created in public storage");
+                }
+                else {
+                    //make sure to disable USB storage to be able to write to external memory
+                    Log.d(Tag, "myFile1 creation failed :(");
+                }
+                if(execute.createPrivateFile("priv1/priv2", "elGp2.txt"))
+                    Log.d(Tag,"elGp2 was created  ");
+                else
+                    Log.d(Tag,"elGp2 creation failed :( ");
+
+                //list private files
+                List<FileInfo> pubFileList= execute.getPrivateFiles();
+                List<String> filesData=new ArrayList<String>();
+                for(FileInfo f:pubFileList){
+                    String temp="";
+                    temp+=("file_path: "+f.getFileAbsolutePath()+"\n");
+                    temp+=("file_size: "+f.getFileSize());
+
+                    filesData.add(temp);
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplication(),android.R.layout.simple_list_item_1,android.R.id.text1,filesData);
+                appsList.setAdapter(adapter);
             }
         });
     }

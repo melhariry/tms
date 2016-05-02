@@ -11,7 +11,7 @@ public class FileInfo {
     private String fileAbsolutePath;
     /*fileSize in Bytes*/
     private long fileSize;
-    /*attribute of file like in Castle 1-> public file , 0 -> private file */
+    /*attribute of file like in Castle true-> public file , false -> private file */
     private boolean attribute;
 
     public void setFileAbsolutePath(String fileAbsolutePath) {
@@ -34,7 +34,7 @@ public class FileInfo {
         return fileAbsolutePath;
     }
 
-    public boolean getAttribute() {
+    public boolean isPublic() {
         return attribute;
     }
 

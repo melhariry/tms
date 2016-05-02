@@ -12,8 +12,10 @@ import android.util.Log;
 
 import com.elgp2.verifonetms.models.AppInfo;
 import com.elgp2.verifonetms.models.FileInfo;
+import com.elgp2.verifonetms.models.MachineInfo;
 import com.elgp2.verifonetms.utilities.AppUtil;
 import com.elgp2.verifonetms.utilities.FileUtil;
+import com.elgp2.verifonetms.utilities.SystemUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -75,6 +77,27 @@ public class Execute {
         return results;
     }
 
+    /*
+     *creates a new file or directory on device external memory
+    * @relativePath : path within the external memory (e.g: myDir1/myDir2)
+    * @fileName : name of file to be create (e.g : myFile.txt)
+    * returns true on success false otherwise
+    * */
+
+    public Boolean createPublicFile(String relativePath,String fileName){
+        return FileUtil.createPublicFile(relativePath,fileName);
+    }
+
+    /*
+    *creates a new file or directory on application internal storage
+    * @relativePath : path within the external memory (e.g: myDir1/myDir2)
+    * @fileName : name of file to be create (e.g : myFile.txt)
+    * returns true on success false otherwise
+    * */
+    public Boolean createPrivateFile(String relativePath,String fileName){
+        return FileUtil.createPrivateFile(relativePath, fileName, context);
+    }
+
     /*returns list of files inside an absolute folder path*/
     private List<FileInfo> listFiles(String path,boolean isPublic){
       List<FileInfo> publicFileList=new ArrayList<FileInfo>();
@@ -112,6 +135,26 @@ public class Execute {
           }
       }
       return publicFileList;
+    }
+
+    /**
+     * @return object contains machine info
+     */
+    public MachineInfo getMachineInfo(){
+       MachineInfo machineInfo=new MachineInfo();
+
+       machineInfo.setBrand(SystemUtil.getMachineBrand());
+       machineInfo.setFreeDiskSpace(SystemUtil.getFreeDiskSpace());
+       machineInfo.setFreeRamSize(SystemUtil.getFreeRamSize(context));
+       machineInfo.setManufacturer(SystemUtil.getMachineManufacturer());
+       machineInfo.setModel(SystemUtil.getMachineModel());
+       machineInfo.setSdkVersion(SystemUtil.getMachineSDKVersion());
+       machineInfo.setSerialNumber(SystemUtil.getMachineSerial());
+       machineInfo.setTotalDiskSpace(SystemUtil.getTotalDiskSpace());
+       machineInfo.setTotalRamSize(SystemUtil.getTotalRamSize(context));
+       machineInfo.setVersionRelease(SystemUtil.getMachineVersionRelease());
+
+       return machineInfo;
     }
 
 }
