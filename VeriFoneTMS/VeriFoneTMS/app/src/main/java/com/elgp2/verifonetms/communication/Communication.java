@@ -1,7 +1,5 @@
-package com.elgp2.verifonetms.volley;
+package com.elgp2.verifonetms.communication;
 
-import android.app.DownloadManager;
-import android.nfc.Tag;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;

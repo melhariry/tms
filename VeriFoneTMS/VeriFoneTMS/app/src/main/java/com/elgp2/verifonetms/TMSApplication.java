@@ -3,7 +3,7 @@ package com.elgp2.verifonetms;
 import android.app.Application;
 import android.content.Context;
 
-import com.elgp2.verifonetms.volley.MyVolley;
+import com.elgp2.verifonetms.communication.MyVolley;
 
 /**
  * base application class to insure MyVolley is initialized and share ApplicationContext globally

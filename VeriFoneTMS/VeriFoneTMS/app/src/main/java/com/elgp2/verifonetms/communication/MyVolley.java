@@ -1,4 +1,4 @@
-package com.elgp2.verifonetms.volley;
+package com.elgp2.verifonetms.communication;
 
 import android.content.Context;
 
