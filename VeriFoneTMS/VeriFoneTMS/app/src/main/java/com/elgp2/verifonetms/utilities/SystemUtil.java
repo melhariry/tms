@@ -6,6 +6,8 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.StatFs;
 
+import com.elgp2.verifonetms.TMSApplication;
+
 import java.text.DecimalFormat;
 
 /**
@@ -43,13 +45,13 @@ public class SystemUtil {
         return Build.VERSION.RELEASE;
     }
 
-    public static long getFreeRamSize(Context context){
-        ActivityManager.MemoryInfo memoryInfo = getSystemMemoryInfo(context);
+    public static long getFreeRamSize(){
+        ActivityManager.MemoryInfo memoryInfo = getSystemMemoryInfo(TMSApplication.getInstance());
         return memoryInfo.availMem;
     }
 
-    public static long getTotalRamSize(Context context){
-        ActivityManager.MemoryInfo memoryInfo = getSystemMemoryInfo(context);
+    public static long getTotalRamSize(){
+        ActivityManager.MemoryInfo memoryInfo = getSystemMemoryInfo(TMSApplication.getInstance());
         return memoryInfo.totalMem;
     }
 

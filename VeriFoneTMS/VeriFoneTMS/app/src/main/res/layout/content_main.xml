@@ -17,8 +17,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="list_apps"/>
-    <ListView
-        android:id="@+id/apps_list"
+    <TextView
+        android:id="@+id/httpResult"
         android:layout_below="@+id/list_apps_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

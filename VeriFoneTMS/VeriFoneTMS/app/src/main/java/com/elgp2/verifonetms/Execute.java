@@ -31,8 +31,8 @@ public class Execute {
      private final String Tag= "Execute";
      private final Context context;
 
-    public Execute(Context c) {
-        context=c;
+    public Execute() {
+        context=TMSApplication.getInstance();
     }
 
     /*returns a list of all installed apps ont the system*/
@@ -69,7 +69,7 @@ public class Execute {
 
     public List<Boolean> deleteFiles(List<String>  filesPaths){
         List<Boolean> results = new ArrayList<Boolean>();
-        if(filesPaths != null ){
+        if(filesPaths != null && filesPaths.size() > 0){
             for(String filePath:filesPaths){
                 results.add(FileUtil.deleteDir(filePath));
             }
@@ -145,13 +145,13 @@ public class Execute {
 
        machineInfo.setBrand(SystemUtil.getMachineBrand());
        machineInfo.setFreeDiskSpace(SystemUtil.getFreeDiskSpace());
-       machineInfo.setFreeRamSize(SystemUtil.getFreeRamSize(context));
+       machineInfo.setFreeRamSize(SystemUtil.getFreeRamSize());
        machineInfo.setManufacturer(SystemUtil.getMachineManufacturer());
        machineInfo.setModel(SystemUtil.getMachineModel());
        machineInfo.setSdkVersion(SystemUtil.getMachineSDKVersion());
        machineInfo.setSerialNumber(SystemUtil.getMachineSerial());
        machineInfo.setTotalDiskSpace(SystemUtil.getTotalDiskSpace());
-       machineInfo.setTotalRamSize(SystemUtil.getTotalRamSize(context));
+       machineInfo.setTotalRamSize(SystemUtil.getTotalRamSize());
        machineInfo.setVersionRelease(SystemUtil.getMachineVersionRelease());
 
        return machineInfo;

@@ -11,7 +11,11 @@ import android.widget.Toast;
 import com.elgp2.verifonetms.models.FileInfo;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.List;
 
 /**
@@ -87,8 +91,31 @@ public class FileUtil {
         return true;
     }
 
+    /**
+     * copy src File content to dstFile content , to be used in create or update File
+     * @param src srcFile
+     * @param dst dstFile
+     * @return true on success
+     * @throws IOException
+     */
+    public static Boolean copyFile(File src, File dst) throws IOException {
+        FileChannel     srcChannel = new FileInputStream(src).getChannel();
+        FileChannel     dstChannel = new FileOutputStream(dst).getChannel();
+
+        try {
+            srcChannel.transferTo(0,srcChannel.size(),dstChannel);
+        }
+        finally {
+            if(srcChannel != null)
+                srcChannel.close();
+            if(dstChannel != null)
+                dstChannel.close();
+        }
+        return true;
+    }
+
     /*returns the file size in Bytes*/
-    public static long getFileSize(File f){
+    public static long getFileSize(File f) {
         long size =0 ;
 
         if(f.isDirectory()){
