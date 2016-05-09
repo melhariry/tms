@@ -59,7 +59,7 @@ public class Communication {
     public Communication(){
         requestQueue = MyVolley.getRequestQueue();
         status = commStatus.UNINITIALIZED;
-        publicIP = "41.47.139.128";
+        publicIP = "41.47.128.239";
         params= new HashMap<String,String>();
     }
 
@@ -106,13 +106,14 @@ public class Communication {
      * helper method to sendRequests to server
      * @param URI: request to be sent to server
      */
-    private void sendRequest(String URI){
+    private void sendRequest(final String URI){
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST,URI,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String res) {
                         status = commStatus.RESPONSE;
+                        Log.d(Tag,"status:"+ status.toString());
                         Log.d(Tag,res);
                         response = res;
                     }
@@ -134,7 +135,7 @@ public class Communication {
         status = commStatus.STARTED;
         //attach Tag to request
         stringRequest.setTag(Tag);
-        Log.d(Tag,"request started");
+        Log.d(Tag, "request started");
         requestQueue.add(stringRequest);
     }
 

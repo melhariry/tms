@@ -25,6 +25,6 @@ public class TMSApplication extends Application {
         super.onCreate();
         if(tmsApplication == null)
             tmsApplication =this;
-        MyVolley.init(this);
+       // MyVolley.init(this);
     }
 }
