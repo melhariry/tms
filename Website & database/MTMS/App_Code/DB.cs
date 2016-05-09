@@ -235,4 +235,107 @@ public class DB
             throw (EX);
         }
     }
+
+    public bool SubmitCommandResult(string serialNumber, string commandExecuted, string status, DateTime timestamp, string parameters)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("SubmitCommandResult", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@SerialNumber", serialNumber);
+            cmd.Parameters.AddWithValue("@CommandExecuted", commandExecuted);
+            cmd.Parameters.AddWithValue("@Status", status);
+            cmd.Parameters.AddWithValue("@TimeStamp", timestamp);
+            cmd.Parameters.AddWithValue("@Parameters", parameters);
+            SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            rowCount.Direction = ParameterDirection.ReturnValue;
+            Conn.Open();
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+            if (Int32.Parse(rowCount.Value.ToString()) == 1)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+    }
+
+    public bool ClearCommandToSend(string serialNumber)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("ClearCommandToSend", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@SerialNumber", serialNumber);
+            SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            rowCount.Direction = ParameterDirection.ReturnValue;
+            Conn.Open();
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+            if (Int32.Parse(rowCount.Value.ToString()) == 1)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+    }
+    public bool DeletePosFileFromList(string serialNumber, string fileName)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("DeletePosFileFromList", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@SerialNumber", serialNumber);
+            cmd.Parameters.AddWithValue("@FileName", fileName);
+            SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            rowCount.Direction = ParameterDirection.ReturnValue;
+            Conn.Open();
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+            if (Int32.Parse(rowCount.Value.ToString()) == 1)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+    }
+
+    public bool SubmitPosAppList(string serialNumber, string name, int version, string company)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("SubmitPosAppList", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@SerialNumber", serialNumber);
+            cmd.Parameters.AddWithValue("@Name", name);
+            cmd.Parameters.AddWithValue("@Version", version);
+            cmd.Parameters.AddWithValue("@Company", company);
+            SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            rowCount.Direction = ParameterDirection.ReturnValue;
+            Conn.Open();
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+            if (Int32.Parse(rowCount.Value.ToString()) > 0)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+    }
 }
