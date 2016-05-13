@@ -22,9 +22,9 @@ public static class Methods
         return VisitorsIPAddr;
     }
 
-    public static void CreateFtpDirectory(string vendor, string serialNumber)
+    public static void CreateFtpDirectory(string serialNumber)
     {
-        WebRequest request = WebRequest.Create("ftp://localhost/MTMS_FTP/Terminals/" + vendor + "/" + serialNumber + "/");
+        WebRequest request = WebRequest.Create("ftp://localhost/MTMS_FTP/Terminals/" + serialNumber + "/");
         request.Method = WebRequestMethods.Ftp.MakeDirectory;
         request.Credentials = new NetworkCredential("MTMS_FTP", "1234");
         FtpWebResponse response = (FtpWebResponse)request.GetResponse();
