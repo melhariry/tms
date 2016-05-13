@@ -58,39 +58,34 @@ public partial class Terminals_Show : System.Web.UI.Page
             HttpContext.Current.Response.Redirect("./Index.aspx?error=2");
 
     }
-    protected void Upload_Click(object sender, EventArgs e)
+    protected void Test_Click(object sender, EventArgs e)
     {
         DataRow terminalInfo = (new DB()).GetTerminalInfo(Convert.ToInt32(HttpContext.Current.Request.Params["id"]));
         string ftpDirectory = "ftp://localhost/Terminals/" + terminalInfo["Vendor"] + "/" + terminalInfo["SerialNumber"] + "/";
-        string fileName = Path.GetFileName(FileUpload1.FileName);
-        byte[] buffer = new byte[4096];
-        int bytesWritten = 0;
-        int totalBytes = FileUpload1.PostedFile.ContentLength;
+        byte[] fileBytes = null;
+
         try
         {
+            string fileName = Path.GetFileName(FileUpload1.FileName);
+            using (StreamReader fileStream = new StreamReader(FileUpload1.PostedFile.InputStream))
+            {
+                fileBytes = Encoding.UTF8.GetBytes(fileStream.ReadToEnd());
+                fileStream.Close();
+            }
+
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpDirectory + fileName);
             request.Method = WebRequestMethods.Ftp.UploadFile;
             request.Credentials = new NetworkCredential("MTMS_FTP", "1234");
-            request.ContentLength = FileUpload1.PostedFile.ContentLength;
+            request.ContentLength = fileBytes.Length;
             request.KeepAlive = false;
-            request.UseBinary = true;
 
-            using (Stream fileStream = FileUpload1.PostedFile.InputStream)
+
+            using (Stream requestStream = request.GetRequestStream())
             {
-                using (Stream requestStream = request.GetRequestStream())
-                {
-                    while (totalBytes > 0)
-                    {
-                        bytesWritten = fileStream.Read(buffer, 0, buffer.Length);
-                        requestStream.Write(buffer, 0, bytesWritten);
-                        totalBytes -= bytesWritten;
-                    }
-                    requestStream.Close();
-                }
-                fileStream.Close();
+                requestStream.Write(fileBytes, 0, fileBytes.Length);
+                requestStream.Close();
             }
             FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-            FtpStatus.Text = response.StatusDescription;
             response.Close();
             
         }
@@ -109,48 +104,5 @@ public partial class Terminals_Show : System.Web.UI.Page
             FileListGrid.Rows[i].Cells[0].Controls.Add(selectFile);
         }
 
-    }
-    protected void Download_Click(object sender, EventArgs e)
-    {
-        //TODO:: pick fileName from fileList and set proper local Path
-        string fileName = "xx.mp3";
-        string localPath = "D:\\University\\GP\\" + fileName;
-
-        int bytesRead = 0;
-        byte[] buffer = new byte[4096];
-        try
-        {
-            DataRow terminalInfo = (new DB()).GetTerminalInfo(Convert.ToInt32(HttpContext.Current.Request.Params["id"]));
-            string ftpDirectory = "ftp://localhost/Terminals/" + terminalInfo["Vendor"] + "/" + terminalInfo["SerialNumber"] + "/";
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpDirectory + fileName);
-            request.Method = WebRequestMethods.Ftp.DownloadFile;
-            request.Credentials = new NetworkCredential("MTMS_FTP", "1234");
-            request.ContentLength = FileUpload1.PostedFile.ContentLength;
-            request.KeepAlive = false;
-            request.UseBinary = true;
-
-            using (FileStream fileStream = new FileStream(localPath, FileMode.Create))
-            {
-                using (Stream requestStream = request.GetResponse().GetResponseStream())
-                {
-                    do
-                    {
-                        bytesRead = requestStream.Read(buffer, 0, buffer.Length);
-                        fileStream.Write(buffer, 0, bytesRead);
-
-                    } while (bytesRead != 0);
-                    requestStream.Close();
-                }
-                fileStream.Close();
-            }
-            FtpWebResponse response = (FtpWebResponse)request.GetResponse();
-            FtpStatus.Text = response.StatusDescription;
-            response.Close();
-        }
-        catch (WebException)
-        {
-            //TODO: Redirect with error mo7taram
-            HttpContext.Current.Response.Redirect("./Index.aspx?error=3");
-        }
     }
 }
