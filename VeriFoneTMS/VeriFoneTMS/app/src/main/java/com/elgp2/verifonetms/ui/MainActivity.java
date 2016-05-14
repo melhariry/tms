@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         listAppsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 Intent managerIntent= new Intent(getApplicationContext(), Manager.class);
+                Intent managerIntent= new Intent(getApplicationContext(), Manager.class);
                 startService(managerIntent);
                 finish();
             }

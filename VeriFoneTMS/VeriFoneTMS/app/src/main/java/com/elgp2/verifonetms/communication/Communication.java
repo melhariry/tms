@@ -59,7 +59,7 @@ public class Communication {
     public Communication(){
         requestQueue = MyVolley.getRequestQueue();
         status = commStatus.UNINITIALIZED;
-        publicIP = "41.47.128.239";
+        publicIP = Constants.publicIP;
         params= new HashMap<String,String>();
     }
 
@@ -88,8 +88,9 @@ public class Communication {
     public void createPosRecord(){
         params.clear();
         params.put("Vendor","VeriFone");
+        params.put("Model",SystemUtil.getMachineModel());
         params.put("TotalDiskCapacity", String.valueOf(SystemUtil.getTotalDiskSpace()));
-        params.put("TotalRamSize",String.valueOf(SystemUtil.getTotalRamSize()));
+        params.put("TotalRamSize", String.valueOf(SystemUtil.getTotalRamSize()));
         String uri = buildUri("CreatePosRecord.ashx");
         sendRequest(uri);
     }
@@ -101,6 +102,12 @@ public class Communication {
         sendRequest(uri);
     }
 
+    public void submitCommandResults( Map<String , String> map){
+        params.clear();
+        params.putAll(map);
+        String uri = buildUri("SubmitCommandResult.ashx");
+        sendRequest(uri);
+    }
 
     /**
      * helper method to sendRequests to server

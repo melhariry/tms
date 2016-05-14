@@ -31,8 +31,8 @@ public class Execute {
      private final String Tag= "Execute";
      private final Context context;
 
-    public Execute() {
-        context=TMSApplication.getInstance();
+    public Execute(Context c) {
+        context=c;
     }
 
     /*returns a list of all installed apps ont the system*/

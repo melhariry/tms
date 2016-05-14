@@ -133,6 +133,7 @@ public class FileUtil {
     }
 
     /*delete file or Dir note, if directory is to be deleted all files in it must be deleted first then delete the folder itself*/
+    //TODO add check if file doesn't exist
     public static Boolean deleteDir(String absolutePath){
         File file = new File(absolutePath);
         if(file.isDirectory()){

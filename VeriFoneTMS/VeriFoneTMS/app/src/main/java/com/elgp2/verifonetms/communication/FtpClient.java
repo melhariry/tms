@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.elgp2.verifonetms.TMSApplication;
 import com.elgp2.verifonetms.utilities.FileUtil;
+import com.elgp2.verifonetms.utilities.SystemUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,20 +25,20 @@ public class FtpClient {
     /**
      * Tag for Debugging
      */
-    protected final String Tag = "FtpClient";
-    protected final String userName ;
-    protected final String passWord ;
-    protected String publicIP ;
+    private final String Tag = "FtpClient";
+    private final String userName ;
+    private final String passWord ;
+    private String publicIP ;
     /**
      * instance of ftp4j library's FTPClient
      */
     protected FTPClient ftpClient;
 
     public FtpClient(){
-        userName = "MTMS_USER";
-        passWord = "1234";
+        userName = Constants.FTPUserName;
+        passWord = Constants.FTPPassWord;
         ftpClient = new FTPClient();
-        publicIP = "41.47.128.239";
+        publicIP = Constants.publicIP;
     }
 
     public void downloadFile(final String filePath , final String fileName) throws FTPException, IOException, FTPIllegalReplyException {
@@ -51,8 +52,7 @@ public class FtpClient {
                         ftpClient.login(userName, passWord);
                         if (ftpClient.isAuthenticated()) {
                             Log.d(Tag, "FTPClient Authenticated");
-                            ftpClient.changeDirectory("/Terminals/Verifone/");
-                            
+                            ftpClient.changeDirectory("/Terminals/Verifone/"+ SystemUtil.getMachineSerial()+"/");
                             FileUtil.createPrivateFile(filePath, fileName, TMSApplication.getInstance());
                             File f = new File(TMSApplication.getInstance().getFilesDir().getAbsolutePath()+"/"+filePath+"/"+fileName);
 
@@ -83,10 +83,13 @@ public class FtpClient {
                         ftpClient.login(userName, passWord);
                         if (ftpClient.isAuthenticated()) {
                             Log.d(Tag, "FTPClient Authenticated");
-                            ftpClient.changeDirectory("/Terminals/Verifone/");
+                            ftpClient.changeDirectory("/Terminals/Verifone/"+ SystemUtil.getMachineSerial()+"/");
                             File f = new File(TMSApplication.getInstance().getFilesDir().getAbsolutePath()+"/"+filePath+"/"+fileName);
                             if(f.exists())
                                 ftpClient.upload(f,new MyFTPListener());
+                            else{
+                                ftpClient.disconnect(true);
+                            }
                         } else
                             Log.e(Tag, "Authentication to FtpServer failed");
                     } else {
@@ -119,18 +122,45 @@ public class FtpClient {
         {
             // Transfer completed
             Log.d(Tag,"TRANSFER-STATUS: File transfer completed...");
+            try {
+                ftpClient.disconnect(true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (FTPIllegalReplyException e) {
+                e.printStackTrace();
+            } catch (FTPException e) {
+                e.printStackTrace();
+            }
         }
 
         public void aborted()
         {
             // Transfer aborted
             Log.d(Tag,"TRANSFER-STATUS: File transfer aborted...");
+            try {
+                ftpClient.disconnect(true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (FTPIllegalReplyException e) {
+                e.printStackTrace();
+            } catch (FTPException e) {
+                e.printStackTrace();
+            }
         }
 
         public void failed()
         {
             // Transfer failed
             Log.d(Tag,"TRANSFER-STATUS: File transfer failed...");
+            try {
+                ftpClient.disconnect(true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (FTPIllegalReplyException e) {
+                e.printStackTrace();
+            } catch (FTPException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
