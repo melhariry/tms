@@ -70,7 +70,7 @@ public class DB
         }
     }
 
-    public bool SubmitHealthTestResults(string serialNumber, int crypto, int printer, int timer, int buzzer, int led, int rtc, int memory, Int64 usedDiskSize, Int64 usedRamSize)
+    public bool SubmitHealthTestResults(string serialNumber, int crypto, int printer, int timer, int buzzer, int led, int rtc, Int64 usedDiskSize, Int64 usedRamSize)
     {
         try
         {
@@ -84,7 +84,6 @@ public class DB
             cmd.Parameters.AddWithValue("@Buzzer", buzzer);
             cmd.Parameters.AddWithValue("@Led", led);
             cmd.Parameters.AddWithValue("@Rtc", rtc);
-            cmd.Parameters.AddWithValue("@Memory", memory);
             cmd.Parameters.AddWithValue("@UsedDiskSize", usedDiskSize);
             cmd.Parameters.AddWithValue("@UsedRamSize", usedRamSize);
             SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
@@ -312,7 +311,7 @@ public class DB
         }
     }
 
-    public bool SubmitPosAppList(string serialNumber, string name, int version, string company)
+    public bool SubmitPosAppList(string serialNumber, string name, string version, string company)
     {
         try
         {

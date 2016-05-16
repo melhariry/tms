@@ -23,14 +23,16 @@ public class CreatePosRecord : IHttpHandler
             if(db.CreatePosRecord(
                 context.Request.Headers["SerialNumber"],
                 context.Request.Params["Vendor"],
-                "Model",
+                context.Request.Params["Model"],
                 Methods.GetUserIP(context),
                 Int64.Parse(context.Request.Params["TotalDiskCapacity"]),
                 Int64.Parse(context.Request.Params["TotalRamSize"]),
                 out PosId
                 ))
             {
-                Methods.CreateFtpDirectory(context.Request.Headers["SerialNumber"]);
+                Methods.CreateFtpDirectory(context.Request.Headers["SerialNumber"], context.Request.Params["Vendor"]);
+                Methods.CreateFtpInnerDirectory(context.Request.Headers["SerialNumber"], context.Request.Params["Vendor"], "pub");
+                Methods.CreateFtpInnerDirectory(context.Request.Headers["SerialNumber"], context.Request.Params["Vendor"], "pri");
                 context.Response.StatusCode = 200;
                 context.Response.Write("Success");
             }

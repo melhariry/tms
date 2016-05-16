@@ -8,6 +8,8 @@ public class SubmitCommandResult : IHttpHandler {
     public void ProcessRequest (HttpContext context) {
         string status = string.Empty, parameters = string.Empty;
         context.Response.ContentType = "text/plain";
+        string[] commandParams;
+        string[] commandStatus;
         try
         {
             DB db = new DB();
@@ -35,7 +37,6 @@ public class SubmitCommandResult : IHttpHandler {
                     Int32.Parse(context.Request.Params["Buzzer"]),
                     Int32.Parse(context.Request.Params["Led"]),
                     Int32.Parse(context.Request.Params["Rtc"]),
-                    Int32.Parse(context.Request.Params["Memory"]),
                     Int64.Parse(context.Request.Params["UsedDiskSize"]),
                     Int64.Parse(context.Request.Params["UsedRamSize"])
                     ))
@@ -47,47 +48,53 @@ public class SubmitCommandResult : IHttpHandler {
                 break;
                     
                 case "DeleteFile":
-                    string[] fileNames = context.Request.Params["Name"].Split(',');
-                    string[] fileStatus = context.Request.Params["Status"].Split(',');
-                    for (int i = 0; i < fileNames.Length; i++)
+                    commandParams = context.Request.Params["Name"].Split(',');
+                    commandStatus = context.Request.Params["Status"].Split(',');
+                    for (int i = 0; i < commandParams.Length; i++)
                     {
-                        if (Convert.ToInt32(fileStatus[i]) == 0)
+                        if (Convert.ToInt32(commandStatus[i]) == 0)
                         {
-                            db.DeletePosFileFromList(context.Request.Headers["SerialNumber"], fileNames[0]);
+                            db.DeletePosFileFromList(context.Request.Headers["SerialNumber"], commandParams[i]);
                         }
-                        else
-                        {
-                            parameters += fileNames[i] + ';';
-                            status += fileStatus[i] + ';';
-                        }
+                        parameters += commandParams[i] + ';';
+                        status += commandStatus[i] + ';';
                     }
-                    if (status.Equals(string.Empty))
-                        status = "200";
                 break;
                     
                 case "ListFiles":
+                    
                 break;
                     
                 case "ListApps":
-                    string[] AppNames = context.Request.Params["Name"].Split(',');
-                    string[] AppVersions = context.Request.Params["Version"].Split(',');
-                    string[] AppComs = context.Request.Params["Com"].Split(',');
-                    for (int i = 0; i < AppNames.Length; i++)
+                    commandParams = context.Request.Params["Name"].Split(',');
+                    string[] appVersions = context.Request.Params["Version"].Split(',');
+                    string[] appComs = context.Request.Params["Com"].Split(',');
+                    for (int i = 0; i < commandParams.Length; i++)
                     {
-                        if (!db.SubmitPosAppList(context.Request.Headers["SerialNumber"], AppNames[i], Convert.ToInt32(AppVersions[i]), AppComs[i]))
+                        if (!db.SubmitPosAppList(context.Request.Headers["SerialNumber"], commandParams[i], appVersions[i], appComs[i]))
                         {
                             status += "500;";
-                            parameters += AppNames[i] + ';';
+                            parameters += commandParams[i] + ';';
                         }
                              
                     }
-                    if (status.Equals(string.Empty))
-                        status = "200;";
+                break;
+                    
+                //Push file and pull file cases
+                default:
+                    commandParams = context.Request.Params["Path"].Split(',');
+                    commandStatus = context.Request.Params["Status"].Split(',');
+                    for (int i = 0; i < commandParams.Length; i++)
+                    {
+                        parameters += commandParams[i] + ';';
+                        status += commandStatus[i] + ';';
+                    }
                 break;
                     
             }
 
-
+            if (status.Equals(string.Empty))
+                status = "0";
             //Log Result for all commands except testhealth and finish
             if (db.SubmitCommandResult(
                 context.Request.Headers["SerialNumber"],

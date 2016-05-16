@@ -9,6 +9,8 @@ using System.Net;
 /// </summary>
 public static class Methods
 {
+    private static string username = "MTMS_FTP";
+    private static string password = "1234";
     public static string GetUserIP(HttpContext context)
     {
         string VisitorsIPAddr = string.Empty;
@@ -22,11 +24,20 @@ public static class Methods
         return VisitorsIPAddr;
     }
 
-    public static void CreateFtpDirectory(string serialNumber)
+    public static void CreateFtpDirectory(string serialNumber, string vendor)
     {
-        WebRequest request = WebRequest.Create("ftp://localhost/MTMS_FTP/Terminals/" + serialNumber + "/");
+        WebRequest request = WebRequest.Create("ftp://localhost/Terminals/" + vendor + "/" + serialNumber + "/");
         request.Method = WebRequestMethods.Ftp.MakeDirectory;
-        request.Credentials = new NetworkCredential("MTMS_FTP", "1234");
+        request.Credentials = new NetworkCredential(username, password);
+        FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+        response.Close();
+    }
+
+    public static void CreateFtpInnerDirectory(string serialNumber, string vendor, string folderName)
+    {
+        WebRequest request = WebRequest.Create("ftp://localhost/Terminals/" + vendor + "/" + serialNumber + "/" + folderName + "/");
+        request.Method = WebRequestMethods.Ftp.MakeDirectory;
+        request.Credentials = new NetworkCredential(username, password);
         FtpWebResponse response = (FtpWebResponse)request.GetResponse();
         response.Close();
     }

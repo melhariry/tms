@@ -14,15 +14,17 @@ public class PosUp : IHttpHandler {
         {
             DB db = new DB();
             int posId = -1;
-            context.Response.StatusCode = 200;
+            
             if (db.PosExists(context.Request.Headers["SerialNumber"], Methods.GetUserIP(context), out posId))
             {
                 //send commands
                 DataRow commandToSend = db.GetCommandToSend(posId);
-                context.Response.Write(commandToSend["Command"]);
+                //No command to send
+                context.Response.StatusCode = 200;
+                context.Response.Write("0" + commandToSend["Command"]);
             }
             else
-                context.Response.Write("CreatePosRecord; ");
+                context.Response.Write("128");
         }
         catch (Exception EX)
         {
