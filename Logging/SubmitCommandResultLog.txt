@@ -1,0 +1,96 @@
+newRequest from:663697DCAAF56668
+Command=ListFiles
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=ListFiles
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=ListFiles&Name=FileAccess.CAP&Type=8&Parent=pub&Size=0&Name=HelloWorld.CAP&Type=8&Parent=pub&Size=0&Name=TransApp.CAP&Type=8&Parent=pub&Size=0&Name=app.mci&Type=8&Parent=pub&Size=0&Name=app.mmci&Type=8&Parent=pub&Size=0&Name=fs_data&Type=4&Parent=pub&Size=0&Name=la2a.txt&Type=8&Parent=pub&Size=0&Name=la2aDir&Type=4&Parent=pub&Size=0&Name=la2a.txt&Type=8&Parent=la2aDir&Size=0&Name=sessionlog.txt&Type=8&Parent=pub&Size=0&Name=update.mci&Type=8&Parent=pub&Size=0&Name=update.mmci&Type=8&Parent=pub&Size=0&Name=v2Alpha&Type=8&Parent=pri&Size=0&Name=verified_ap.out&Type=8&Parent=pri&Size=0
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=ListFiles&Name=FileAccess.CAP&Type=8&Parent=pub&Size=311071024&Name=HelloWorld.CAP&Type=8&Parent=pub&Size=439639677&Name=TransApp.CAP&Type=8&Parent=pub&Size=19405560&Name=app.mci&Type=8&Parent=pub&Size=29239496&Name=app.mmci&Type=8&Parent=pub&Size=346873671&Name=fs_data&Type=4&Parent=pub&Size=186366593&Name=la2a.txt&Type=8&Parent=pub&Size=28259194&Name=la2aDir&Type=4&Parent=pub&Size=262147073&Name=la2a.txt&Type=8&Parent=la2aDir&Size=2&Name=sessionlog.txt&Type=8&Parent=pub&Size=30011553&Name=update.mci&Type=8&Parent=pub&Size=197436766&Name=update.mmci&Type=8&Parent=pub&Size=2&Name=v2Alpha&Type=8&Parent=pri&Size=2&Name=verified_ap.out&Type=8&Parent=pri&Size=429056191
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=ListFiles&Name=FileAccess.CAP&Type=8&Parent=pub&Size=10314&Name=HelloWorld.CAP&Type=8&Parent=pub&Size=5266&Name=TransApp.CAP&Type=8&Parent=pub&Size=5178&Name=app.mci&Type=8&Parent=pub&Size=14&Name=app.mmci&Type=8&Parent=pub&Size=7&Name=fs_data&Type=4&Parent=pub&Size=0&Name=la2a.txt&Type=8&Parent=pub&Size=5&Name=la2aDir&Type=4&Parent=pub&Size=0&Name=la2a.txt&Type=8&Parent=la2aDir&Size=5&Name=sessionlog.txt&Type=8&Parent=pub&Size=6431&Name=update.mci&Type=8&Parent=pub&Size=13&Name=update.mmci&Type=8&Parent=pub&Size=10&Name=v2Alpha&Type=8&Parent=pri&Size=37717&Name=verified_ap.out&Type=8&Parent=pri&Size=85
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=PushFile&name=pub/la2aDir/la2a.txt&state=65535
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=PushFile&name=pub/la2aDir/la2a.txt&state=65535
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=PushFile&name=pub/la2aDir/la2a.txt&state=65535
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=PushFile&name=pub/la2aDir/la2a.txt&state=65535
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=PushFile&name=pub/la2aDir/la2a.txt&state=65535
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=PushFile&name=pub/la2aDir/la2a.txt&state=65535
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=PushFile&name=pub/la2aDir/la2a.txt&state=550
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----
+newRequest from:663697DCAAF56668
+Command=PushFile&name=pub/la2aDir/la2a.txt&state=550
+-----
+newRequest from:663697DCAAF56668
+Command=PushFile&name=pub/la2aDir/la2a.txt&state=550
+-----
+newRequest from:663697DCAAF56668
+Command=Finish
+-----

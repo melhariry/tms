@@ -232,7 +232,7 @@ USHORT manCreatePosRecord()
 	USHORT ret;
     ULONG  ulUsedDiskSize,  ulTotalDiskSize, ulUsedRamSize, ulTotalRamSize;
     ret = CTOS_SystemMemoryStatus (&ulUsedDiskSize ,&ulTotalDiskSize,&ulUsedRamSize,&ulTotalRamSize );
-    sprintf(baResponse,"Vendor=Castles&TotalDiskCapacity=%d&TotalRamSize=%d",ulTotalDiskSize,ulTotalRamSize);
+    sprintf(baResponse,"Vendor=Castles&Model=Vega3000&TotalDiskCapacity=%d&TotalRamSize=%d",ulTotalDiskSize,ulTotalRamSize);
 	ret=commSendTms(baResponse,PATH_CREATE_POS_RECORD);
 	return 0x00;
 }
@@ -249,7 +249,7 @@ USHORT manAppList()
 	BYTE key;
 	//max 50 apps xD
 	USHORT usResult = exeListApps(baStr);
-	sprintf(baResponse,"Command=listApp%s",baStr);
+	sprintf(baResponse,"Command=listApps%s",baStr);
 	usResult=commSendTms(baResponse,PATH_SUBMIT_COMMAND_RESULT);
 	return 0x00;
 }
@@ -618,7 +618,7 @@ USHORT manUpdateApp()
 	//delete apps srcs
 
 	//send response
-
+	
 	sprintf(baResponse,"Command=UpdateApp%s",baUpdateResp);
 	usResult=commSendTms(baResponse,PATH_SUBMIT_COMMAND_RESULT); 
 

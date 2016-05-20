@@ -1,13 +1,38 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><configurationDescriptor version="84">
-  <logicalFolder displayName="root" kind="ROOT" name="root" projectFiles="true">
-    <logicalFolder displayName="Header Files" name="HeaderFiles" projectFiles="true">
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="84">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>GPRS.h</itemPath>
+      <itemPath>common.h</itemPath>
+      <itemPath>communication.h</itemPath>
+      <itemPath>execute.h</itemPath>
+      <itemPath>files.h</itemPath>
+      <itemPath>httpclient.h</itemPath>
+      <itemPath>manager.h</itemPath>
+      <itemPath>test.h</itemPath>
+      <itemPath>util.h</itemPath>
     </logicalFolder>
-    <logicalFolder displayName="Resource Files" name="ResourceFiles" projectFiles="true">
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
     </logicalFolder>
-    <logicalFolder displayName="Source Files" name="SourceFiles" projectFiles="true">
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>GPRS.c</itemPath>
       <itemPath>appmain.c</itemPath>
+      <itemPath>communication.c</itemPath>
+      <itemPath>execute.c</itemPath>
+      <itemPath>httpclient.c</itemPath>
+      <itemPath>manager.c</itemPath>
+      <itemPath>test.c</itemPath>
+      <itemPath>util.c</itemPath>
     </logicalFolder>
-    <logicalFolder displayName="Important Files" name="ExternalFiles" projectFiles="false">
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
     </logicalFolder>
   </logicalFolder>
   <projectmakefile>NbMakefile</projectmakefile>
