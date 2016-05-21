@@ -1,5 +1,6 @@
 package com.elgp2.verifonetms.communication;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.elgp2.verifonetms.TMSApplication;
@@ -29,6 +30,16 @@ public class FtpClient {
     private final String userName ;
     private final String passWord ;
     private String publicIP ;
+
+    public  enum ftpStatus {
+        FTPUNINITIALIZED,
+        FTPSTARTED,
+        FTPERROR,
+        FTPTRANSFERING,
+        FTPCOMPLETED
+    }
+
+    private ftpStatus status;
     /**
      * instance of ftp4j library's FTPClient
      */
@@ -39,65 +50,103 @@ public class FtpClient {
         passWord = Constants.FTPPassWord;
         ftpClient = new FTPClient();
         publicIP = Constants.publicIP;
+        status = ftpStatus.FTPUNINITIALIZED;
     }
 
-    public void downloadFile(final String filePath , final String fileName) throws FTPException, IOException, FTPIllegalReplyException {
+    public ftpStatus getStatus() {
+        return status;
+    }
+
+    public void downloadFile(final String filePath,final Context context) {
+        Log.d(Tag,"downlaod starts");
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
+                    String fileRealtivePath;
                     ftpClient.connect(publicIP);
+                    status = ftpStatus.FTPSTARTED;
                     if (ftpClient.isConnected()) {
                         Log.d(Tag, "FTPClient connected");
-                        ftpClient.login(userName, passWord);
+                       ftpClient.login(userName, passWord);
                         if (ftpClient.isAuthenticated()) {
                             Log.d(Tag, "FTPClient Authenticated");
-                            ftpClient.changeDirectory("/Terminals/Verifone/"+ SystemUtil.getMachineSerial()+"/");
-                            FileUtil.createPrivateFile(filePath, fileName, TMSApplication.getInstance());
-                            File f = new File(TMSApplication.getInstance().getFilesDir().getAbsolutePath()+"/"+filePath+"/"+fileName);
-
-                            ftpClient.download(fileName, f,new MyFTPListener());
-                            Log.d(Tag, "download finished");
-                        } else
-                            Log.e(Tag, "Authentication to FtpServer failed");
-                    } else {
-                        Log.e(Tag, "FTPClient failed to connect");
-                    }
-                }
-                catch (Exception e){
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
-    }
-
-    public void uploadFile(final String filePath, final String fileName){
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    ftpClient.connect(publicIP);
-                    if (ftpClient.isConnected()) {
-                        Log.d(Tag, "FTPClient connected");
-                        ftpClient.login(userName, passWord);
-                        if (ftpClient.isAuthenticated()) {
-                            Log.d(Tag, "FTPClient Authenticated");
-                            ftpClient.changeDirectory("/Terminals/Verifone/"+ SystemUtil.getMachineSerial()+"/");
-                            File f = new File(TMSApplication.getInstance().getFilesDir().getAbsolutePath()+"/"+filePath+"/"+fileName);
+                            ftpClient.changeDirectory("/Terminals/VeriFone/" + SystemUtil.getMachineSerial() + "/" + FileUtil.getFTPAbsolutePath(filePath) + "/");
+                            if(FileUtil.isPub(filePath)) {
+                                Log.d(Tag,"it is pub");
+                                fileRealtivePath = filePath.replace("pub/","");
+                                Log.d(Tag ,"ftp path "+fileRealtivePath );
+                                FileUtil.createPublicFile(fileRealtivePath, FileUtil.getFileName(fileRealtivePath));
+                            }
+                            else {
+                                Log.d(Tag,"it is pri");
+                                fileRealtivePath = filePath.replace("pri/","");
+                                FileUtil.createPrivateFile(fileRealtivePath, FileUtil.getFileName(fileRealtivePath), context);
+                            }
+                            Log.d(Tag,"file path :" + FileUtil.getAbsolutePath(filePath, context));
+                            File f = new File(FileUtil.getAbsolutePath(filePath, context));
                             if(f.exists())
-                                ftpClient.upload(f,new MyFTPListener());
+                                ftpClient.download(FileUtil.getFileName(fileRealtivePath), f,new MyFTPListener());
                             else{
+
+                                status= ftpStatus.FTPERROR;
                                 ftpClient.disconnect(true);
                             }
                         } else
                             Log.e(Tag, "Authentication to FtpServer failed");
                     } else {
                         Log.e(Tag, "FTPClient failed to connect");
+                        status = ftpStatus.FTPERROR;
                     }
                 }
                 catch (Exception e){
                     e.printStackTrace();
+                    status = ftpStatus.FTPERROR;
+                }
+            }
+        });
+        thread.start();
+    }
+
+    public void uploadFile(final String filePath, final Context context){
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String fileRelativePath;
+                    status = ftpStatus.FTPSTARTED;
+                     ftpClient.connect(publicIP);
+
+                    if (ftpClient.isConnected()) {
+                        Log.d(Tag, "FTPClient connected");
+                        ftpClient.login(userName, passWord);
+                        if (ftpClient.isAuthenticated()) {
+                            Log.d(Tag, "FTPClient Authenticated");
+
+                            ftpClient.changeDirectory("/Terminals/VeriFone/" + SystemUtil.getMachineSerial() + "/" + FileUtil.getFTPAbsolutePath(filePath) + "/");
+                            Log.d(Tag, "ftp on server path : " + "/Terminals/VeriFone/" + SystemUtil.getMachineSerial() + "/" + FileUtil.getFTPAbsolutePath(filePath) + "/");
+                            Log.d(Tag,"filePath given : "+ filePath);
+
+                            File f = new File(FileUtil.getAbsolutePath(filePath,context));
+                            if(f.exists()) {
+                                Log.d(Tag,"file existis");
+                                ftpClient.upload(f, new MyFTPListener());
+                            }
+                            else{
+                                Log.d(Tag,"error at uplad file doesn't exist");
+                                status = ftpStatus.FTPERROR;
+                                ftpClient.disconnect(true);
+                            }
+                        } else
+                            Log.e(Tag, "Authentication to FtpServer failed");
+                    } else {
+                        Log.e(Tag, "FTPClient failed to connect");
+                        status = ftpStatus.FTPERROR;
+                    }
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                    status = ftpStatus.FTPERROR;
                 }
             }
         });
@@ -110,25 +159,22 @@ public class FtpClient {
         {
             // Transfer started
             Log.d(Tag,"TRANSFER-STATUS: File transfer started...");
+            status = ftpStatus.FTPSTARTED;
         }
 
         public void transferred(int length)
         {
-            // Yet other length bytes has been transferred since the last time this
-            // method was called
+            status = ftpStatus.FTPTRANSFERING;
         }
 
         public void completed()
         {
             // Transfer completed
             Log.d(Tag,"TRANSFER-STATUS: File transfer completed...");
+            status = ftpStatus.FTPCOMPLETED;
             try {
                 ftpClient.disconnect(true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (FTPIllegalReplyException e) {
-                e.printStackTrace();
-            } catch (FTPException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -137,13 +183,10 @@ public class FtpClient {
         {
             // Transfer aborted
             Log.d(Tag,"TRANSFER-STATUS: File transfer aborted...");
+            status = ftpStatus.FTPERROR;
             try {
                 ftpClient.disconnect(true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (FTPIllegalReplyException e) {
-                e.printStackTrace();
-            } catch (FTPException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -152,13 +195,10 @@ public class FtpClient {
         {
             // Transfer failed
             Log.d(Tag,"TRANSFER-STATUS: File transfer failed...");
+            status  = ftpStatus.FTPERROR;
             try {
                 ftpClient.disconnect(true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (FTPIllegalReplyException e) {
-                e.printStackTrace();
-            } catch (FTPException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

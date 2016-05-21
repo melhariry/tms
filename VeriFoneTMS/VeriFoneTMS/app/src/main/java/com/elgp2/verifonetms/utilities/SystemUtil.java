@@ -8,6 +8,7 @@ import android.os.StatFs;
 
 import com.elgp2.verifonetms.TMSApplication;
 
+import java.io.File;
 import java.text.DecimalFormat;
 
 /**
@@ -55,12 +56,14 @@ public class SystemUtil {
         return memoryInfo.totalMem;
     }
 
-    public static long getFreeDiskSpace(){
-        return statfs.getAvailableBlocksLong()*statfs.getBlockSizeLong();
+    public static long getFreeDiskSpace(Context context){
+        File internalStorageFile=context.getFilesDir();
+        return internalStorageFile.getFreeSpace();
     }
 
-    public static long getTotalDiskSpace(){
-        return statfs.getBlockCountLong()*statfs.getBlockSizeLong();
+    public static long getTotalDiskSpace(Context context){
+        File internalStorageFile=context.getFilesDir();
+       return internalStorageFile.getTotalSpace();
     }
 
     /*source: http://stackoverflow.com/questions/7115016/how-to-find-the-amount-of-free-storage-disk-space-left-on-android*/

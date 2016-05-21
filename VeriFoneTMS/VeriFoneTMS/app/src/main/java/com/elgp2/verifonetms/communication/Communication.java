@@ -1,5 +1,6 @@
 package com.elgp2.verifonetms.communication;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -10,7 +11,10 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.elgp2.verifonetms.utilities.SystemUtil;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,13 +58,13 @@ public class Communication {
     /**
      * holds parameters inside request
      */
-    private Map<String,String> params;
+    private List<Map.Entry<String,String>> params;
 
     public Communication(){
         requestQueue = MyVolley.getRequestQueue();
         status = commStatus.UNINITIALIZED;
         publicIP = Constants.publicIP;
-        params= new HashMap<String,String>();
+        params= new ArrayList<Map.Entry<String,String>>();
     }
 
     public String getResponse() {
@@ -85,26 +89,26 @@ public class Communication {
         sendRequest(uri);
     }
 
-    public void createPosRecord(){
+    public void createPosRecord(Context context){
         params.clear();
-        params.put("Vendor","VeriFone");
-        params.put("Model",SystemUtil.getMachineModel());
-        params.put("TotalDiskCapacity", String.valueOf(SystemUtil.getTotalDiskSpace()));
-        params.put("TotalRamSize", String.valueOf(SystemUtil.getTotalRamSize()));
+        params.add(new  AbstractMap.SimpleEntry("Vendor", "VeriFone"));
+        params.add(new AbstractMap.SimpleEntry<String, String>("Model", SystemUtil.getMachineModel()));
+        params.add(new AbstractMap.SimpleEntry<String, String>("TotalDiskCapacity", String.valueOf(SystemUtil.getTotalDiskSpace(context))));
+        params.add(new AbstractMap.SimpleEntry<String, String>("TotalRamSize", String.valueOf(SystemUtil.getTotalRamSize())));
         String uri = buildUri("CreatePosRecord.ashx");
         sendRequest(uri);
     }
 
     public void requestCommandParameters(String commandName){
         params.clear();
-        params.put("Command",commandName);
+        params.add(new AbstractMap.SimpleEntry<String, String>("Command", commandName));
         String uri =buildUri("RequestCommandParameters.ashx");
         sendRequest(uri);
     }
 
-    public void submitCommandResults( Map<String , String> map){
+    public void submitCommandResults( List<Map.Entry<String , String>> map){
         params.clear();
-        params.putAll(map);
+        params.addAll(map);
         String uri = buildUri("SubmitCommandResult.ashx");
         sendRequest(uri);
     }
@@ -155,7 +159,7 @@ public class Communication {
         String uri = "http://" + publicIP + "/MTMS/" + pageName;
         if(params != null &&params .size() > 0 ) {
             uri += "?";
-            for(Map.Entry<String, String> entry : params.entrySet()){
+            for(Map.Entry<String, String> entry : params){
                 uri += ("&"+ entry.getKey()+"="+entry.getValue());
             }
         }

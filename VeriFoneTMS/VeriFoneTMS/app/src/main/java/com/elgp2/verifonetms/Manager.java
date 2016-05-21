@@ -1,17 +1,24 @@
 package com.elgp2.verifonetms;
 
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.elgp2.verifonetms.communication.Communication;
+import com.elgp2.verifonetms.communication.FtpClient;
 import com.elgp2.verifonetms.communication.MyVolley;
 import com.elgp2.verifonetms.models.AppInfo;
+import com.elgp2.verifonetms.models.FileInfo;
 import com.elgp2.verifonetms.utilities.SystemUtil;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collection;
@@ -33,11 +40,14 @@ public class Manager extends Service {
     private Communication mCommunication;
 
     private Execute mExecute;
+
+    private FtpClient ftpClient;
     @Override
     public void onCreate() {
         MyVolley.init(this);
         mCommunication = new Communication();
         mExecute = new Execute(this);
+        ftpClient = new FtpClient();
         Log.d(Tag, "Manager Service on Create");
     }
 
@@ -67,7 +77,9 @@ public class Manager extends Service {
         Log.d(Tag, "Manager Service destroyed");
     }
 
-    public void posUp(){
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    private void posUp(){
         try {
             mCommunication.posUp();
 
@@ -82,7 +94,9 @@ public class Manager extends Service {
                     waitForResponse();
                 }
                 if(b.get(1)){
-                    //list files command
+                    //listFiles
+                    submitFileList();
+                    waitForResponse();
                 }
                 if(b.get(2)){
                     //list apps command
@@ -99,17 +113,18 @@ public class Manager extends Service {
                 }
                 if(b.get(4)){
                     //push file command
-                    String [] fileNames = requestCommandParameters("Put");
-                    if(fileNames != null){
-
+                    String [] filePaths = requestCommandParameters("PushFile");
+                    if(filePaths != null){
+                        submitFTP(filePaths, false);
+                        waitForResponse();
                     }
                 }
                 if(b.get(5)){
                     //pull file command
-                    //TODO add this paramter to database
-                    String [] fileNames = requestCommandParameters("PullFile");
-                    if(fileNames != null){
-
+                    String [] filePaths = requestCommandParameters("PullFile");
+                    if(filePaths != null){
+                        submitFTP(filePaths,true);
+                        waitForResponse();
                     }
                 }
                 if(b.get(6)){
@@ -122,17 +137,15 @@ public class Manager extends Service {
                 if(b.get(7)){
                     // create POS record command
                     Log.d(Tag,"create POS record");
-                    mCommunication.createPosRecord();
+                    mCommunication.createPosRecord(this);
                     waitForResponse();
                 }
                 //finish commands execution
-                submitFinishCommand();
-                waitForResponse();
-                //stop the service TODO reschedule it
-                this.stopSelf();
+                //submitFinishCommand();
+                //waitForResponse();
             }
             else{
-                Log.d(Tag,"response not ok");
+                Log.d(Tag, "error after sending PosUP service terminating");
                 //TODO add error handler to terminate the service and reschedule it
             }
         }
@@ -140,10 +153,13 @@ public class Manager extends Service {
             e.printStackTrace();
             Log.d(Tag , "response parsing failed");
         }
-
+        //stop the service TODO reschedule it
+        this.stopSelf();
     }
 
-    public String [] requestCommandParameters(String command){
+
+
+    private String [] requestCommandParameters(String command){
         mCommunication.requestCommandParameters(command);
         String response = waitForResponse();
         String [] params = null;
@@ -153,59 +169,100 @@ public class Manager extends Service {
             }
             catch(Exception e){
                 e.printStackTrace();
-                Log.d(Tag, "response for command paramters parsing failed");
+                Log.d(Tag, "response for command parameters parsing failed");
             }
         }
         return params;
     }
 
-    public void submitFinishCommand(){
-        Map<String,String> params= new HashMap<String, String>();
-        params.put("Command", "Finish");
+    private void submitFinishCommand(){
+        List<Map.Entry<String,String>> params= new ArrayList<Map.Entry<String, String>>();
+        params.add(new AbstractMap.SimpleEntry<String, String>("Command", "Finish"));
         mCommunication.submitCommandResults(params);
     }
 
-    public void submitAppList(){
-        Map<String,String> params = new HashMap<String, String>();
-        params.put("Command","ListApps");
+    private void submitAppList(){
+        List<Map.Entry<String,String>> params= new ArrayList<Map.Entry<String, String>>();
+        params.add(new AbstractMap.SimpleEntry<String, String>("Command", "ListApps"));
         List<AppInfo> appList =mExecute.getInstalledApps();
         for(AppInfo appInfo: appList){
-            params.put("Name",appInfo.getAppLabel());
-            params.put("Version",appInfo.getVersionName());
-            params.put("Com",appInfo.getCompanyName());
+            params.add(new AbstractMap.SimpleEntry<String, String>("Name", appInfo.getAppLabel()));
+            params.add(new AbstractMap.SimpleEntry<String, String>("Version", "3"));
+            params.add(new AbstractMap.SimpleEntry<String, String>("Com", appInfo.getCompanyName()));
         }
         mCommunication.submitCommandResults(params);
     }
 
-    public void submitDeleteFiles(String [] paths){
-        Map<String , String> params = new HashMap<String, String>();
-        params.put("Command","DeleteFile");
+    private void submitFileList(){
+        List<Map.Entry<String,String>> params = new ArrayList<Map.Entry<String, String>>();
+        params.add(new AbstractMap.SimpleEntry<String, String>("Command","ListFiles"));
+        List<FileInfo> fileList = mExecute.getFileInfoList();
+        for(FileInfo fileInfo : fileList){
+            params.add(new AbstractMap.SimpleEntry<String, String>("Name",fileInfo.getName()));
+            params.add(new AbstractMap.SimpleEntry<String, String>("Type",String.valueOf(fileInfo.getIsFolder())));
+            params.add(new AbstractMap.SimpleEntry<String, String>("Parent",fileInfo.getParentName()));
+            params.add(new AbstractMap.SimpleEntry<String, String>("Size",String.valueOf(fileInfo.getFileSize())));
+        }
+        mCommunication.submitCommandResults(params);
+    }
+
+    private void submitDeleteFiles(String [] paths){
+        List<Map.Entry<String,String>> params= new ArrayList<Map.Entry<String, String>>();
+        params.add(new AbstractMap.SimpleEntry<String, String>("Command", "DeleteFile"));
         List<Boolean> deleteResults = mExecute.deleteFiles(Arrays.asList(paths));
         for(int i = 0 ; i< paths.length ; i++){
-            params.put("Name",paths[i]);
+            params.add(new AbstractMap.SimpleEntry<String, String>("Name", paths[i]));
             if(deleteResults.get(i))
-                params.put("Status","0");
+                params.add(new AbstractMap.SimpleEntry<String, String>("Status", "0"));
             else
-                params.put("Status","1");
+                params.add(new AbstractMap.SimpleEntry<String, String>("Status", "1"));
         }
         mCommunication.submitCommandResults(params);
     }
 
-    public void submitTestHealth(){
-        Map<String,String> params = new HashMap<String,String>();
-        params.put("Command","TestHealth");
-        params.put("Crypto","0");
-        params.put("Printer","0");
-        params.put("Timer","0");
-        params.put("Buzzer","0");
-        params.put("Led","0");
-        params.put("Rtc","0");
-        params.put("Memory","0");
-        params.put("UsedDiskSize", String.valueOf(SystemUtil.getTotalDiskSpace() - SystemUtil.getFreeDiskSpace()));
-        params.put("UsedRamSize",String.valueOf(SystemUtil.getTotalRamSize() - SystemUtil.getFreeRamSize()));
+    private void submitFTP(String[] filePaths,Boolean pull) {
+        List<Map.Entry<String,String>> params= new ArrayList<Map.Entry<String, String>>();
+        params.add(new AbstractMap.SimpleEntry<String, String>("Command", "PushFile"));
+        for(String path : filePaths){
+            params.add(new AbstractMap.SimpleEntry<String, String>("Path",path));
+            if(pull)
+                ftpClient.downloadFile(path,this);
+            else
+                ftpClient.uploadFile(path,this);
+           Boolean status = waitForFtp();
+            if(status)
+                params.add(new AbstractMap.SimpleEntry<String, String>("Status","0"));
+            else
+                params.add(new AbstractMap.SimpleEntry<String, String>("Status","1"));
+        }
         mCommunication.submitCommandResults(params);
     }
 
+    private void submitTestHealth(){
+        List<Map.Entry<String,String>> params= new ArrayList<Map.Entry<String, String>>();
+        params.add(new AbstractMap.SimpleEntry<String, String>("Command", "TestHealth"));
+        params.add(new AbstractMap.SimpleEntry<String, String>("Crypto", "0"));
+        params.add(new AbstractMap.SimpleEntry<String, String>("Printer", "0"));
+        params.add(new AbstractMap.SimpleEntry<String, String>("Timer", "0"));
+        params.add(new AbstractMap.SimpleEntry<String, String>("Buzzer", "0"));
+        params.add(new AbstractMap.SimpleEntry<String, String>("Led", "0"));
+        params.add(new AbstractMap.SimpleEntry<String, String>("Rtc", "0"));
+        params.add(new AbstractMap.SimpleEntry<String, String>("Memory", "0"));
+        params.add(new AbstractMap.SimpleEntry<String, String>("UsedDiskSize", String.valueOf(SystemUtil.getTotalDiskSpace(this) - SystemUtil.getFreeDiskSpace(this))));
+        params.add(new AbstractMap.SimpleEntry<String, String>("UsedRamSize", String.valueOf(SystemUtil.getTotalRamSize() - SystemUtil.getFreeRamSize())));
+        mCommunication.submitCommandResults(params);
+    }
+
+    private Boolean waitForFtp() {
+
+        while(ftpClient.getStatus() != FtpClient.ftpStatus.FTPCOMPLETED && ftpClient.getStatus() != FtpClient.ftpStatus.FTPERROR ){
+            //TODO check this condition
+        }
+        if(ftpClient.getStatus() == FtpClient.ftpStatus.FTPCOMPLETED)
+            return true;
+        else
+            return false;
+    }
 
     /**
      * helper method to block thread till response/error is sent back

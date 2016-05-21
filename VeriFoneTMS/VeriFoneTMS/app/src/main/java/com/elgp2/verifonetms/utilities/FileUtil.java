@@ -1,6 +1,7 @@
 package com.elgp2.verifonetms.utilities;
 
 import android.content.Context;
+import android.graphics.Path;
 import android.nfc.Tag;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -35,10 +36,14 @@ public class FileUtil {
     * returns true on success false otherwise
     * */
     public static Boolean createPublicFile(String relativePath,String fileName){
+        relativePath = relativePath.replace("/"+getFileName(relativePath),"");
         File myDir= new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+relativePath+"/");
+        Log.d(Tag,"pubFile location : "+Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+relativePath+"/");
         //create the parent folders if they are not already created
         myDir.mkdirs();
         try{
+            Log.d(Tag,"fileName:"+fileName);
+            Log.d(Tag,"dirPath:"+myDir.getAbsolutePath());
             File file = new File(myDir,fileName);
             if(!file.exists()) {
                 if(!file.createNewFile()) {
@@ -133,9 +138,10 @@ public class FileUtil {
     }
 
     /*delete file or Dir note, if directory is to be deleted all files in it must be deleted first then delete the folder itself*/
-    //TODO add check if file doesn't exist
     public static Boolean deleteDir(String absolutePath){
         File file = new File(absolutePath);
+        if(!file.exists())
+            return true;
         if(file.isDirectory()){
             File[] childFiles = file.listFiles();
             if(childFiles != null && childFiles.length > 0){
@@ -145,6 +151,39 @@ public class FileUtil {
             }
         }
         return file.delete();
+    }
+
+    public static String getAbsolutePath(String relativePath,Context context){
+        Boolean isPub = relativePath.startsWith("pub") ? true : false;
+        //relativePath = relativePath.substring(4,relativePath.length());
+        String absPath  = "" ;
+        if(isPub){
+            relativePath = relativePath.replace("pub/","");
+            absPath =  Environment.getExternalStorageDirectory().getAbsolutePath() +"/"+ relativePath;
+            absPath.replace("/"+getFileName(absPath),"");
+        }
+        else{
+            relativePath = relativePath.replace("pri/","");
+            absPath =  context.getFilesDir().getAbsolutePath() + "/" + relativePath;
+            absPath.replace("/"+getFileName(absPath),"");
+        }
+        Log.d(Tag, "AbsolutePAth : "+ absPath);
+        return absPath;
+    }
+
+    public static String getFTPAbsolutePath(String relativePath){
+        Log.d(Tag , "FTPAbsolutePath:" + relativePath.replace("/"+getFileName(relativePath),""));
+        return relativePath.replace("/"+getFileName(relativePath),"");
+    }
+
+    public static String getFileName(String path){
+        String [] arr = path.split("/");
+        Log.d(Tag , "fileName = "+ arr[arr.length-1]);
+        return arr[arr.length -1];
+    }
+
+    public static Boolean isPub(String filePath){
+        return filePath.startsWith("pub") ? true : false;
     }
 
     /*Concat two File arrays */

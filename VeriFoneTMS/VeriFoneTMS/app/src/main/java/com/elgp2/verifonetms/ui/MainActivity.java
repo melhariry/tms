@@ -16,7 +16,11 @@ import com.elgp2.verifonetms.R;
 import com.elgp2.verifonetms.communication.Communication;
 import com.elgp2.verifonetms.communication.FtpClient;
 
+import java.io.IOException;
 import java.util.BitSet;
+
+import it.sauronsoftware.ftp4j.FTPException;
+import it.sauronsoftware.ftp4j.FTPIllegalReplyException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,18 +28,13 @@ public class MainActivity extends AppCompatActivity {
     private Button listAppsButton;
     /*Tag for debugging*/
     private final String Tag = "MainActivity";
-    private Execute execute;
 
-    private Communication comm;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-  //      execute =new Execute();
-//        comm = new Communication();
         listAppsButton= (Button) findViewById(R.id.list_apps_button);
         listAppsButtonHandler();
     }
@@ -48,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent managerIntent= new Intent(getApplicationContext(), Manager.class);
                 startService(managerIntent);
                 finish();
+
             }
         });
     }

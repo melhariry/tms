@@ -5,9 +5,9 @@ package com.elgp2.verifonetms.communication;
  */
 public class Constants {
 
-    public static final String publicIP  = "192.168.1.3";
+    public static final String publicIP  = "192.168.1.102";
 
-    public static final String FTPUserName = "MTMS_USER";
+    public static final String FTPUserName = "MTMS_FTP";
 
     public static final String FTPPassWord = "1234";
 }

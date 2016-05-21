@@ -31,8 +31,12 @@ public class Execute {
      private final String Tag= "Execute";
      private final Context context;
 
-    public Execute(Context c) {
+    private List<FileInfo> FileList;
+
+    public Execute(Context c)
+    {
         context=c;
+        FileList =new ArrayList<FileInfo>();
     }
 
     /*returns a list of all installed apps ont the system*/
@@ -59,12 +63,17 @@ public class Execute {
         return appsInfo;
     }
 
-    public List<FileInfo> getPublicFiles(){
-        return listFiles(Environment.getExternalStorageDirectory().getAbsolutePath(),true);
-    }
-    /*returns list of private files(files inside our app folder)*/
-    public List<FileInfo> getPrivateFiles(){
-        return listFiles(context.getFilesDir().getAbsolutePath(), false);
+    public List<FileInfo> getFileInfoList(){
+        List<FileInfo> dragonFileList = new ArrayList<FileInfo>();
+        FileList.clear();
+        //list public files
+        listFiles(Environment.getExternalStorageDirectory().getAbsolutePath()+"/Download","",true);
+        dragonFileList.addAll(FileList);
+        FileList.clear();
+        listFiles(context.getFilesDir().getAbsolutePath(),"",false);
+        dragonFileList.addAll(FileList);
+        FileList.clear();
+        return dragonFileList;
     }
 
     public List<Boolean> deleteFiles(List<String>  filesPaths){
@@ -85,7 +94,7 @@ public class Execute {
     * */
 
     public Boolean createPublicFile(String relativePath,String fileName){
-        return FileUtil.createPublicFile(relativePath,fileName);
+        return FileUtil.createPublicFile(relativePath, fileName);
     }
 
     /*
@@ -98,43 +107,61 @@ public class Execute {
         return FileUtil.createPrivateFile(relativePath, fileName, context);
     }
 
-    /*returns list of files inside an absolute folder path*/
-    private List<FileInfo> listFiles(String path,boolean isPublic){
-      List<FileInfo> publicFileList=new ArrayList<FileInfo>();
-
-      File externalStorageDir = new File( path );
-      File[] list = externalStorageDir.listFiles();
-      if(list != null){
-          for(int i=0;i<list.length;i++) {
-              File file = list[i];
-              if(file.isDirectory()){
-                 File[] temp = file.listFiles();
-                  if(temp != null && temp.length >0 ) {
-                      list = FileUtil.concat(list, temp);
-                  }
-                  //an Empty folder
-                  else{
-                      FileInfo fileInfo = new FileInfo();
-                      //true for public file
-                      fileInfo.setAttribute(isPublic);
-                      fileInfo.setFileAbsolutePath(file.getAbsolutePath());
-                      fileInfo.setFileSize(FileUtil.getFileSize(file));
-
-                      publicFileList.add(fileInfo);
-                  }
-              }
-              else {
-                  FileInfo fileInfo = new FileInfo();
-                  //true for public file
-                  fileInfo.setAttribute(isPublic);
-                  fileInfo.setFileAbsolutePath(file.getAbsolutePath());
-                  fileInfo.setFileSize(FileUtil.getFileSize(file));
-
-                  publicFileList.add(fileInfo);
-              }
-          }
-      }
-      return publicFileList;
+    //list private file data and puts the results in privateFileList
+    public void listFiles(String path,String parentName, Boolean isPublic){
+        File currentFolder =new File(path);
+        File [] list = currentFolder.listFiles();
+        FileInfo currentFolderInfo = new FileInfo();
+        if(!parentName.isEmpty()) {
+            currentFolderInfo.setName(currentFolder.getName().replace(" ",""));
+            currentFolderInfo.setIsFolder(1);
+            currentFolderInfo.setParentName(parentName.replace(" ",""));
+            currentFolderInfo.setFileSize(0);
+            FileList.add(currentFolderInfo);
+        }
+        if(list != null && list.length >0){
+            for(File fileWalker : list){
+                if(fileWalker.isDirectory()){
+                    if(!parentName.isEmpty())
+                        listFiles(fileWalker.getAbsolutePath(), currentFolder.getName(),isPublic);
+                    else{
+                        if(isPublic)
+                            listFiles(fileWalker.getAbsolutePath(),"pub",isPublic);
+                        else
+                            listFiles(fileWalker.getAbsolutePath(), "pri",isPublic);
+                    }
+                }
+                else{
+                    FileInfo currentFileInfo = new FileInfo();
+                    currentFileInfo.setFileSize(FileUtil.getFileSize(fileWalker));
+                    if(parentName.isEmpty()) {
+                        if(isPublic)
+                            currentFileInfo.setParentName("pub");
+                        else
+                            currentFileInfo.setParentName("pri");
+                    }
+                    else
+                        currentFileInfo.setParentName(currentFolder.getName().replace(" ",""));
+                    currentFileInfo.setIsFolder(0);
+                    currentFileInfo.setName(fileWalker.getName().replace(" ",""));
+                    FileList.add(currentFileInfo);
+                }
+            }
+        }
+        else{
+            //empty folder
+            if(parentName.isEmpty()){
+                FileInfo emptyFolderInfo = new FileInfo();
+                emptyFolderInfo.setName(currentFolder.getName().replace(" ", ""));
+                emptyFolderInfo.setIsFolder(1);
+                if(isPublic)
+                    emptyFolderInfo.setParentName("pub");
+                else
+                    emptyFolderInfo.setParentName("pri");
+                emptyFolderInfo.setFileSize(0);
+                FileList.add(emptyFolderInfo);
+            }
+        }
     }
 
     /**
@@ -144,17 +171,16 @@ public class Execute {
        MachineInfo machineInfo=new MachineInfo();
 
        machineInfo.setBrand(SystemUtil.getMachineBrand());
-       machineInfo.setFreeDiskSpace(SystemUtil.getFreeDiskSpace());
+       machineInfo.setFreeDiskSpace(SystemUtil.getFreeDiskSpace(context));
        machineInfo.setFreeRamSize(SystemUtil.getFreeRamSize());
        machineInfo.setManufacturer(SystemUtil.getMachineManufacturer());
        machineInfo.setModel(SystemUtil.getMachineModel());
        machineInfo.setSdkVersion(SystemUtil.getMachineSDKVersion());
        machineInfo.setSerialNumber(SystemUtil.getMachineSerial());
-       machineInfo.setTotalDiskSpace(SystemUtil.getTotalDiskSpace());
+       machineInfo.setTotalDiskSpace(SystemUtil.getTotalDiskSpace(context));
        machineInfo.setTotalRamSize(SystemUtil.getTotalRamSize());
        machineInfo.setVersionRelease(SystemUtil.getMachineVersionRelease());
 
        return machineInfo;
     }
-
 }

@@ -8,34 +8,42 @@ import java.io.File;
 public class FileInfo {
 
     /*absolute path of the file*/
-    private String fileAbsolutePath;
+    private String name;
+
+    private String parentName;
     /*fileSize in Bytes*/
     private long fileSize;
-    /*attribute of file like in Castle true-> public file , false -> private file */
-    private boolean attribute;
+    private int isFolder;
 
-    public void setFileAbsolutePath(String fileAbsolutePath) {
-        this.fileAbsolutePath = fileAbsolutePath;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setParentName(String parentName) {
+        this.parentName = parentName;
     }
 
     public void setFileSize(long fileSize) {
         this.fileSize = fileSize;
     }
 
-    public void setAttribute(boolean attribute) {
-        this.attribute = attribute;
+    public void setIsFolder(int isFolder) {
+        this.isFolder = isFolder;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getIsFolder() {
+        return isFolder;
     }
 
     public long getFileSize() {
         return fileSize;
     }
 
-    public String getFileAbsolutePath() {
-        return fileAbsolutePath;
+    public String getParentName() {
+        return parentName;
     }
-
-    public boolean isPublic() {
-        return attribute;
-    }
-
 }

@@ -13,7 +13,7 @@ public class AppInfo {
     private String versionName;
 
     public void setAppLabel(String appLabel) {
-        this.appLabel = appLabel;
+        this.appLabel = appLabel.replace(" ","");
     }
 
     public void setCompanyName(String companyName) {
