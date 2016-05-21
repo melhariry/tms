@@ -57,20 +57,25 @@
                         <div class="btn-controls">
                             
 							<div class="btn-box-row row-fluid">
-								<a class="btn-box big span4">
+								<a class="btn-box big span3">
                                     <input type="checkbox" />
 									<i class="icon-adjust"></i>
 									<b>Test Health</b>
 								</a>
-								<a class="btn-box big span4">
-                                    <input type="checkbox" id="update_app" />
+								<a class="btn-box big span3">
+                                    <input type="checkbox" />
 									<i class="icon-briefcase"></i>
-									<b>Update App</b>
+									<b>List Files</b>
 								</a>
-								<a class="btn-box big span4">
+								<a class="btn-box big span3">
                                     <input type="checkbox" />
 									<i class="icon-gift"></i>
-									<b>List Files</b>
+									<b>List Apps</b>
+								</a>
+                                <a class="btn-box big span3">
+                                    <input type="checkbox" />
+									<i class="icon-gift"></i>
+									<b>Delete File</b>
 								</a>
 							</div>
 
@@ -78,17 +83,17 @@
 							    <a class="btn-box big span4">
                                     <input type="checkbox" id="update_hotlist" />
 									<i class="icon-adjust"></i>
-									<b>Update Hotlist</b>
+									<b>Push File</b>
 								</a>
 								<a class="btn-box big span4">
                                     <input type="checkbox" />
 									<i class="icon-briefcase"></i>
-									<b>Get Transaction File </b>
+									<b>Pull File</b>
 								</a>
 								<a class="btn-box big span4">
                                     <input type="checkbox" />
 									<i class="icon-gift"></i>
-									<b>List Apps</b>
+									<b>Update App</b>
 								</a>
 							</div>
                         </div>
