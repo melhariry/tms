@@ -84,13 +84,59 @@ USHORT usHttpBuffLen=SIZE_HTTP_BUFF;
 * F U N C T I O N S *
 *==========================================*/
 USHORT ftpUpload(BYTE *baSrcPath,BYTE *baFileName);
+/*USHORT commPingTms(OUT USHORT* usCommand)
+{
+  //local variables 
+  USHORT usRet;
+  //check/establish connection
+  gprsOpen();
+  usret=gprsConnect(baTmsUrl,usTmsPort);
+  //build request
+  GetSerialNumber(baSerialNumber);
+  sprintf(baHttpParam,"SerialNumber:%s\n",baSerialNumber);
+  HTTP_BuildHeader(baHttpHeader,tmsPaths[PATH_POSUP],"GET",baHttpParam);  
+  //send request
+  gprsSend(baHttpHeader,strlen(baHttpHeader));
+  //wait response
+  usHttpBuffLen=SIZE_HTTP_BUFF;
+  usret=gprsRecieve(baHttpBuff,&usHttpBuffLen);
+  HTTP_GetMessage(baHttpMessage,baHttpBuff);
+  //
+  if(sscanf(baHttpMessage,"%d",usCommand)!=1)
+    usRet=0xFF;
 
+  CTOS_LCDTClearDisplay();
+  CTOS_LCDTPrint(baHttpMessage);
+
+  gprsDisconnect();
+  return usRet;
+}*/
 static size_t
 WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void **userp)
 {
     BYTE key;
     size_t realsize = size * nmemb;
     if(realsize<=1)return realsize;
+    // BYTE *mem = (BYTE *)userp;
+    // mem = realloc(mem,  realsize + 1);
+ 
+    // if(mem == NULL)
+    // {
+    //     /* out of memory! */ 
+    //     CTOS_LCDTPrint("not enough memory \n(realloc returned NULL)\n");
+    //     return 0;
+    // }
+ 
+    // memcpy(mem, contents, realsize);
+    // mem[realsize] = 0;
+    
+    // if(userp!=mem)
+    // {
+    //     free(userp);
+    //     userp=mem;
+    // }
+    //sprintf(baHttpBuff,"\n%p->%s",*userp,(BYTE*)*userp);
+    //CTOS_LCDTPrint(baHttpBuff);
     BYTE *mem = (BYTE *)*userp;
     mem =realloc(mem,  realsize + 1);
     
@@ -105,12 +151,14 @@ WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void **userp)
     *userp=mem;
     //sprintf(baHttpBuff,"\n%p->%s",*userp,(BYTE*)*userp);
     //CTOS_LCDTPrint(baHttpBuff);
-    //CTOS_LCDTPrint(userp);
-    //CTOS_KBDGet(&key);
+    CTOS_LCDTPrint(userp);
+
+        //CTOS_KBDGet(&key);
     return realsize;
 }
 USHORT commInit()
 {
+
   gprsOpen();  
   gprsConnect(baTmsUrl,usTmsPort);  
   GetSerialNumber(baSerialNumber);
@@ -227,16 +275,39 @@ USHORT commSendTms(INOUT BYTE *baMessage,IN USHORT usPathIndex)
     return usret;
 }
 
+USHORT commSendTms2(INOUT BYTE *baMessage,IN USHORT usPathIndex)
+{
+    USHORT usret;
+    gprsOpen();
+    usret=gprsConnect(baTmsUrl,usTmsPort);
+    if(usret!=d_OK)return usret;
+    sprintf(baHttpParam,"SerialNumber:%s\nContent-Length:%d",baSerialNumber,strlen(baMessage));
+    HTTP_BuildHeader(baHttpHeader,tmsPaths[usPathIndex],"POST",baHttpParam);
+    HTTP_BuildRequest(baHttpBuff,baHttpHeader,baMessage);
+    gprsSend(baHttpBuff,strlen(baHttpBuff));
+    usHttpBuffLen=SIZE_HTTP_BUFF;
+    memset(baHttpBuff,0,sizeof baHttpBuff);
+    
+    usret=gprsRecieve(baHttpBuff,&usHttpBuffLen);
+    if(usret!=d_OK)return usret;
+    HTTP_GetMessage(baHttpMessage,baHttpBuff);
+    memset(baMessage,0,sizeof baMessage);
+    strcpy(baMessage,baHttpMessage);
+    CTOS_LCDTPrintXY(6,1,baMessage);
+    if(strlen(baHttpBuff)==0)
+      return 0xFF;//error
+    return 0;//ack
+}
 
-USHORT commSendFile(IN BYTE *baSrcPath,IN BYTE * baFileName)
+USHORT commSendFile(IN BYTE * baFilePath,IN BYTE * baFileName)
 {
     gprsConnect(baTmsUrl,21);
-    return ftpUpload(baSrcPath,baFileName);
+    return ftpUpload(baFilePath,baFileName);
     
 }
 
 
-USHORT ftpUpload(BYTE *baSrcPath,BYTE *baDstPath)
+USHORT ftpUpload(BYTE *baSrcPath,BYTE *baFileName)
 {
     BYTE baUrl[100];
     BYTE baStderr[200];
@@ -247,9 +318,9 @@ USHORT ftpUpload(BYTE *baSrcPath,BYTE *baDstPath)
     double speed_upload, total_time;
     FILE *fd;
     BYTE baFilePath[100];
-    //sprintf(baFilePath,"%s/%s",baSrcPath,baFileName);
+    sprintf(baFilePath,"%s/%s",baSrcPath,baFileName);
     //strcat(baSrcPath,baFileName);
-    fd = fopen(baSrcPath, "rb"); /* open file to upload */ 
+    fd = fopen(baFilePath, "rb"); /* open file to upload */ 
     if(!fd) {
         return 1; /* can't continue */ 
     }
@@ -258,7 +329,7 @@ USHORT ftpUpload(BYTE *baSrcPath,BYTE *baDstPath)
     if(fstat(fileno(fd), &file_info) != 0) {
         return 1; /* can't continue */ 
     }
-    sprintf(baUrl,"ftp://%s:%s@%s/Terminals/Castles/%s/%s",ftpUser,ftpPass,baTmsUrl,baSerialNumber,baDstPath);//serial number folder
+    sprintf(baUrl,"ftp://%s:%s@%s/Terminals/Castles/%s",ftpUser,ftpPass,baTmsUrl,baFileName);//serial number folder
 
 
 
@@ -319,7 +390,7 @@ USHORT ftpUpload(BYTE *baSrcPath,BYTE *baDstPath)
 
 }
 
-USHORT ftpDownload(BYTE *baSrcPath,BYTE *baDstPath)
+USHORT ftpDownload(BYTE *baSrcPath,BYTE *baFileName)
 {
     BYTE baUrl[100];
     BYTE baStderr[200];
@@ -330,9 +401,9 @@ USHORT ftpDownload(BYTE *baSrcPath,BYTE *baDstPath)
     double speed_upload, total_time;
     FILE *fd;
     BYTE baFilePath[100];
-    ///sprintf(baFilePath,"%s/%s",baSrcPath,baFileName);
+    sprintf(baFilePath,"%s/%s",baSrcPath,baFileName);
     //strcat(baSrcPath,baFileName);
-    fd = fopen(baDstPath, "wb"); /* open file to upload */ 
+    fd = fopen(baFilePath, "wb"); /* open file to upload */ 
     if(!fd) {
         return 1; /* can't continue */ 
     }
@@ -341,13 +412,7 @@ USHORT ftpDownload(BYTE *baSrcPath,BYTE *baDstPath)
     /*if(fstat(fileno(fd), &file_info) != 0) {
         return 1; /* can't continue */ 
     //}
-    sprintf(baUrl,"ftp://%s:%s@%s/%s",ftpUser,ftpPass,baTmsUrl,baSrcPath);
-    CTOS_LCDTPrint(baUrl);
-    CTOS_LCDTPrint("\n");
-    CTOS_LCDTPrint(baUrl+20);
-    CTOS_LCDTPrint("\n");
-    CTOS_LCDTPrint(baUrl+40);
-
+    sprintf(baUrl,"ftp://%s:%s@%s/Terminals/Castles/%s",ftpUser,ftpPass,baTmsUrl,baFileName);//serial number folder
 
 
 
@@ -400,34 +465,15 @@ USHORT ftpDownload(BYTE *baSrcPath,BYTE *baDstPath)
 
 }
 
-USHORT commRecieveFile(BYTE *baSrcPath,BYTE *baDstPath)
+USHORT commRecieveFile(IN BYTE * baFilePath,IN BYTE * baFileName)
 {
     USHORT sysret;
     BYTE cmdline[300];
-    BYTE srcPath[100];
     gprsConnect(baTmsUrl,21);
     //sprintf(cmdline,"wget -O %s/%s ftp://%s:%s@%s/Terminals/Castles/%s > stdout.txt 2> stderr.txt",baFilePath,baFileName,ftpUser,ftpPass,baTmsUrl,baFileName);
     //sysret=system(cmdline);
     //return sysret;
-
-    sprintf(srcPath,"Terminals/Castles/%s/%s",baSerialNumber,baSrcPath);
-
-    return ftpDownload(srcPath,baDstPath);
-    
-}
-USHORT commRecieveCAP(BYTE *baSrcPath,BYTE *baDstPath)
-{
-    USHORT sysret;
-    BYTE cmdline[300];
-    BYTE srcPath[100];
-    gprsConnect(baTmsUrl,21);
-    //sprintf(cmdline,"wget -O %s/%s ftp://%s:%s@%s/Terminals/Castles/%s > stdout.txt 2> stderr.txt",baFilePath,baFileName,ftpUser,ftpPass,baTmsUrl,baFileName);
-    //sysret=system(cmdline);
-    //return sysret;
-
-    sprintf(srcPath,"Apps/Castles/%s",baSrcPath);
-
-    return ftpDownload(srcPath,baDstPath);
+    return ftpDownload(baFilePath,baFileName);
     
 }
 
@@ -439,4 +485,9 @@ USHORT wgetftpDownload(BYTE* baHost,BYTE* baUser,BYTE* baPass,BYTE* baPath,BYTE*
   sysret=system(cmdline);
   return sysret;
 }
+USHORT commDownloadFile(BYTE* baFileName)
+{
+ //return ftpDownload(baTmsUrl,"MTMS_FTP","1234","Terminals/Castles",baFileName);
+}
+
 

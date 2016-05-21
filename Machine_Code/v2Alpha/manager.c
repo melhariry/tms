@@ -265,8 +265,8 @@ USHORT manAppList()
 
 USHORT manFileList()
 {
-	 BYTE key;
-	 memset(baStr,0,sizeof baStr);
+	BYTE key;
+	memset(baStr,0,sizeof baStr);
 	USHORT usResult = exeListFiles(baStr);
 	sprintf(baResponse,"Command=ListFiles%s",baStr);
 	usResult=commSendTms(baResponse,PATH_SUBMIT_COMMAND_RESULT);
@@ -320,6 +320,7 @@ USHORT manDeleteFile()
 	//execute
 	//usResult = exeDeleteFiles(paramsList,paramsCount,deleteResults);
 	memset(baDelResp,0,sizeof(baDelResp));
+
 	usResult = exeDeleteFiles(paramsList,paramsCount,baDelResp);
 	
 	/*if(usResult!=0)
@@ -399,55 +400,31 @@ USHORT manPushFile()
 		//check public / private
 		if(strncmp(paramsList[i],"pub",3)==0)
 		{//public
-			
 			sprintf(baPath,"/home/ap/pub/%s",paramsList[i]+4);
 			CTOS_LCDTPrint("\n");
 			CTOS_LCDTPrint(baPath);
 			if(access(baPath,F_OK)!=-1)
 			{
 				CTOS_LCDTPrint("\nxfound");
-				usResult=commSendFile("/home/ap/pub",paramsList[i]+4);
+				usResult=commSendFile(baPath,paramsList[i]);
 			}
 			else
 				usResult=0xFFFF;
 		}
 		else
-
 		{
 			CTOS_LCDTPrint("\nxpri");
 			sprintf(baPath,"%s",paramsList[i]+4);
 			if(access(baPath,F_OK)!=-1)
 			{
 				CTOS_LCDTPrint("\nxfound");
-				usResult=commSendFile(".",paramsList[i]+4);
+				usResult=commSendFile(baPath,paramsList[i]);
 			}
 			else
 
 				usResult=0xFFFF;
 		}
-
-
-
-		/*
-		if(access(paramsList[i],F_OK)!=-1)
-		{
-			CTOS_LCDTPrint("\nPrivate");
-			CTOS_KBDGet(&key);
-			usResult=commSendFile(".",paramsList[i]);
-		}
-		else
-		if (access(pubPath,F_OK)!=-1)
-		{
-			CTOS_LCDTPrint("\nPublic");
-			CTOS_KBDGet(&key);
-			usResult=commSendFile("/home/ap/pub",paramsList[i]);
-		}
-		else
-		{
-			CTOS_LCDTPrint("\nNot Found");
-			usResult=0xFFFF;
-		}*/
-		sprintf(baFile,"&name=%s&state=%d",paramsList[i],usResult);
+		sprintf(baFile,"&Name=%s&State=%d",paramsList[i],usResult);
 		strcat(baPushResp,baFile);
 
 		CTOS_KBDGet(&key);
@@ -524,21 +501,21 @@ USHORT manPullFile()
 		USHORT isPublic;
 		if(strncmp(paramsList[i],"pub",3)==0)
 		{//public
+			sprintf(baPath,"/home/ap/pub/%s",paramsList[i]+4);
 			
-			
-			usResult=commRecieveFile("/home/ap/pub",paramsList[i]+4);
+			usResult=commRecieveFile(paramsList[i],baPath);
 			
 			
 		}
 		else
 		{
 			
-			
-			usResult=commRecieveFile(".",paramsList[i]);
+			sprintf(baPath,"./%s",paramsList[i]+4);
+			usResult=commRecieveFile(paramsList[i],baPath);
 			
 		}
 
-		sprintf(baFile,"&name=%s&state=%d",paramsList[i],usResult);
+		sprintf(baFile,"&Name=%s&State=%d",paramsList[i],usResult);
 		
 		CTOS_LCDTPrint(baFile);
 		strcat(baPullResp,baFile);
@@ -609,7 +586,8 @@ USHORT manUpdateApp()
 	for (i = 0; i < paramsCount; ++i)
 	{
 		//usResult=commRecieveFile("/home/ap/pub/",paramsList[i]);
-		usResult=commRecieveFile(".",paramsList[i]);
+		//usResult=commRecieveFile(".",paramsList[i]);
+		usResult=commRecieveCAP(paramsList[i],paramsList[i]);
 		fprintf(MCI, "%s\n", paramsList[i]);
 	}
 	if(getwd(pathname)==NULL)

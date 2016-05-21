@@ -1,33 +1,21 @@
 newRequest from:663697DCAAF56668
-Command=PushFile
+Command=DeleteFile
+-----
+newRequest from:663697DCAAF56668
+Command=DeleteFile
+-----
+newRequest from:663697DCAAF56668
+Command=DeleteFile
+-----
+newRequest from:663697DCAAF56668
+Command=PullFile
+-----
+newRequest from:663697DCAAF56668
+Command=DeleteFile
 -----
 newRequest from:663697DCAAF56668
 Command=PushFile
 -----
 newRequest from:663697DCAAF56668
-Command=PushFile
------
-newRequest from:663697DCAAF56668
-Command=PushFile
------
-newRequest from:663697DCAAF56668
-Command=PushFile
------
-newRequest from:663697DCAAF56668
-Command=PushFile
------
-newRequest from:663697DCAAF56668
-Command=PushFile
------
-newRequest from:663697DCAAF56668
-Command=PushFile
------
-newRequest from:663697DCAAF56668
-Command=PushFile
------
-newRequest from:663697DCAAF56668
-Command=PushFile
------
-newRequest from:663697DCAAF56668
-Command=PushFile
+Command=UpdateApp
 -----

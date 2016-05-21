@@ -124,7 +124,8 @@ USHORT  exeListApps(BYTE* baAppList)
     CTOS_APGet(index,&appInfo);
     memset(baTemp,0,sizeof baTemp);
     sprintf(baTemp,"&name=%s&version=0x%x%x&com=%s",appInfo.baName,appInfo.baVersion[0],appInfo.baVersion[1],appInfo.baCompany);
-    strcpy(baAppList,baTemp);
+    //strcpy(baAppList,baTemp);
+    strcat(baAppList,baTemp);
 
   }
   return 0;
@@ -288,24 +289,35 @@ USHORT  exeListFiles(BYTE* baFileList)
 
   return usret;
 }*/
+SHORT exeDeleteFile(BYTE *filePath)
+{
+  return remove(filePath);//api
+}
 USHORT  exeDeleteFiles(IN BYTE * fileNames[],IN int length, OUT BYTE deleteResults[])
 {
+    int i;
+    USHORT usret=0;
+    SHORT sfile;
+    BYTE baTemp[100];
+    for(i =0;i<length; ++i)
+    {
+        usret=usret<<1;
+        //usfile= DeleteFile(fileNames[i]);    
+        if(strncmp(fileNames[i],"pub",3)==0)
+            sprintf(baTemp,"/home/ap/%s",fileNames[i]);
+        else
+            sprintf(baTemp,"./%s",fileNames[i]+4);
+        CTOS_LCDTPrint(baTemp);
+        sfile=exeDeleteFile(baTemp);
+        usret|=sfile==0?0:255;
+        sprintf(baTemp,"&Name=%s&State=%x",fileNames[i],sfile==0?0:255);// can be done in manager
+        strcat(deleteResults,baTemp);
+    }
+    //CTOS_LCDTPrint("\n");
 
-  int i;
-  USHORT usret=0,usfile;
-  BYTE baTemp[100];
-  for(i =0;i<length; ++i)
-  {
-     usret=usret<<1;
-     usfile= DeleteFile(fileNames[i]);    
-     usret|=usfile?1:0;
-     sprintf(baTemp,"&name=%s&state=%x",fileNames[i],usfile);
-     strcat(deleteResults,baTemp);
-  }
-  //CTOS_LCDTPrint("\n");
-
-  return usret;
+    return usret;
 }
+
 
 
 USHORT  exeSystemTest(BYTE* baTestResult)
