@@ -15,7 +15,7 @@ public partial class Terminals_Index : System.Web.UI.Page
 
     private void PopulateGrid()
     {
-        TerminalsGrid.DataSource = (new DB()).GetTerminals();
+        TerminalsGrid.DataSource = DB.Instance.GetTerminals();
         TerminalsGrid.DataBind();
     }
     protected void TerminalsGrid_DataBound(object sender, EventArgs e)

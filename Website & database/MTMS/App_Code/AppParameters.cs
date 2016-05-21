@@ -10,8 +10,14 @@ public static class AppParameters
 {
     public enum Commands
     {
+        //LSB To MSB
         TEST_HEALTH,
+        LIST_FILES,
         LIST_APPS,
-        LIST_FILES
+        DELETE_FILE,
+        PUSH_FILE,
+        PULL_FILE,
+        UPDATE_APP,
+        CREATE_POS_RECORD
     }
 }

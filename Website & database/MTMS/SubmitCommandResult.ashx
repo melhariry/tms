@@ -12,7 +12,6 @@ public class SubmitCommandResult : IHttpHandler {
         string[] commandStatus;
         try
         {
-            DB db = new DB();
             string command = context.Request.Params["Command"];
             //TODO: Handle DeleteFiles, ListFiles, ListApps
            
@@ -20,7 +19,7 @@ public class SubmitCommandResult : IHttpHandler {
             { 
                 //Pos Terminal done executing all commands, flush command to send
                 case "Finish":
-                    if (!db.ClearCommandToSend(context.Request.Headers["SerialNumber"]))
+                    if (!DB.Instance.ClearCommandToSend(context.Request.Headers["SerialNumber"]))
                     {
                         context.Response.StatusCode = 500;
                         context.Response.StatusDescription = "An error occurred while submitting the terminating command";
@@ -29,17 +28,17 @@ public class SubmitCommandResult : IHttpHandler {
                 break;
                     
                 case "TestHealth":
-                    if (!db.SubmitHealthTestResults(
-                    context.Request.Headers["SerialNumber"],
-                    Int32.Parse(context.Request.Params["Crypto"]),
-                    Int32.Parse(context.Request.Params["Printer"]),
-                    Int32.Parse(context.Request.Params["Timer"]),
-                    Int32.Parse(context.Request.Params["Buzzer"]),
-                    Int32.Parse(context.Request.Params["Led"]),
-                    Int32.Parse(context.Request.Params["Rtc"]),
-                    Int64.Parse(context.Request.Params["UsedDiskSize"]),
-                    Int64.Parse(context.Request.Params["UsedRamSize"])
-                    ))
+                    if (!DB.Instance.SubmitHealthTestResults(
+                        context.Request.Headers["SerialNumber"],
+                        Int32.Parse(context.Request.Params["Crypto"]),
+                        Int32.Parse(context.Request.Params["Printer"]),
+                        Int32.Parse(context.Request.Params["Timer"]),
+                        Int32.Parse(context.Request.Params["Buzzer"]),
+                        Int32.Parse(context.Request.Params["Led"]),
+                        Int32.Parse(context.Request.Params["Rtc"]),
+                        Int64.Parse(context.Request.Params["UsedDiskSize"]),
+                        Int64.Parse(context.Request.Params["UsedRamSize"])
+                        ))
                     {
                         context.Response.StatusCode = 500;
                         context.Response.StatusDescription = "An error occurred while submitting the test health result";
@@ -54,7 +53,7 @@ public class SubmitCommandResult : IHttpHandler {
                     {
                         if (Convert.ToInt32(commandStatus[i]) == 0)
                         {
-                            db.DeletePosFileFromList(context.Request.Headers["SerialNumber"], commandParams[i]);
+                            DB.Instance.DeletePosFileFromList(context.Request.Headers["SerialNumber"], commandParams[i]);
                         }
                         parameters += commandParams[i] + ';';
                         status += commandStatus[i] + ';';
@@ -71,7 +70,7 @@ public class SubmitCommandResult : IHttpHandler {
                     string[] appComs = context.Request.Params["Com"].Split(',');
                     for (int i = 0; i < commandParams.Length; i++)
                     {
-                        if (!db.SubmitPosAppList(context.Request.Headers["SerialNumber"], commandParams[i], appVersions[i], appComs[i]))
+                        if (!DB.Instance.SubmitPosAppList(context.Request.Headers["SerialNumber"], commandParams[i], appVersions[i], appComs[i]))
                         {
                             status += "500;";
                             parameters += commandParams[i] + ';';
@@ -96,7 +95,7 @@ public class SubmitCommandResult : IHttpHandler {
             if (status.Equals(string.Empty))
                 status = "0";
             //Log Result for all commands except testhealth and finish
-            if (db.SubmitCommandResult(
+            if (DB.Instance.SubmitCommandResult(
                 context.Request.Headers["SerialNumber"],
                 command,
                 status,

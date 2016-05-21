@@ -16,7 +16,7 @@ public partial class Terminals_Show : System.Web.UI.Page
     protected void Page_Load(object sender, EventArgs e)
     {
         PopulateGrid();
-        DataRow commandToSend = (new DB()).GetCommandToSend(Convert.ToInt32(HttpContext.Current.Request.Params["id"]));
+        DataRow commandToSend = DB.Instance.GetCommandToSend(Convert.ToInt32(HttpContext.Current.Request.Params["id"]));
         if (commandToSend != null)
         {
             BitArray cmd = new BitArray(new int[] { Convert.ToInt32(commandToSend["Command"]) }) ;
@@ -36,7 +36,7 @@ public partial class Terminals_Show : System.Web.UI.Page
 
     private void PopulateGrid()
     {
-        FileListGrid.DataSource = (new DB()).GetTerminalFileList(Convert.ToInt32(HttpContext.Current.Request.Params["id"]));
+        FileListGrid.DataSource = DB.Instance.GetTerminalFileList(Convert.ToInt32(HttpContext.Current.Request.Params["id"]));
         FileListGrid.DataBind();
     }
 
@@ -50,7 +50,7 @@ public partial class Terminals_Show : System.Web.UI.Page
 
         int[] command = new int[1];
         cmd.CopyTo(command, 0);
-        if ((new DB()).UpdateCommandToSend(commandId, command[0]))
+        if (DB.Instance.UpdateCommandToSend(commandId, command[0]))
             HttpContext.Current.Response.Redirect("./Index.aspx?success");
 
         //TODO: Redirect with error mo7taram
@@ -60,7 +60,7 @@ public partial class Terminals_Show : System.Web.UI.Page
     }
     protected void Upload_Click(object sender, EventArgs e)
     {
-        DataRow terminalInfo = (new DB()).GetTerminalInfo(Convert.ToInt32(HttpContext.Current.Request.Params["id"]));
+        DataRow terminalInfo = DB.Instance.GetTerminalInfo(Convert.ToInt32(HttpContext.Current.Request.Params["id"]));
         string ftpDirectory = "ftp://localhost/Terminals/" + terminalInfo["Vendor"] + "/" + terminalInfo["SerialNumber"] + "/";
         string fileName = Path.GetFileName(FileUpload1.FileName);
         byte[] buffer = new byte[4096];
@@ -120,7 +120,7 @@ public partial class Terminals_Show : System.Web.UI.Page
         byte[] buffer = new byte[4096];
         try
         {
-            DataRow terminalInfo = (new DB()).GetTerminalInfo(Convert.ToInt32(HttpContext.Current.Request.Params["id"]));
+            DataRow terminalInfo = DB.Instance.GetTerminalInfo(Convert.ToInt32(HttpContext.Current.Request.Params["id"]));
             string ftpDirectory = "ftp://localhost/Terminals/" + terminalInfo["Vendor"] + "/" + terminalInfo["SerialNumber"] + "/";
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpDirectory + fileName);
             request.Method = WebRequestMethods.Ftp.DownloadFile;

@@ -12,13 +12,12 @@ public class PosUp : IHttpHandler {
         context.Response.ContentType = "text/plain";
         try
         {
-            DB db = new DB();
             int posId = -1;
-            
-            if (db.PosExists(context.Request.Headers["SerialNumber"], Methods.GetUserIP(context), out posId))
+
+            if (DB.Instance.PosExists(context.Request.Headers["SerialNumber"], Methods.GetUserIP(context), out posId))
             {
                 //send commands
-                DataRow commandToSend = db.GetCommandToSend(posId);
+                DataRow commandToSend = DB.Instance.GetCommandToSend(posId);
                 //No command to send
                 context.Response.StatusCode = 200;
                 context.Response.Write("0" + commandToSend["Command"]);

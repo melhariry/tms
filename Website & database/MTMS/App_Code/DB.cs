@@ -9,10 +9,29 @@ using System.Configuration;
 /// Database class
 /// </summary>
 
-public class DB
+public sealed class DB
 {
     SqlConnection Conn = new SqlConnection(ConfigurationManager.ConnectionStrings["DbConnectionString"].ToString());
     
+    private static volatile DB instance = new DB();
+    private static object syncRoot = new Object();
+    private DB() { }
+    public static DB Instance
+    {
+        get
+        {
+            if (instance == null)
+            {
+                lock (syncRoot)
+                {
+                    if (instance == null)
+                        instance = new DB();
+                }
+            }
+            return instance;
+        }
+    }
+
     public bool PosExists(string posSerialNumber, string posLastConnectionIp, out int posId)
     {
         try
@@ -331,6 +350,89 @@ public class DB
                 return true;
             else
                 return false;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+    }
+
+    public DataRow GetTerminalsCount()
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("GetTerminalsCount", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            DataRow row = null;
+            if (table.Rows.Count > 0)
+                row = table.Rows[0];
+            return row;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+    }
+
+    public DataRow GetGroupsCount()
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("GetGroupsCount", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            DataRow row = null;
+            if (table.Rows.Count > 0)
+                row = table.Rows[0];
+            return row;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+    }
+
+    public DataTable GetPosGroups()
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("GetPosGroups", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            return table;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+    }
+
+    public DataTable GetGroupTerminals(int groupId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("GetGroupTerminals", Conn);
+            cmd.Parameters.AddWithValue("@GroupId", groupId);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            return table;
         }
         catch (Exception EX)
         {

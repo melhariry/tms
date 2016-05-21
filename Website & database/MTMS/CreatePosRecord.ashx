@@ -18,9 +18,8 @@ public class CreatePosRecord : IHttpHandler
         context.Response.ContentType = "text/plain";        
         try
         {
-            DB db = new DB();
             int PosId = -1;
-            if(db.CreatePosRecord(
+            if (DB.Instance.CreatePosRecord(
                 context.Request.Headers["SerialNumber"],
                 context.Request.Params["Vendor"],
                 context.Request.Params["Model"],

@@ -41,4 +41,14 @@ public static class Methods
         FtpWebResponse response = (FtpWebResponse)request.GetResponse();
         response.Close();
     }
+
+    public static int getTerminalsCount() 
+    {
+        return Convert.ToInt32(DB.Instance.GetTerminalsCount()[0]);
+    }
+
+    public static int getGroupsCount()
+    {
+        return Convert.ToInt32(DB.Instance.GetGroupsCount()[0]);
+    }
 }

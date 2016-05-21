@@ -13,7 +13,7 @@ public class RequestCommandParameters : IHttpHandler {
         context.Response.ContentType = "text/plain";
         try
         {
-            DataRow parameters = (new DB()).GetCommandParameters(context.Request.Headers["SerialNumber"]);
+            DataRow parameters = DB.Instance.GetCommandParameters(context.Request.Headers["SerialNumber"]);
             context.Response.StatusCode = 200;
             context.Response.Write(parameters[context.Request.Params["Command"] + "Parameters"].ToString());
 
