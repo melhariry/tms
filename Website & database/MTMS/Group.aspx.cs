@@ -5,12 +5,15 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Data;
+using System.Collections;
+using System.Web.UI.HtmlControls;
+using System.IO;
 
 public partial class Group : System.Web.UI.Page
 {
     DataTable groupTerminals;
     protected void Page_Load(object sender, EventArgs e)
-    {
+    {  
         groupTerminals = DB.Instance.GetGroupTerminals(Convert.ToInt32(Context.Request.Params["id"]));
     }
     protected void PrintGroupTerminals()
@@ -27,4 +30,75 @@ public partial class Group : System.Web.UI.Page
         }
         Response.Write(rawHTML);
     }
+
+    private void ClearCheckBoxes()
+    {
+        foreach (Control ctrl in GroupForm.Controls)
+        {
+            if (ctrl is CheckBox)
+            {
+                (ctrl as CheckBox).Checked = false;
+            }
+        }
+    }
+    protected void SubmitBtn_Click(object sender, EventArgs e)
+    {
+        //TODO:: Handle success and errors for ftpupload and updateCommandToSend
+        BitArray cmd = new BitArray(32, false);
+        DataRow oldCommand;
+        string  updateAppParams, pullFileParams, vendor, pushFileParams;
+        string apkPath = "Apps/VeriFone/", cabPath = "Apps/Castles/";
+        foreach (Control ctrl in GroupForm.Controls)
+        {
+            if (ctrl is CheckBox)
+            {
+                cmd.Set((int)Enum.Parse(typeof(AppParameters.Commands), ctrl.ID), (ctrl as CheckBox).Checked);
+            }
+        }
+        int[] newCommand = new int[1];
+        cmd.CopyTo(newCommand, 0);
+        if (UPDATE_APP.Checked)
+        {
+            if (update_app_cab.HasFile)
+                if (!Methods.UploadToFtp(Path.GetFileName(update_app_cab.FileName), update_app_cab.PostedFile.ContentLength, cabPath, update_app_cab.PostedFile.InputStream))
+                { }
+
+            if (update_app_apk.HasFile)
+                if (!Methods.UploadToFtp(Path.GetFileName(update_app_apk.FileName), update_app_apk.PostedFile.ContentLength, apkPath, update_app_apk.PostedFile.InputStream))
+                { }
+        }
+        if (PULL_FILE.Checked)
+        {
+            if (update_hotlist.HasFile)
+                if (!Methods.UploadToFtp(Path.GetFileName(update_hotlist.FileName), update_hotlist.PostedFile.ContentLength, string.Empty, update_hotlist.PostedFile.InputStream))
+                { }
+        }
+        for (int i = 0; i < groupTerminals.Rows.Count; i++)
+        {
+            oldCommand = DB.Instance.GetCommandToSend(Convert.ToInt32(groupTerminals.Rows[i][0]));
+            if (Convert.ToInt32(oldCommand["Command"]) != 0)
+                newCommand[0] = newCommand[0] | Convert.ToInt32(oldCommand["Command"]);
+            updateAppParams = oldCommand["UpdateAppParameters"].ToString();
+            pullFileParams = oldCommand["PullFileParameters"].ToString();
+            pushFileParams = oldCommand["PushFileParameters"].ToString();
+            vendor = groupTerminals.Rows[i][2].ToString();
+
+            if (PUSH_FILE.Checked)
+                pushFileParams += "pub/transaction.txt;";
+            if (PULL_FILE.Checked)
+                pullFileParams += update_hotlist.FileName +";";
+
+            if (UPDATE_APP.Checked)
+            {
+                if (vendor.Equals("Castles"))
+                    updateAppParams += update_app_cab.FileName + ";";
+                else if (vendor.Equals("VeriFone"))
+                    updateAppParams += update_app_apk.FileName + ";";
+            }
+            if (!DB.Instance.UpdateCommandToSend(Convert.ToInt32(oldCommand["Id"]), newCommand[0], string.Empty, updateAppParams, string.Empty, pushFileParams, pullFileParams))
+            { }
+        }
+        ClearCheckBoxes();
+    }
+
 }

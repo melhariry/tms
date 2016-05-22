@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Net;
+using System.Data;
+using System.IO;
 
 /// <summary>
 /// Summary description for Methods
@@ -50,5 +52,47 @@ public static class Methods
     public static int getGroupsCount()
     {
         return Convert.ToInt32(DB.Instance.GetGroupsCount()[0]);
+    }
+
+    public static bool UploadToFtp(string name, int contentLength, string path, Stream inputStream)
+    {
+        DataRow terminalInfo = DB.Instance.GetTerminalInfo(Convert.ToInt32(HttpContext.Current.Request.Params["id"]));
+        string ftpDirectory = "ftp://localhost/" + path;
+        string fileName = name;
+        byte[] buffer = new byte[4096];
+        int bytesWritten = 0;
+        int totalBytes = contentLength;
+        try
+        {
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpDirectory + fileName);
+            request.Method = WebRequestMethods.Ftp.UploadFile;
+            request.Credentials = new NetworkCredential("MTMS_FTP", "1234");
+            request.ContentLength = contentLength;
+            request.KeepAlive = false;
+            request.UseBinary = true;
+
+            using (Stream fileStream = inputStream)
+            {
+                using (Stream requestStream = request.GetRequestStream())
+                {
+                    while (totalBytes > 0)
+                    {
+                        bytesWritten = fileStream.Read(buffer, 0, buffer.Length);
+                        requestStream.Write(buffer, 0, bytesWritten);
+                        totalBytes -= bytesWritten;
+                    }
+                    requestStream.Close();
+                }
+                fileStream.Close();
+            }
+            FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+            response.Close();
+            return true;
+        }
+        catch (WebException)
+        {
+
+            return false;
+        }
     }
 }

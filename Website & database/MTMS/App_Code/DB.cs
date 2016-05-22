@@ -57,6 +57,10 @@ public sealed class DB
         {
             throw (EX);
         }
+        finally
+        {
+            Conn.Close();
+        }
     }
 
     public bool CreatePosRecord(string serialNumber, string vendor, string model, string ip, Int64 diskCapacity, Int64 ramSize, out int PosId)
@@ -78,7 +82,7 @@ public sealed class DB
             cmd.ExecuteNonQuery();
             Conn.Close();
             PosId = Int32.Parse((Id.Value.ToString()));
-            if ( PosId != -1)
+            if (PosId != -1)
                 return true;
             else
                 return false;
@@ -86,6 +90,10 @@ public sealed class DB
         catch (Exception EX)
         {
             throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
         }
     }
 
@@ -119,6 +127,10 @@ public sealed class DB
         {
             throw (EX);
         }
+        finally
+        {
+            Conn.Close();
+        }
     }
 
     public DataTable GetTerminals()
@@ -137,6 +149,10 @@ public sealed class DB
         catch (Exception EX)
         {
             throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
         }
     }
 
@@ -161,9 +177,13 @@ public sealed class DB
         {
             throw (EX);
         }
+        finally
+        {
+            Conn.Close();
+        }
     }
 
-    public bool UpdateCommandToSend(int id, int command)
+    public bool UpdateCommandToSend(int id, int command, string updateFileParams, string updateAppParams, string deleteFileParams, string pushFileParams, string pullFileParams)
     {
         try
         {
@@ -172,6 +192,11 @@ public sealed class DB
 
             cmd.Parameters.AddWithValue("@Id", id);
             cmd.Parameters.AddWithValue("@Command", command);
+            cmd.Parameters.AddWithValue("@UpdateFileParams", updateFileParams);
+            cmd.Parameters.AddWithValue("@UpdateAppParams", updateAppParams);
+            cmd.Parameters.AddWithValue("@DeleteFileParams", deleteFileParams);
+            cmd.Parameters.AddWithValue("@PushFileParams", pushFileParams);
+            cmd.Parameters.AddWithValue("@PullFileParams", pullFileParams);
             SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
             rowCount.Direction = ParameterDirection.ReturnValue;
             Conn.Open();
@@ -185,6 +210,10 @@ public sealed class DB
         catch (Exception EX)
         {
             throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
         }
     }
 
@@ -209,6 +238,10 @@ public sealed class DB
         {
             throw (EX);
         }
+        finally
+        {
+            Conn.Close();
+        }
     }
 
     public DataRow GetTerminalInfo(int posId)
@@ -232,6 +265,10 @@ public sealed class DB
         {
             throw (EX);
         }
+        finally
+        {
+            Conn.Close();
+        }
     }
 
     public DataTable GetTerminalFileList(int posId)
@@ -251,6 +288,10 @@ public sealed class DB
         catch (Exception EX)
         {
             throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
         }
     }
 
@@ -280,6 +321,10 @@ public sealed class DB
         {
             throw (EX);
         }
+        finally
+        {
+            Conn.Close();
+        }
     }
 
     public bool ClearCommandToSend(string serialNumber)
@@ -304,6 +349,10 @@ public sealed class DB
         {
             throw (EX);
         }
+        finally
+        {
+            Conn.Close();
+        }
     }
     public bool DeletePosFileFromList(string serialNumber, string fileName)
     {
@@ -327,6 +376,10 @@ public sealed class DB
         catch (Exception EX)
         {
             throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
         }
     }
 
@@ -355,6 +408,10 @@ public sealed class DB
         {
             throw (EX);
         }
+        finally
+        {
+            Conn.Close();
+        }
     }
 
     public DataRow GetTerminalsCount()
@@ -376,6 +433,10 @@ public sealed class DB
         catch (Exception EX)
         {
             throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
         }
     }
 
@@ -399,6 +460,10 @@ public sealed class DB
         {
             throw (EX);
         }
+        finally
+        {
+            Conn.Close();
+        }
     }
 
     public DataTable GetPosGroups()
@@ -417,6 +482,10 @@ public sealed class DB
         catch (Exception EX)
         {
             throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
         }
     }
 
@@ -437,6 +506,10 @@ public sealed class DB
         catch (Exception EX)
         {
             throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
         }
     }
 }

@@ -50,12 +50,12 @@ public partial class Terminals_Show : System.Web.UI.Page
 
         int[] command = new int[1];
         cmd.CopyTo(command, 0);
-        if (DB.Instance.UpdateCommandToSend(commandId, command[0]))
+        /*if (DB.Instance.UpdateCommandToSend(commandId, command[0]))
             HttpContext.Current.Response.Redirect("./Index.aspx?success");
 
         //TODO: Redirect with error mo7taram
         else
-            HttpContext.Current.Response.Redirect("./Index.aspx?error=2");
+            HttpContext.Current.Response.Redirect("./Index.aspx?error=2");*/
 
     }
     protected void Upload_Click(object sender, EventArgs e)

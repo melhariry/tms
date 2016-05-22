@@ -23,7 +23,7 @@ public class PosUp : IHttpHandler {
                 context.Response.Write("0" + commandToSend["Command"]);
             }
             else
-                context.Response.Write("128");
+                context.Response.Write("0128");
         }
         catch (Exception EX)
         {

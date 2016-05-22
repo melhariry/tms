@@ -1,19 +1,32 @@
 ﻿$(document).ready(function () {
-    $("#update_app").click(function () {
-        if ($("#update_app").is(':checked')) {
-            $("#inputs_div").append("<div id='update_app_params'><h4>Update App parameters</h4><label>CAB File:</label><input id='update_app_cab' type='file' accept='.cab' /><br><label>APK File:</label><input id='update_app_apk' type='file' accept='.apk' /><hr></div");
+    $("#UPDATE_APP").click(function () {
+        if ($("#UPDATE_APP").is(':checked')) {
+            $("#update_app_params").show();
         }
         else {
-            $("#update_app_params").remove();
+            $("#update_app_params").hide();
         }
     });
-    $("#update_hotlist").click(function () {
-        if ($("#update_hotlist").is(':checked')) {
-            $("#inputs_div").append("<div id='update_hotlist_params'><h4>Update Hotlist parameters</h4><label>Hotlist File:</label><input id='update_hotlist' type='file' accept='.txt' /><hr></div");
+    $("#PULL_FILE").click(function () {
+        if ($("#PULL_FILE").is(':checked')) {
+            $("#update_hotlist_params").show();
         }
         else {
-            $("#update_hotlist_params").remove();
+            $("#update_hotlist_params").hide();
         }
     });
-    
+    $("#SubmitBtn").click(function (event) {
+        if ($("#UPDATE_APP").is(':checked')) {
+            if ($("#update_app_apk").get(0).files.length == 0 && $("#update_app_cab").get(0).files.length == 0) {
+                alert("Please choose app .apk or .cab to update!");
+                event.preventDefault();
+            }
+        }
+        if ($("#PULL_FILE").is(':checked')) {
+            if ($("#update_hotlist").get(0).files.length == 0) {
+                alert("Please choose hotlist file to update!");
+                event.preventDefault();
+            }
+        }
+    });
 });

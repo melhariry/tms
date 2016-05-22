@@ -13,7 +13,7 @@ public class SubmitCommandResult : IHttpHandler {
         try
         {
             string command = context.Request.Params["Command"];
-            //TODO: Handle DeleteFiles, ListFiles, ListApps
+            //TODO: Handle ListFiles, UpdateApp
            
             switch (command)
             { 
@@ -117,6 +117,7 @@ public class SubmitCommandResult : IHttpHandler {
         {
             context.Response.StatusCode = 500;
             context.Response.StatusDescription = EX.Message;
+            context.Response.Write(EX.Message);
         }
     }
  

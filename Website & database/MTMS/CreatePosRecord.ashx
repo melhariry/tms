@@ -32,6 +32,7 @@ public class CreatePosRecord : IHttpHandler
                 Methods.CreateFtpDirectory(context.Request.Headers["SerialNumber"], context.Request.Params["Vendor"]);
                 Methods.CreateFtpInnerDirectory(context.Request.Headers["SerialNumber"], context.Request.Params["Vendor"], "pub");
                 Methods.CreateFtpInnerDirectory(context.Request.Headers["SerialNumber"], context.Request.Params["Vendor"], "pri");
+                Methods.CreateFtpInnerDirectory(context.Request.Headers["SerialNumber"], context.Request.Params["Vendor"], "pub/MTMS");
                 context.Response.StatusCode = 200;
                 context.Response.Write("Success");
             }

@@ -11,7 +11,7 @@
 	<link type="text/css" href="Resources/css/theme.css" rel="stylesheet"/>
 	<link type="text/css" href="Resources/css/font-awesome.css" rel="stylesheet"/>
 	<link type="text/css" href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600' rel='stylesheet'/>
-    <title>MTMS - Group <%= Context.Request.Params["id"].ToString() %></title>
+    <title>MTMS - Group <%= Context.Request.Params["name"].ToString() %></title>
 </head>
 <body>
 
@@ -45,7 +45,7 @@
                         <!--/.sidebar-->
                     </div>
                     <!--/.span3-->
-                    <div class="span9">
+                    <form class="span9" runat="server" id="GroupForm">
                         <div class="btn-controls">
                             <div class="btn-box-row row-fluid">
                                 <h1 class="btn-box big span12">
@@ -87,17 +87,17 @@
                             
 							<div class="btn-box-row row-fluid">
 								<a class="btn-box big span4">
-                                    <input type="checkbox" />
+                                    <asp:CheckBox id="TEST_HEALTH" runat="server" />
 									<i class="icon-adjust"></i>
 									<b>Test Health</b>
 								</a>
 								<a class="btn-box big span4">
-                                    <input type="checkbox" id="update_app" />
+                                    <asp:CheckBox id="UPDATE_APP" runat="server"/>
 									<i class="icon-briefcase"></i>
 									<b>Update App</b>
 								</a>
 								<a class="btn-box big span4">
-                                    <input type="checkbox" />
+                                    <asp:CheckBox id="LIST_FILES" runat="server"/>
 									<i class="icon-gift"></i>
 									<b>List Files</b>
 								</a>
@@ -105,35 +105,49 @@
 
 							<div class="btn-box-row row-fluid">
 							    <a class="btn-box big span4">
-                                    <input type="checkbox" id="update_hotlist" />
+                                    <asp:CheckBox id="PULL_FILE" runat="server"/>
 									<i class="icon-adjust"></i>
 									<b>Update Hotlist</b>
 								</a>
 								<a class="btn-box big span4">
-                                    <input type="checkbox" />
+                                    <asp:CheckBox id="PUSH_FILE" runat="server"/>
 									<i class="icon-briefcase"></i>
 									<b>Get Transaction File </b>
 								</a>
 								<a class="btn-box big span4">
-                                    <input type="checkbox" />
+                                    <asp:CheckBox id="LIST_APPS" runat="server"/>
 									<i class="icon-gift"></i>
 									<b>List Apps</b>
 								</a>
 							</div>
                         </div>
 
-                        <div class="module">
+                        <div class="module" id="group_module" runat="server">
                             <div class="module-head">
                                 <h3>Inputs</h3>
                             </div>
-                            <div class="module-body" id="inputs_div">
+                            <div class="module-body" id="inputs_div" runat="server">
+                                <div id='update_app_params' hidden="hidden">
+                                    <h4>Update App parameters</h4>
+                                    <label>CAB File:</label>
+                                    <asp:FileUpload id='update_app_cab' runat="server" /><br/>
+                                    <label>APK File:</label>
+                                    <asp:FileUpload id='update_app_apk' runat="server" />
+                                    <hr/>
+                                </div>
+                                <div id='update_hotlist_params' hidden="hidden">
+                                    <h4>Update Hotlist parameters</h4>
+                                    <label>Hotlist File:</label>
+                                    <asp:FileUpload id='update_hotlist' runat="server" />
+                                    <hr/>
+                                </div>
                                 <div class="align-right">
-                                    <button type="submit" class="btn btn-large">Submit</button>
+                                    <asp:Button ID="SubmitBtn" runat="server" class="btn btn-large" Text="Submit" OnClick="SubmitBtn_Click"></asp:Button>
                                 </div>
 							</div>
                         </div>
                         <!--/.content-->
-                    </div>
+                    </form>
                     <!--/.span9-->
                 </div>
             </div>
