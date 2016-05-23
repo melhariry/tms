@@ -66,7 +66,7 @@ public static class Methods
         {
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpDirectory + fileName);
             request.Method = WebRequestMethods.Ftp.UploadFile;
-            request.Credentials = new NetworkCredential("MTMS_FTP", "1234");
+            request.Credentials = new NetworkCredential(username, password);
             request.ContentLength = contentLength;
             request.KeepAlive = false;
             request.UseBinary = true;
@@ -91,8 +91,56 @@ public static class Methods
         }
         catch (WebException)
         {
-
             return false;
         }
     }
+
+    public static bool DownloadFromFtp(string fileName, string localPath, string ftpPath)
+    {
+        int bytesRead = 0;
+        byte[] buffer = new byte[4096];
+        try
+        {
+            DataRow terminalInfo = DB.Instance.GetTerminalInfo(Convert.ToInt32(HttpContext.Current.Request.Params["id"]));
+            string ftpDirectory = "ftp://localhost/" + ftpPath;
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create(ftpDirectory + fileName);
+            request.Method = WebRequestMethods.Ftp.DownloadFile;
+            request.Credentials = new NetworkCredential(username, password);
+            request.KeepAlive = false;
+            request.UseBinary = true;
+
+            using (FileStream fileStream = new FileStream(localPath, FileMode.Create))
+            {
+                using (Stream requestStream = request.GetResponse().GetResponseStream())
+                {
+                    do
+                    {
+                        bytesRead = requestStream.Read(buffer, 0, buffer.Length);
+                        fileStream.Write(buffer, 0, bytesRead);
+
+                    } while (bytesRead != 0);
+                    requestStream.Close();
+                }
+                fileStream.Close();
+            }
+            FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+            response.Close();
+            return true;
+        }
+        catch (WebException)
+        {
+            return false;
+        }
+    }
+    public static string ReturnHTMLStatus(string message, string status)
+    {
+        string rawHTML = string.Empty;
+        rawHTML += "<div class=\"alert alert-" + status + "\">";
+        rawHTML += "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>";
+        if (status.Equals("error"))
+            rawHTML += "<strong>Error: </strong>";
+        rawHTML += "<ul>" + message + "</ul></div>";
+        return rawHTML;
+    }
+
 }

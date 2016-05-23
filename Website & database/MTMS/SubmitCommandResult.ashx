@@ -13,8 +13,7 @@ public class SubmitCommandResult : IHttpHandler {
         try
         {
             string command = context.Request.Params["Command"];
-            //TODO: Handle ListFiles, UpdateApp
-           
+            
             switch (command)
             { 
                 //Pos Terminal done executing all commands, flush command to send
@@ -61,7 +60,17 @@ public class SubmitCommandResult : IHttpHandler {
                 break;
                     
                 case "ListFiles":
-                    
+                    commandParams = context.Request.Params["Name"].Split(',');
+                    string[] parentFolders = context.Request.Params["Parent"].Split(',');
+                    string[] fileSizes = context.Request.Params["Size"].Split(',');
+                    for (int i = 0; i < commandParams.Length; i++)
+                    {
+                        if (!DB.Instance.SubmitPosFileList(context.Request.Headers["SerialNumber"], commandParams[i], Convert.ToInt64(fileSizes[i]), parentFolders[i]))
+                        {
+                            status += "500;";
+                            parameters += commandParams[i] + ';';
+                        }
+                    } 
                 break;
                     
                 case "ListApps":
@@ -77,6 +86,16 @@ public class SubmitCommandResult : IHttpHandler {
                         }
                              
                     }
+                break;
+                    
+                case "UpdateApp":
+                    commandParams = context.Request.Params["Name"].Split(',');
+                    commandStatus = context.Request.Params["Status"].Split(',');
+                    for (int i = 0; i < commandParams.Length; i++)
+                    {
+                        parameters += commandParams[i] + ';';
+                        status += commandStatus[i] + ';';
+                    }               
                 break;
                     
                 //Push file and pull file cases

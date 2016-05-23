@@ -512,4 +512,62 @@ public sealed class DB
             Conn.Close();
         }
     }
+
+    public bool SubmitPosFileList(string serialNumber, string name, long size, string parentFolder)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("SubmitPosFileList", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@SerialNumber", serialNumber);
+            cmd.Parameters.AddWithValue("@Name", name);
+            cmd.Parameters.AddWithValue("@Size", size);
+            cmd.Parameters.AddWithValue("@ParentFolder", parentFolder);
+            SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            rowCount.Direction = ParameterDirection.ReturnValue;
+            Conn.Open();
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+            if (Int32.Parse(rowCount.Value.ToString()) > 0)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
+
+    public Boolean CheckCredentials(string username, string password)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("CheckCredentials", Conn);
+            cmd.Parameters.AddWithValue("@Username", username);
+            cmd.Parameters.AddWithValue("@Password", password);
+            SqlParameter Success = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            Success.Direction = ParameterDirection.ReturnValue;
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            return Int32.Parse(Success.Value.ToString()) == 1;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
 }

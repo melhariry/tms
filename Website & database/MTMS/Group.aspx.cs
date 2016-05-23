@@ -12,6 +12,7 @@ using System.IO;
 public partial class Group : System.Web.UI.Page
 {
     DataTable groupTerminals;
+    string rawHTMLError = string.Empty, rawHTMLSuccess = string.Empty;
     protected void Page_Load(object sender, EventArgs e)
     {  
         groupTerminals = DB.Instance.GetGroupTerminals(Convert.ToInt32(Context.Request.Params["id"]));
@@ -31,6 +32,16 @@ public partial class Group : System.Web.UI.Page
         Response.Write(rawHTML);
     }
 
+    protected void PrintStatus()
+    {
+        if (!rawHTMLError.Equals(string.Empty))
+            Response.Write(Methods.ReturnHTMLStatus(rawHTMLError, "error"));
+        if (!rawHTMLSuccess.Equals(string.Empty))
+            Response.Write(Methods.ReturnHTMLStatus(rawHTMLSuccess, "success"));
+        rawHTMLError = string.Empty;
+        rawHTMLSuccess = string.Empty;
+    }
+
     private void ClearCheckBoxes()
     {
         foreach (Control ctrl in GroupForm.Controls)
@@ -41,12 +52,14 @@ public partial class Group : System.Web.UI.Page
             }
         }
     }
+    
     protected void SubmitBtn_Click(object sender, EventArgs e)
     {
         //TODO:: Handle success and errors for ftpupload and updateCommandToSend
         BitArray cmd = new BitArray(32, false);
         DataRow oldCommand;
-        string  updateAppParams, pullFileParams, vendor, pushFileParams;
+        bool commandSubmitted = true;
+        string updateAppParams, pullFileParams, vendor, pushFileParams;
         string apkPath = "Apps/VeriFone/", cabPath = "Apps/Castles/";
         foreach (Control ctrl in GroupForm.Controls)
         {
@@ -61,17 +74,23 @@ public partial class Group : System.Web.UI.Page
         {
             if (update_app_cab.HasFile)
                 if (!Methods.UploadToFtp(Path.GetFileName(update_app_cab.FileName), update_app_cab.PostedFile.ContentLength, cabPath, update_app_cab.PostedFile.InputStream))
-                { }
+                    rawHTMLError += "<li>" + Path.GetFileName(update_app_cab.FileName) + " cannot be uploaded</li>";
+                else
+                    rawHTMLSuccess += "<li>" + Path.GetFileName(update_app_cab.FileName) + " uploaded successfully</li>";
 
             if (update_app_apk.HasFile)
                 if (!Methods.UploadToFtp(Path.GetFileName(update_app_apk.FileName), update_app_apk.PostedFile.ContentLength, apkPath, update_app_apk.PostedFile.InputStream))
-                { }
+                    rawHTMLError += "<li>" + Path.GetFileName(update_app_apk.FileName) + " cannot be uploaded</li>";
+                else
+                    rawHTMLSuccess += "<li>" + Path.GetFileName(update_app_apk.FileName) + " uploaded successfully</li>";
         }
         if (PULL_FILE.Checked)
         {
             if (update_hotlist.HasFile)
                 if (!Methods.UploadToFtp(Path.GetFileName(update_hotlist.FileName), update_hotlist.PostedFile.ContentLength, string.Empty, update_hotlist.PostedFile.InputStream))
-                { }
+                    rawHTMLError += "<li>" + Path.GetFileName(update_hotlist.FileName) + " cannot be uploaded</li>";
+                else
+                    rawHTMLSuccess += "<li>" + Path.GetFileName(update_hotlist.FileName) + " uploaded successfully</li>";   
         }
         for (int i = 0; i < groupTerminals.Rows.Count; i++)
         {
@@ -96,8 +115,13 @@ public partial class Group : System.Web.UI.Page
                     updateAppParams += update_app_apk.FileName + ";";
             }
             if (!DB.Instance.UpdateCommandToSend(Convert.ToInt32(oldCommand["Id"]), newCommand[0], string.Empty, updateAppParams, string.Empty, pushFileParams, pullFileParams))
-            { }
+                commandSubmitted = false;
         }
+
+        if (!commandSubmitted)
+            rawHTMLError += "<li>" + "Database error, please contact Database adminstrator</li>";
+        else
+            rawHTMLSuccess += "<li>" + "Commands submitted successfully</li>";
         ClearCheckBoxes();
     }
 

@@ -55,6 +55,7 @@
                             </div>
                             
                         </div>
+                        <% PrintStatus(); %>
                         <div class="content">
                             
                             <div class="module">
