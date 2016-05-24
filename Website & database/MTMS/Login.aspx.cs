@@ -28,7 +28,7 @@ public partial class login : System.Web.UI.Page
     protected void PrintStatus()
     {
         if (!rawHTMLError.Equals(string.Empty))
-            Response.Write(Methods.ReturnHTMLStatus(rawHTMLError, "error"));
+            Response.Write(Methods.ReturnHTMLStatus(rawHTMLError, "error", false));
         rawHTMLError = string.Empty;
     }
 }

@@ -22,7 +22,7 @@
                         <i class="icon-reorder shaded"></i></a><a class="brand" href="index.aspx">MTMS </a>
                     <div class="nav-collapse collapse navbar-inverse-collapse">
                         <ul class="nav pull-right">
-                            <li><a href="#">Logout </a></li>
+                            <li><a href="logout.aspx">Logout </a></li>
                         </ul>
                     </div>
                     <!-- /.nav-collapse -->
@@ -83,7 +83,12 @@
 							    </div>
                             </div>
                         </div>
-
+                        <div class="module">
+                            <div class="module-head">
+                                    <h3>
+                                        Ongoing Group Command</h3>
+                            </div>
+                        </div>
                         <div class="btn-controls">
                             
 							<div class="btn-box-row row-fluid">
@@ -143,7 +148,7 @@
                                     <hr/>
                                 </div>
                                 <div class="align-right">
-                                    <asp:Button ID="SubmitBtn" runat="server" class="btn btn-large" Text="Submit" OnClick="SubmitBtn_Click"></asp:Button>
+                                    <asp:Button ID="GroupSubmitBtn" runat="server" CssClass="btn btn-large" Text="Submit" OnClick="GroupSubmitBtn_Click"></asp:Button>
                                 </div>
 							</div>
                         </div>

@@ -21,7 +21,7 @@
                         <i class="icon-reorder shaded"></i></a><a class="brand" href="index.aspx">MTMS </a>
                     <div class="nav-collapse collapse navbar-inverse-collapse">
                         <ul class="nav pull-right">
-                            <li><a href="#">Logout </a></li>
+                            <li><a href="logout.aspx">Logout </a></li>
                         </ul>
                     </div>
                     <!-- /.nav-collapse -->

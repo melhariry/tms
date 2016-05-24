@@ -132,14 +132,17 @@ public static class Methods
             return false;
         }
     }
-    public static string ReturnHTMLStatus(string message, string status)
+    public static string ReturnHTMLStatus(string message, string status, bool isList = true)
     {
         string rawHTML = string.Empty;
         rawHTML += "<div class=\"alert alert-" + status + "\">";
         rawHTML += "<button type=\"button\" class=\"close\" data-dismiss=\"alert\">×</button>";
         if (status.Equals("error"))
             rawHTML += "<strong>Error: </strong>";
-        rawHTML += "<ul>" + message + "</ul></div>";
+        if (isList)
+            rawHTML += "<ul>" + message + "</ul></div>";
+        else
+            rawHTML += message + "</div>";
         return rawHTML;
     }
 

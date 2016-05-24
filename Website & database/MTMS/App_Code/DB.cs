@@ -439,7 +439,7 @@ public sealed class DB
             Conn.Close();
         }
     }
-
+    
     public DataRow GetGroupsCount()
     {
         try
@@ -560,6 +560,102 @@ public sealed class DB
             adapter.Fill(table);
             Conn.Close();
             return Int32.Parse(Success.Value.ToString()) == 1;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
+
+    public DataTable GetPosCommandLog(int posId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("GetPosCommandLog", Conn);
+            cmd.Parameters.AddWithValue("@PosId", posId);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            return table;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
+
+    public DataTable GetPosHealthTest(int posId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("GetPosHealthTest", Conn);
+            cmd.Parameters.AddWithValue("@PosId", posId);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            return table;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
+
+    public DataTable GetPosAppList(int posId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("GetPosAppList", Conn);
+            cmd.Parameters.AddWithValue("@PosId", posId);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            return table;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
+
+    public DataTable GetPosFileList(int posId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("GetPosFileList", Conn);
+            cmd.Parameters.AddWithValue("@PosId", posId);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            return table;
         }
         catch (Exception EX)
         {

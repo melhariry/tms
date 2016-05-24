@@ -5,12 +5,12 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-public partial class Index : System.Web.UI.Page
+public partial class Logout : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack)
-            if (Session["id"] == null)
-                Response.Redirect("~/Login.aspx");
+        Session.Remove("id");
+        Session.Abandon();
+        Response.Redirect("~/Login.aspx");
     }
 }

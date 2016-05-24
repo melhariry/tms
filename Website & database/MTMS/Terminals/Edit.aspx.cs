@@ -32,6 +32,18 @@ public partial class Terminals_Show : System.Web.UI.Page
         //TODO: Redirect with error mo7taram
         else
             HttpContext.Current.Response.Redirect("./Index.aspx?error=2");
+
+        //if (commandToSend != null)
+        //{
+        //    int index = 0;
+        //    BitArray cmd = new BitArray(new int[] { Convert.ToInt32(commandToSend["Command"]) });
+        //    foreach (AppParameters.Commands commandIndex in Enum.GetValues(typeof(AppParameters.Commands)))
+        //    {
+        //        if (index == 7)
+        //            break;
+        //        (TerminalForm.Controls[index++] as CheckBox).Checked = cmd.Get((int)(commandIndex));
+        //    }
+        //}
     }
 
     private void PopulateGrid()

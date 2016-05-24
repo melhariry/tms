@@ -11,6 +11,9 @@ public partial class groups : System.Web.UI.Page
     private DataTable allGroups;
     protected void Page_Load(object sender, EventArgs e)
     {
+        if (!IsPostBack)
+            if (Session["id"] == null)
+                Response.Redirect("~/Login.aspx");
         allGroups = DB.Instance.GetPosGroups();
     }
     protected void PrintGroups()

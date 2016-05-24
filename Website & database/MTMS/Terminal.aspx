@@ -21,7 +21,7 @@
                         <i class="icon-reorder shaded"></i></a><a class="brand" href="index.aspx">MTMS </a>
                     <div class="nav-collapse collapse navbar-inverse-collapse">
                         <ul class="nav pull-right">
-                            <li><a href="#">Logout </a></li>
+                            <li><a href="logout.aspx">Logout </a></li>
                         </ul>
                     </div>
                     <!-- /.nav-collapse -->
@@ -44,7 +44,7 @@
                         <!--/.sidebar-->
                     </div>
                     <!--/.span3-->
-                    <div class="span9">
+                    <form runat="server" id="TerminalForm" class="span9">
                         <div class="btn-controls">
                             <div class="btn-box-row row-fluid">
                                 <h1 class="btn-box big span12">
@@ -53,27 +53,144 @@
                             </div>
                             
                         </div>
+                        <% PrintStatus(); %>
+                        <div class="content">
+                            <div class="module">
+                                    <div class="module-head">
+                                        <h3>
+                                            History</h3>
+                                    </div>
+                                    <div class="module-body table">
+                                        <table id="history" border="0" class="datatable-1 table table-bordered table-striped  display dataTable"  aria-describedby="DataTables_Table_0_info" style="width: 100%;">
+								            <thead>
+									        <tr>
+                                                <th rowspan="1" colspan="1">Command</th>
+                                                <th rowspan="1" colspan="1">Status</th>
+                                                <th rowspan="1" colspan="1">Timestamp</th>
+                                                <th rowspan="1" colspan="1">Parameters</th>
+									        </tr>
+								        </thead>
+								            <tbody role="alert" aria-live="polite" aria-relevant="all">
+                                                <% PrintTerminalHistory(); %>
+								            </tbody>
+                                        </table>
+							        </div>
+                                </div>
 
+                                <div class="module">
+                                    <div class="module-head">
+                                        <h3>
+                                            Test Health History</h3>
+                                    </div>
+                                    <div class="module-body table">
+                                        <table id="testHealth" border="0" class="datatable-1 table table-bordered table-striped  display dataTable"  aria-describedby="DataTables_Table_0_info" style="width: 100%;">
+								            <thead>
+									        <tr>
+                                                <th rowspan="1" colspan="1">Crypto</th>
+                                                <th rowspan="1" colspan="1">Printer</th>
+                                                <th rowspan="1" colspan="1">Timer</th>
+                                                <th rowspan="1" colspan="1">Buzzer</th>
+                                                <th rowspan="1" colspan="1">Led</th>
+                                                <th rowspan="1" colspan="1">Rtc</th>
+                                                <th rowspan="1" colspan="1">RamUsed(KB)</th>
+                                                <th rowspan="1" colspan="1">DiskUsed(KB)</th>
+                                                <th rowspan="1" colspan="1">Timestamp</th>
+									        </tr>
+								        </thead>
+								            <tbody role="alert" aria-live="polite" aria-relevant="all">
+                                                <% PrintTerminalHealthTest(); %>
+								            </tbody>
+                                        </table>
+							        </div>
+                                </div>
+
+                                <div class="module">
+                                    <div class="module-head">
+                                        <h3>
+                                            App List</h3>
+                                    </div>
+                                    <div class="module-body table">
+                                        <table id="appList" border="0" class="datatable-1 table table-bordered table-striped  display dataTable"  aria-describedby="DataTables_Table_0_info" style="width: 100%;">
+								            <thead>
+									        <tr>
+                                                <th rowspan="1" colspan="1">Name</th>
+                                                <th rowspan="1" colspan="1">Version</th>
+                                                <th rowspan="1" colspan="1">Company</th>
+									        </tr>
+								        </thead>
+								            <tbody role="alert" aria-live="polite" aria-relevant="all">
+                                                <% PrintTerminalAppList(); %>
+								            </tbody>
+                                        </table>
+							        </div>
+                                </div>
+
+                                <div class="module">
+                                    <div class="module-head">
+                                        <h3>
+                                            File List</h3>
+                                    </div>
+                                    <div class="module-body table">
+                                        <table id="fileList" border="0" class="datatable-1 table table-bordered table-striped  display dataTable"  aria-describedby="DataTables_Table_0_info" style="width: 100%;">
+								            <thead>
+									        <tr>
+                                                <th rowspan="1" colspan="1">Full Path</th>
+                                                <th rowspan="1" colspan="1">Size (Bytes)</th>
+                                                <th rowspan="1" colspan="1">Accessibility Level</th>
+									        </tr>
+								        </thead>
+								            <tbody role="alert" aria-live="polite" aria-relevant="all">
+                                                <% PrintTerminalFileList(); %>
+								            </tbody>
+                                        </table>
+							        </div>
+                                </div>
+                                <div class="module">
+                                    <div class="module-head">
+                                        <h3>
+                                            Command To Be Sent</h3>
+                                    </div>
+                                    <div class="module-body table">
+                                        <table id="commandToSend" border="0" class="datatable-1 table table-bordered table-striped  display dataTable"  aria-describedby="DataTables_Table_0_info" style="width: 100%;">
+								            <thead>
+									        <tr>
+                                                <th rowspan="1" colspan="1">Command</th>
+                                                <th rowspan="1" colspan="1">Parameters</th>
+									        </tr>
+								        </thead>
+								            <tbody role="alert" aria-live="polite" aria-relevant="all">
+                                                <% PrintCommandToSend(); %>
+								            </tbody>
+                                        </table>
+							        </div>
+                                </div>
+                            </div>
+                        <div class="module">
+                            <div class="module-head">
+                                    <h3>
+                                        Ongoing Command</h3>
+                            </div>
+                        </div>
                         <div class="btn-controls">
                             
 							<div class="btn-box-row row-fluid">
 								<a class="btn-box big span3">
-                                    <input type="checkbox" />
+                                    <asp:CheckBox id="TEST_HEALTH" runat="server" />
 									<i class="icon-adjust"></i>
 									<b>Test Health</b>
 								</a>
 								<a class="btn-box big span3">
-                                    <input type="checkbox" />
+                                    <asp:CheckBox id="LIST_FILES" runat="server" />
 									<i class="icon-briefcase"></i>
 									<b>List Files</b>
 								</a>
 								<a class="btn-box big span3">
-                                    <input type="checkbox" />
+                                    <asp:CheckBox id="LIST_APPS" runat="server" />
 									<i class="icon-gift"></i>
 									<b>List Apps</b>
 								</a>
                                 <a class="btn-box big span3">
-                                    <input type="checkbox" />
+                                    <asp:CheckBox id="DELETE_FILE" runat="server" />
 									<i class="icon-gift"></i>
 									<b>Delete File</b>
 								</a>
@@ -81,17 +198,17 @@
 
 							<div class="btn-box-row row-fluid">
 							    <a class="btn-box big span4">
-                                    <input type="checkbox" id="update_hotlist" />
+                                    <asp:CheckBox id="PUSH_FILE" runat="server" />
 									<i class="icon-adjust"></i>
 									<b>Push File</b>
 								</a>
 								<a class="btn-box big span4">
-                                    <input type="checkbox" />
+                                    <asp:CheckBox id="PULL_FILE" runat="server" />
 									<i class="icon-briefcase"></i>
 									<b>Pull File</b>
 								</a>
 								<a class="btn-box big span4">
-                                    <input type="checkbox" />
+                                    <asp:CheckBox id="UPDATE_APP" runat="server" />
 									<i class="icon-gift"></i>
 									<b>Update App</b>
 								</a>
@@ -103,13 +220,44 @@
                                 <h3>Inputs</h3>
                             </div>
                             <div class="module-body" id="inputs_div">
+                                <div id='update_app_params' hidden="hidden">
+                                    <h4>Update App parameters</h4>
+                                    <label>App Source:</label>
+                                    <asp:FileUpload id='update_app_src' runat="server" /><br/>
+                                    <hr/>
+                                </div>
+                                <div id='pull_file_params' hidden="hidden">
+                                    <h4>Pull File Parameters</h4>
+                                    <label>File Source:</label>
+                                    <asp:FileUpload id='pull_file_src' runat="server" />
+                                    <hr/>
+                                </div>
+                                <div id='push_file_params' hidden="hidden">
+                                    <h4>Push File Parameters</h4>
+                                    <div class="module-head">
+                                        <h3>
+                                            <asp:CheckBox id="hotlist_file" runat="server" />
+                                            Hotlist File</h3>
+                                    </div>
+                                    <div class="module-head">
+                                        <h3>
+                                            <asp:CheckBox id="tms_conf" runat="server"/>
+                                            TMS App conf file</h3>
+                                    </div>
+                                    <div class="module-head">
+                                        <h3>
+                                            <asp:CheckBox id="trsc_conf" runat="server"/>
+                                            Transaction App conf file</h3>
+                                    </div>
+                                    <hr/>
+                                </div>
                                 <div class="align-right">
-                                    <button type="submit" class="btn btn-large">Submit</button>
+                                    <asp:Button ID="TerminalSubmitBtn" runat="server" CssClass="btn btn-large" Text="Submit" OnClick="TerminalSubmitBtn_Click"></asp:Button>
                                 </div>
 							</div>
                         </div>
                         <!--/.content-->
-                    </div>
+                    </form>
                     <!--/.span9-->
                 </div>
             </div>
@@ -129,7 +277,7 @@
     <script src="Resources/js/forms_builder.js" type="text/javascript"></script>
     <script>
         $(document).ready(function () {
-            $('#terminals').DataTable();
+            $('#history, #testHealth, #appList, #fileList, #commandToSend').DataTable();
             $('.dataTables_paginate').addClass("btn-group datatable-pagination");
             $('.dataTables_paginate > a').wrapInner('<span />');
             $('.dataTables_paginate > a:first-child').append('<i class="icon-chevron-left shaded"></i>');

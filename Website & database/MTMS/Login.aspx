@@ -37,23 +37,24 @@
 							<h3>Sign In</h3>
 						</div>
 						<div class="module-body">
+                            <% PrintStatus(); %>
 							<div class="control-group">
 								<div class="controls row-fluid">
 									<asp:TextBox runat="server" CssClass="span12" id="inputEmail" placeholder="Username"/>
+                                    <asp:RequiredFieldValidator runat="server" ErrorMessage="* Username is required" ControlToValidate="inputEmail" ForeColor="Red" />
 								</div>
 							</div>
 							<div class="control-group">
 								<div class="controls row-fluid">
 									<asp:TextBox runat="server" CssClass="span12" TextMode="Password"  id="inputPassword" placeholder="Password"/>
+                                    <asp:RequiredFieldValidator runat="server" ErrorMessage="* Password is required" ControlToValidate="inputPassword" ForeColor="Red"/>
 								</div>
 							</div>
-                            <hr />
-                            <% PrintStatus(); %>
 						</div>
 						<div class="module-foot">
 							<div class="control-group">
 								<div class="controls clearfix">
-									<asp:Button ID="Login" runat="server" class="btn btn-primary pull-right" Text="Login" OnClick="Login_Click"></asp:Button>
+									<asp:Button ID="Login" runat="server" CssClass="btn btn-primary pull-right" Text="Login" OnClick="Login_Click"></asp:Button>
 								</div>
 							</div>
 						</div>

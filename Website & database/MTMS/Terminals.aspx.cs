@@ -11,6 +11,9 @@ public partial class Terminals_Terminals : System.Web.UI.Page
     private DataTable allTerminals;
     protected void Page_Load(object sender, EventArgs e)
     {
+        if (!IsPostBack)
+            if (Session["id"] == null)
+                Response.Redirect("~/Login.aspx");
         allTerminals = DB.Instance.GetTerminals();
     }
 
