@@ -23,6 +23,7 @@
 ** The main entry of the terminal application 
 **/
 #include "curl/curl.h"
+#include "wifi.h"
 BYTE baStr[10000];
 BYTE baFileList[1000];
 void system_start()
@@ -100,8 +101,10 @@ int main(int argc,char *argv[])
 		//noFile=lsl("/home/ap/pub",files,0);
 		
 		//exeListFiles(baFileList);
-
-	  	manUp();
+    	system("ifconfig wlan0 up >/home/ap/pub/stdout.txt");
+    	system("iwlist wlan0 scan >/home/ap/pub/stdout.txt");
+    	//wifiConnectSSID("wired","wifimachine");
+	  	//manUp();
 	    //CTOS_APFork("TransApp");
 	    //sleep(7);
 
