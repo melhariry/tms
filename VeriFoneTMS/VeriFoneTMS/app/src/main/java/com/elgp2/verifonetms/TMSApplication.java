@@ -6,7 +6,7 @@ import android.content.Context;
 import com.elgp2.verifonetms.communication.MyVolley;
 
 /**
- * base application class to insure MyVolley is initialized and share ApplicationContext globally
+ * base application class to share ApplicationContext globally
  * Created by POS_GP_TEAM_2016 on 5/7/2016.
  */
 public class TMSApplication extends Application {
@@ -25,6 +25,5 @@ public class TMSApplication extends Application {
         super.onCreate();
         if(tmsApplication == null)
             tmsApplication =this;
-       // MyVolley.init(this);
     }
 }

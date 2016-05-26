@@ -12,9 +12,6 @@ import android.widget.Toast;
 import com.elgp2.verifonetms.models.FileInfo;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.List;
@@ -29,6 +26,11 @@ public class FileUtil {
 
     private FileUtil(){}
 
+    /**
+     * @param relativePath
+     * @param fileName
+     * @return
+     */
     /*
     *creates a new file or directory on device external memory
     * @relativePath : path within the external memory (e.g: myDir1/myDir2)
@@ -36,6 +38,7 @@ public class FileUtil {
     * returns true on success false otherwise
     * */
     public static Boolean createPublicFile(String relativePath,String fileName){
+
         relativePath = relativePath.replace("/"+getFileName(relativePath),"");
         File myDir= new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+relativePath+"/");
         Log.d(Tag,"pubFile location : "+Environment.getExternalStorageDirectory().getAbsolutePath()+"/"+relativePath+"/");
@@ -61,6 +64,8 @@ public class FileUtil {
             e.printStackTrace();
             return false;
         }
+        Log.d(Tag,"pub file creation succeded");
+
         return true;
     }
 
@@ -72,9 +77,8 @@ public class FileUtil {
     * returns true on success false otherwise
     * */
     public static Boolean createPrivateFile(String relativePath, String fileName,Context context){
-        File myDir = new File(context.getFilesDir().getAbsolutePath()+"/"+relativePath+"/");
-        //create the parent folders if they are not already created
-        myDir.mkdirs();
+
+        File myDir = new File(context.getFilesDir().getAbsolutePath()+"/");
         try{
             File file = new File(myDir,fileName);
             if(!file.exists()) {
@@ -93,29 +97,7 @@ public class FileUtil {
             e.printStackTrace();
             return false;
         }
-        return true;
-    }
-
-    /**
-     * copy src File content to dstFile content , to be used in create or update File
-     * @param src srcFile
-     * @param dst dstFile
-     * @return true on success
-     * @throws IOException
-     */
-    public static Boolean copyFile(File src, File dst) throws IOException {
-        FileChannel     srcChannel = new FileInputStream(src).getChannel();
-        FileChannel     dstChannel = new FileOutputStream(dst).getChannel();
-
-        try {
-            srcChannel.transferTo(0,srcChannel.size(),dstChannel);
-        }
-        finally {
-            if(srcChannel != null)
-                srcChannel.close();
-            if(dstChannel != null)
-                dstChannel.close();
-        }
+        Log.d(Tag,"pri file creation succeded");
         return true;
     }
 
@@ -138,7 +120,15 @@ public class FileUtil {
     }
 
     /*delete file or Dir note, if directory is to be deleted all files in it must be deleted first then delete the folder itself*/
-    public static Boolean deleteDir(String absolutePath){
+    public static Boolean deleteDir(String absolutePath,Context context){
+        if(isPub(absolutePath)){
+            absolutePath = absolutePath.replace("pub/", "");
+            absolutePath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/" + absolutePath;
+        }
+        else {
+            absolutePath = absolutePath.replace("pri/","");
+            absolutePath = context.getFilesDir().getAbsolutePath()+"/" + absolutePath;
+        }
         File file = new File(absolutePath);
         if(!file.exists())
             return true;
@@ -146,7 +136,7 @@ public class FileUtil {
             File[] childFiles = file.listFiles();
             if(childFiles != null && childFiles.length > 0){
                 for(File child: childFiles ){
-                    deleteDir(child.getAbsolutePath());
+                    deleteDir(child.getAbsolutePath(),context);
                 }
             }
         }
@@ -155,7 +145,7 @@ public class FileUtil {
 
     public static String getAbsolutePath(String relativePath,Context context){
         Boolean isPub = relativePath.startsWith("pub") ? true : false;
-        //relativePath = relativePath.substring(4,relativePath.length());
+
         String absPath  = "" ;
         if(isPub){
             relativePath = relativePath.replace("pub/","");
@@ -177,13 +167,16 @@ public class FileUtil {
     }
 
     public static String getFileName(String path){
-        String [] arr = path.split("/");
-        Log.d(Tag , "fileName = "+ arr[arr.length-1]);
-        return arr[arr.length -1];
+        if(path.contains("/")){
+            String [] arr = path.split("/");
+            Log.d(Tag , "fileName = "+ arr[arr.length-1]);
+            return arr[arr.length -1];
+        }
+        return path;
     }
 
     public static Boolean isPub(String filePath){
-        return filePath.startsWith("pub") ? true : false;
+        return filePath.contains("pub") ? true : false;
     }
 
     /*Concat two File arrays */

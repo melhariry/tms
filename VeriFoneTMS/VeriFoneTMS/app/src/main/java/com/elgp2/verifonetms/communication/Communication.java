@@ -163,7 +163,7 @@ public class Communication {
                 uri += ("&"+ entry.getKey()+"="+entry.getValue());
             }
         }
-        Log.d(Tag,uri);
-        return uri;
+        Log.d(Tag,uri.replaceAll("\\s",""));
+        return uri.replaceAll("\\s+", "");
     }
 }

@@ -1,33 +1,30 @@
 package com.elgp2.verifonetms.ui;
 
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.Toast;
 
-import com.elgp2.verifonetms.Execute;
+import com.elgp2.verifonetms.Executer.AppUpdater;
 import com.elgp2.verifonetms.Manager;
 import com.elgp2.verifonetms.R;
-import com.elgp2.verifonetms.communication.Communication;
-import com.elgp2.verifonetms.communication.FtpClient;
-
-import java.io.IOException;
-import java.util.BitSet;
-
-import it.sauronsoftware.ftp4j.FTPException;
-import it.sauronsoftware.ftp4j.FTPIllegalReplyException;
 
 public class MainActivity extends AppCompatActivity {
 
-    /*Button to list all installed apps*/
-    private Button listAppsButton;
+
     /*Tag for debugging*/
     private final String Tag = "MainActivity";
+
+    private ComponentName receiver ;
+
+    private PackageManager pm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,22 +32,24 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        listAppsButton= (Button) findViewById(R.id.list_apps_button);
-        listAppsButtonHandler();
+
+        receiver = new ComponentName(this, AppUpdater.class);
+        pm = this.getPackageManager();
+        //enable app starts at system boot
+        pm.setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP);
+
     }
 
-    /*when Click the Button show a list of installed apps*/
-    private void listAppsButtonHandler(){
-        listAppsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent managerIntent= new Intent(getApplicationContext(), Manager.class);
-                startService(managerIntent);
-                finish();
-
-            }
-        });
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent managerIntent= new Intent(getApplicationContext(), Manager.class);
+        startService(managerIntent);
+        finish();
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

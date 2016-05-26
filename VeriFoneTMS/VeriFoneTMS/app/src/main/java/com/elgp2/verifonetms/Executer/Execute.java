@@ -1,9 +1,12 @@
-package com.elgp2.verifonetms;
+package com.elgp2.verifonetms.Executer;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.nfc.Tag;
 import android.os.Environment;
 import android.support.annotation.BoolRes;
@@ -52,9 +55,11 @@ public class Execute {
            if( (packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0){
                 AppInfo appInfo = new AppInfo();
 
-                appInfo.setAppLabel(packageManager.getApplicationLabel(packageInfo.applicationInfo).toString());
+                appInfo.setVersionCode(packageInfo.versionCode);
+                appInfo.setPackageName(packageInfo.packageName);
+                appInfo.setAppLabel(packageManager.getApplicationLabel(packageInfo.applicationInfo).toString().replaceAll("\\s+", ""));
                 appInfo.setVersionName(packageInfo.versionName);
-                appInfo.setCompanyName(AppUtil.getCompanyName(packageInfo.packageName));
+                appInfo.setCompanyName(AppUtil.getCompanyName(packageInfo.packageName).replaceAll("\\s+",""));
 
                 appsInfo.add(appInfo);
            }
@@ -67,7 +72,7 @@ public class Execute {
         List<FileInfo> dragonFileList = new ArrayList<FileInfo>();
         FileList.clear();
         //list public files
-        listFiles(Environment.getExternalStorageDirectory().getAbsolutePath()+"/Download","",true);
+        listFiles(Environment.getExternalStorageDirectory().getAbsolutePath()+"/MTMS","",true);
         dragonFileList.addAll(FileList);
         FileList.clear();
         listFiles(context.getFilesDir().getAbsolutePath(),"",false);
@@ -80,11 +85,12 @@ public class Execute {
         List<Boolean> results = new ArrayList<Boolean>();
         if(filesPaths != null && filesPaths.size() > 0){
             for(String filePath:filesPaths){
-                results.add(FileUtil.deleteDir(filePath));
+                results.add(FileUtil.deleteDir(filePath,context));
             }
         }
         return results;
     }
+
 
     /*
      *creates a new file or directory on device external memory
@@ -113,9 +119,9 @@ public class Execute {
         File [] list = currentFolder.listFiles();
         FileInfo currentFolderInfo = new FileInfo();
         if(!parentName.isEmpty()) {
-            currentFolderInfo.setName(currentFolder.getName().replace(" ",""));
+            currentFolderInfo.setName(currentFolder.getName().replaceAll("\\s+", ""));
             currentFolderInfo.setIsFolder(1);
-            currentFolderInfo.setParentName(parentName.replace(" ",""));
+            currentFolderInfo.setParentName(parentName.replaceAll("\\s+", ""));
             currentFolderInfo.setFileSize(0);
             FileList.add(currentFolderInfo);
         }
@@ -126,7 +132,7 @@ public class Execute {
                         listFiles(fileWalker.getAbsolutePath(), currentFolder.getName(),isPublic);
                     else{
                         if(isPublic)
-                            listFiles(fileWalker.getAbsolutePath(),"pub",isPublic);
+                            listFiles(fileWalker.getAbsolutePath(),"MTMS",isPublic);
                         else
                             listFiles(fileWalker.getAbsolutePath(), "pri",isPublic);
                     }
@@ -136,30 +142,16 @@ public class Execute {
                     currentFileInfo.setFileSize(FileUtil.getFileSize(fileWalker));
                     if(parentName.isEmpty()) {
                         if(isPublic)
-                            currentFileInfo.setParentName("pub");
+                            currentFileInfo.setParentName("MTMS");
                         else
                             currentFileInfo.setParentName("pri");
                     }
                     else
-                        currentFileInfo.setParentName(currentFolder.getName().replace(" ",""));
+                        currentFileInfo.setParentName(currentFolder.getName().replace(" ", ""));
                     currentFileInfo.setIsFolder(0);
-                    currentFileInfo.setName(fileWalker.getName().replace(" ",""));
+                    currentFileInfo.setName(fileWalker.getName().replace("\\s+", ""));
                     FileList.add(currentFileInfo);
                 }
-            }
-        }
-        else{
-            //empty folder
-            if(parentName.isEmpty()){
-                FileInfo emptyFolderInfo = new FileInfo();
-                emptyFolderInfo.setName(currentFolder.getName().replace(" ", ""));
-                emptyFolderInfo.setIsFolder(1);
-                if(isPublic)
-                    emptyFolderInfo.setParentName("pub");
-                else
-                    emptyFolderInfo.setParentName("pri");
-                emptyFolderInfo.setFileSize(0);
-                FileList.add(emptyFolderInfo);
             }
         }
     }
@@ -183,4 +175,6 @@ public class Execute {
 
        return machineInfo;
     }
+
+
 }
