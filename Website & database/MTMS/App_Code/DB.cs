@@ -183,7 +183,7 @@ public sealed class DB
         }
     }
 
-    public bool UpdateCommandToSend(int id, int command, string updateFileParams, string updateAppParams, string deleteFileParams, string pushFileParams, string pullFileParams)
+    public bool UpdateCommandToSend(int id, int command, string updateFileParams, string updateAppParams, string deleteFileParams, string pushFileParams, string pullFileParams, bool isScheduled)
     {
         try
         {
@@ -197,6 +197,7 @@ public sealed class DB
             cmd.Parameters.AddWithValue("@DeleteFileParams", deleteFileParams);
             cmd.Parameters.AddWithValue("@PushFileParams", pushFileParams);
             cmd.Parameters.AddWithValue("@PullFileParams", pullFileParams);
+            cmd.Parameters.AddWithValue("@IsScheduled", isScheduled);
             SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
             rowCount.Direction = ParameterDirection.ReturnValue;
             Conn.Open();
@@ -327,7 +328,7 @@ public sealed class DB
         }
     }
 
-    public bool ClearCommandToSend(string serialNumber)
+    public bool ClearCommandToSend(string serialNumber, bool serverClear = true)
     {
         try
         {
@@ -335,12 +336,13 @@ public sealed class DB
             cmd.CommandType = CommandType.StoredProcedure;
             DataTable table = new DataTable();
             cmd.Parameters.AddWithValue("@SerialNumber", serialNumber);
+            cmd.Parameters.AddWithValue("@ServerClear", serverClear);
             SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
             rowCount.Direction = ParameterDirection.ReturnValue;
             Conn.Open();
             cmd.ExecuteNonQuery();
             Conn.Close();
-            if (Int32.Parse(rowCount.Value.ToString()) == 1)
+            if (Int32.Parse(rowCount.Value.ToString()) > 0)
                 return true;
             else
                 return false;
@@ -648,6 +650,90 @@ public sealed class DB
         try
         {
             SqlCommand cmd = new SqlCommand("GetPosFileList", Conn);
+            cmd.Parameters.AddWithValue("@PosId", posId);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            return table;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
+
+    public bool CreatePosGroup(string name, string branch, string contactPerson, string contactNumber, out int GroupId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("CreatePosGroup", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@Name", name);
+            cmd.Parameters.AddWithValue("@Branch", branch);
+            cmd.Parameters.AddWithValue("@ContactPerson", contactPerson);
+            cmd.Parameters.AddWithValue("@ContactNumber", contactNumber);
+            SqlParameter Id = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            Id.Direction = ParameterDirection.ReturnValue;
+            Conn.Open();
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+            GroupId = Int32.Parse((Id.Value.ToString()));
+            if (GroupId != -1)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
+
+    public bool DeletePosAppList(string serialNumber)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("DeletePosAppList", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@SerialNumber", serialNumber);
+            SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            rowCount.Direction = ParameterDirection.ReturnValue;
+            Conn.Open();
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+            if (Int32.Parse(rowCount.Value.ToString()) > 0)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
+
+    public DataTable GetPosLastHealthTest(int posId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("GetPosLastHealthTest", Conn);
             cmd.Parameters.AddWithValue("@PosId", posId);
             cmd.CommandType = CommandType.StoredProcedure;
             SqlDataAdapter adapter = new SqlDataAdapter(cmd);

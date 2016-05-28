@@ -57,4 +57,12 @@
             }
         }
     });
+    $("#CreateGroupBtn").click(function (event) {
+        var inputtxt = $("ContactNumTxt").val();
+        var phoneno = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
+        if (inputtxt.value.match(phoneno)) {
+            alert("Invalid phone number format");
+            event.preventDefault();
+        }
+    });
 });

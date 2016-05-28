@@ -43,32 +43,72 @@
                         <!--/.sidebar-->
                     </div>
                     <!--/.span3-->
-                    <div class="span9">
+                    <form runat="server" class="span9">
                         <div class="content">
                             <div class="module">
-                            <div class="module-head">
-                                <h3>
-                                    Groups</h3>
+                                <div class="module-head">
+                                    <h3>
+                                        Groups</h3>
+                                </div>
+                                <% PrintStatus(); %>
+                                <div class="module-body table">
+                                    <table id="groups" border="0" class="datatable-1 table table-bordered table-striped  display dataTable"  aria-describedby="DataTables_Table_0_info" style="width: 100%;">
+								        <thead>
+									        <tr>
+                                                <th rowspan="1" colspan="1">Id</th>
+                                                <th rowspan="1" colspan="1">Group Name</th>
+                                                <th rowspan="1" colspan="1">Branch</th>
+                                                <th rowspan="1" colspan="1">Contact Number</th>
+                                                <th rowspan="1" colspan="1">Contact Person</th>
+                                                <th rowspan="1" colspan="1">Date Added</th>
+									        </tr>
+								        </thead>
+								        <tbody role="alert" aria-live="polite" aria-relevant="all">
+                                            <% PrintGroups(); %>
+								        </tbody>
+                                    </table>
+							    </div>
                             </div>
-                            <div class="module-body table">
-                                <table id="groups" border="0" class="datatable-1 table table-bordered table-striped  display dataTable"  aria-describedby="DataTables_Table_0_info" style="width: 100%;">
-								    <thead>
-									    <tr>
-                                            <th rowspan="1" colspan="1">Id</th>
-                                            <th rowspan="1" colspan="1">Group Name</th>
-                                            <th rowspan="1" colspan="1">Date Added</th>
-                                            <th rowspan="1" colspan="1">POS Count</th>
-									    </tr>
-								    </thead>
-								    <tbody role="alert" aria-live="polite" aria-relevant="all">
-                                        <% PrintGroups(); %>
-								    </tbody>
-                                </table>
+                        </div>
+                        <div class="module" id="groups_module">
+                            <div class="module-head">
+                                <h3>Create New Group</h3>
+                            </div>
+                            <div class="module-body" runat="server">
+                                <div class="control-group">
+									<div class="controls">
+										<asp:TextBox runat="server" id="NewNameTxt" placeholder="Group Name" CssClass="span3" />
+										<asp:RequiredFieldValidator runat="server" ErrorMessage="*" ControlToValidate="NewNameTxt" ForeColor="Red" />
+                                    </div>
+                                    <div class="controls">
+										<asp:TextBox runat="server" id="NewBranchTxt" placeholder="Branch" CssClass="span3" />
+                                        <asp:RequiredFieldValidator runat="server" ErrorMessage="*" ControlToValidate="NewBranchTxt" ForeColor="Red" />
+                                    </div>
+                                    <div class="controls">
+										<asp:TextBox runat="server" id="ContactNumTxt" placeholder="Contact Number" CssClass="span3" />
+										<asp:RequiredFieldValidator runat="server" ErrorMessage="*" ControlToValidate="ContactNumTxt" ForeColor="Red" />
+                                    </div>
+                                    <div class="controls">
+										<asp:TextBox runat="server" id="ContactPersonTxt" placeholder="Contact Person" CssClass="span3" />
+										<span class="help-inline">Leave empty if not specified</span>
+									</div>
+                                    <div class="align-right">
+                                    <asp:Button ID="CreateGroupBtn" runat="server" CssClass="btn btn-large" Text="Create" OnClick="CreateGroupBtn_Click"></asp:Button>
+                                    </div>
+								</div>
 							</div>
                         </div>
+
+                        <div class="module">
+                            <div class="module-head">
+                                <h3>Change Terminal Group</h3>
+                            </div>
+                            <div class="module-body" runat="server">
+                                
+							</div>
                         </div>
                         <!--/.content-->
-                    </div>
+                    </form>
                     <!--/.span9-->
                 </div>
             </div>

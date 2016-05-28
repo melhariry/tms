@@ -59,9 +59,9 @@
                                             <th rowspan="1" colspan="1">Vendor</th>
                                             <th rowspan="1" colspan="1">Model</th>
                                             <th rowspan="1" colspan="1">Last Online</th>
-                                            <th rowspan="1" colspan="1">Last Ip</th>
                                             <th rowspan="1" colspan="1">Date Added</th>
                                             <th rowspan="1" colspan="1">Group</th>
+                                            <th rowspan="1" colspan="1">Health State</th>
 									    </tr>
 								    </thead>
 								    <tbody role="alert" aria-live="polite" aria-relevant="all">

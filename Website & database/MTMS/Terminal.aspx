@@ -252,7 +252,9 @@
                                     <hr/>
                                 </div>
                                 <div class="align-right">
+                                    <asp:CheckBox id="Schedule" runat="server" Text="Schedule this command"/>
                                     <asp:Button ID="TerminalSubmitBtn" runat="server" CssClass="btn btn-large" Text="Submit" OnClick="TerminalSubmitBtn_Click"></asp:Button>
+                                    <asp:Button ID="TerminalClearBtn" runat="server" CssClass="btn btn-large" Text="Clear" OnClick="TerminalClearBtn_Click"></asp:Button>
                                 </div>
 							</div>
                         </div>

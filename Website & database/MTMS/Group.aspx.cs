@@ -12,7 +12,7 @@ using System.Net;
 
 public partial class Group : System.Web.UI.Page
 {
-    DataTable groupTerminals;
+    DataTable groupTerminals, lastHealthTest;
     string rawHTMLError = string.Empty, rawHTMLSuccess = string.Empty;
     protected void Page_Load(object sender, EventArgs e)
     {
@@ -24,13 +24,31 @@ public partial class Group : System.Web.UI.Page
     protected void PrintGroupTerminals()
     {
         string rawHTML = string.Empty;
+        double totalDays;
         for (int i = 0; i < groupTerminals.Rows.Count; i++)
         {
+            lastHealthTest = DB.Instance.GetPosLastHealthTest(Convert.ToInt32(groupTerminals.Rows[i][0]));
             rawHTML += "<tr> <td class=\"sorting_1\">";
             rawHTML += "<a href='terminal.aspx?id=" + groupTerminals.Rows[i][0] + "'>";
             rawHTML += groupTerminals.Rows[i][0] + "</a></td>";
-            for (int j = 1; j < 7; j++)
-                rawHTML += "<td>" + groupTerminals.Rows[i][j] + "</td>";
+            for (int j = 1; j < groupTerminals.Columns.Count; j++)
+            {
+                if (j == 4)
+                {
+                    totalDays = DateTime.Now.Subtract((DateTime)groupTerminals.Rows[i][j]).TotalDays;
+                    if (totalDays > 7)
+                        rawHTML += "<td style=\"background-color:#F51616; color:white;\">" + groupTerminals.Rows[i][j] + "</td>";
+                    else
+                        rawHTML += "<td style=\"background-color:#10EB14; color:white;\">" + groupTerminals.Rows[i][j] + "</td>";
+                }
+                else
+                    rawHTML += "<td>" + groupTerminals.Rows[i][j] + "</td>";
+            }
+            if (GetHealthStatus())
+                rawHTML += "<td style=\"background-color:#10EB14; color:white;\">Running</td>";
+            else
+                rawHTML += "<td style=\"background-color:#F51616; color:white;\">Error</td>";
+
             rawHTML += "</tr>";
         }
         Response.Write(rawHTML);
@@ -46,6 +64,14 @@ public partial class Group : System.Web.UI.Page
         rawHTMLSuccess = string.Empty;
     }
 
+    private bool GetHealthStatus()
+    {
+        for (int i = 1; i < lastHealthTest.Columns.Count; i++)
+            if (Convert.ToInt32(lastHealthTest.Rows[0][i]) != 0)
+                return false;
+        return true;
+    }
+
     private void ClearCheckBoxes()
     {
         foreach (Control ctrl in GroupForm.Controls)
@@ -55,6 +81,7 @@ public partial class Group : System.Web.UI.Page
                 (ctrl as CheckBox).Checked = false;
             }
         }
+        Schedule.Checked = false;
     }
     
     protected void GroupSubmitBtn_Click(object sender, EventArgs e)
@@ -123,7 +150,7 @@ public partial class Group : System.Web.UI.Page
                     else if (vendor.Equals("VeriFone"))
                         updateAppParams += update_app_apk.FileName + ";";
                 }
-                if (!DB.Instance.UpdateCommandToSend(Convert.ToInt32(oldCommand["Id"]), ongoingCommand, string.Empty, updateAppParams, string.Empty, pushFileParams, pullFileParams))
+                if (!DB.Instance.UpdateCommandToSend(Convert.ToInt32(oldCommand["Id"]), ongoingCommand, string.Empty, updateAppParams, string.Empty, pushFileParams, pullFileParams, Schedule.Checked))
                     commandSubmitted = false;
             }
 
@@ -141,4 +168,18 @@ public partial class Group : System.Web.UI.Page
         }
     }
 
+    protected void GroupClearBtn_Click(object sender, EventArgs e)
+    {
+        bool commandSubmitted = true;
+        for (int i = 0; i < groupTerminals.Rows.Count; i++)
+        {
+            if (!DB.Instance.ClearCommandToSend(groupTerminals.Rows[i][1].ToString(), false))
+                commandSubmitted = false;
+        }
+        if (!commandSubmitted)
+            rawHTMLError += "<li>" + "Database error, please contact Database adminstrator</li>";
+        else
+            rawHTMLSuccess += "<li>" + "Commands cleared sucessfully</li>";
+        ClearCheckBoxes();
+    }
 }

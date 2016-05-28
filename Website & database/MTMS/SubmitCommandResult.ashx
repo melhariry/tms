@@ -77,6 +77,12 @@ public class SubmitCommandResult : IHttpHandler {
                     commandParams = context.Request.Params["Name"].Split(',');
                     string[] appVersions = context.Request.Params["Version"].Split(',');
                     string[] appComs = context.Request.Params["Com"].Split(',');
+                    if (!DB.Instance.DeletePosAppList(context.Request.Headers["SerialNumber"]))
+                    {
+                        context.Response.StatusCode = 500;
+                        context.Response.StatusDescription = "An error occurred while deleting the app list";
+                        return;
+                    }
                     for (int i = 0; i < commandParams.Length; i++)
                     {
                         if (!DB.Instance.SubmitPosAppList(context.Request.Headers["SerialNumber"], commandParams[i], appVersions[i], appComs[i]))

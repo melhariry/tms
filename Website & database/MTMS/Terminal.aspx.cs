@@ -37,6 +37,7 @@ public partial class Terminal : System.Web.UI.Page
                 (ctrl as CheckBox).Checked = false;
             }
         }
+        Schedule.Checked = false;
     }
 
     protected void PrintStatus()
@@ -89,7 +90,10 @@ public partial class Terminal : System.Web.UI.Page
             rawHTML += "<tr>";
             for (int j = 0; j < 6; j++)
             {
-                rawHTML += "<td>" + (terminalHealthTest.Rows[i][j].ToString().Equals("0") ? "Success" : "Error") + "</td>";
+                if (terminalHealthTest.Rows[i][j].ToString().Equals("0"))
+                    rawHTML += "<td>Success</td>";
+                else
+                    rawHTML += "<td style=\"background-color:#F51616; color:white;\">Error</td>";
             }
 
             rawHTML += "<td>" + Convert.ToInt64(terminalHealthTest.Rows[i][6]) / 1024 +"</td>";
@@ -255,7 +259,7 @@ public partial class Terminal : System.Web.UI.Page
                 updateAppParams += update_app_src.FileName + ";";
 
 
-            if (!DB.Instance.UpdateCommandToSend(Convert.ToInt32(commandToSend["Id"]), ongoingCommand, string.Empty, updateAppParams, deleteFileParams, pushFileParams, pullFileParams))
+            if (!DB.Instance.UpdateCommandToSend(Convert.ToInt32(commandToSend["Id"]), ongoingCommand, string.Empty, updateAppParams, deleteFileParams, pushFileParams, pullFileParams, Schedule.Checked))
                 rawHTMLError += "<li>" + "Database error, please contact Database adminstrator</li>";
             else
                 rawHTMLSuccess += "<li>" + "Commands submitted successfully</li>";
@@ -268,5 +272,13 @@ public partial class Terminal : System.Web.UI.Page
             Response.StatusDescription = ex.Message;
             Response.Write(ex.Message);
         }
+    }
+    protected void TerminalClearBtn_Click(object sender, EventArgs e)
+    {
+        if (!DB.Instance.ClearCommandToSend(DB.Instance.GetTerminalInfo(posId)["SerialNumber"].ToString(), false))
+            rawHTMLError += "<li>" + "Database error, please contact Database adminstrator</li>";
+        else
+            rawHTMLSuccess += "<li>" + "Commands cleared successfully</li>";
+        ClearCheckBoxes();
     }
 }

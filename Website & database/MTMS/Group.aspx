@@ -72,8 +72,8 @@
                                             <th rowspan="1" colspan="1">Vendor</th>
                                             <th rowspan="1" colspan="1">Model</th>
                                             <th rowspan="1" colspan="1">Last Online</th>
-                                            <th rowspan="1" colspan="1">Last Ip</th>
                                             <th rowspan="1" colspan="1">Date Added</th>
+                                            <th rowspan="1" colspan="1">Health State</th>
 									    </tr>
 								    </thead>
 								        <tbody role="alert" aria-live="polite" aria-relevant="all">
@@ -148,7 +148,9 @@
                                     <hr/>
                                 </div>
                                 <div class="align-right">
+                                    <asp:CheckBox id="Schedule" runat="server" Text="Schedule this command"/>
                                     <asp:Button ID="GroupSubmitBtn" runat="server" CssClass="btn btn-large" Text="Submit" OnClick="GroupSubmitBtn_Click"></asp:Button>
+                                    <asp:Button ID="GroupClearBtn" runat="server" CssClass="btn btn-large" Text="Clear" OnClick="GroupClearBtn_Click"></asp:Button>
                                 </div>
 							</div>
                         </div>
