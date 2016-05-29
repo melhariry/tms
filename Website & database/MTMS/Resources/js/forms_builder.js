@@ -65,4 +65,26 @@
             event.preventDefault();
         }
     });
+
+    $("#SelectAllGroups").change(function () {
+        $('input:checkbox').each(function() {
+            $(this).prop('checked', $("#SelectAllGroups").is(':checked'));
+        });
+    });
+    $("#SelectAllOuters").change(function () {
+        $('input:checkbox').each(function () {
+            $(this).prop('checked', $("#SelectAllOuters").is(':checked'));
+        });
+    });
+    $(".acidjs-css3-treeview").delegate("label input:checkbox", "change", function () {
+        var
+            checkbox = $(this),
+            nestedList = checkbox.parent().next().next(),
+            selectNestedListCheckbox = nestedList.find("label:not([for]) input:checkbox");
+
+        if (checkbox.is(":checked")) {
+            return selectNestedListCheckbox.prop("checked", true);
+        }
+        selectNestedListCheckbox.prop("checked", false);
+    });
 });

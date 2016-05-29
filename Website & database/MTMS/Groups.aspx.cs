@@ -12,10 +12,14 @@ public partial class groups : System.Web.UI.Page
     string rawHTMLError = string.Empty, rawHTMLSuccess = string.Empty;
     protected void Page_Load(object sender, EventArgs e)
     {
+        allGroups = DB.Instance.GetPosGroups();
         if (!IsPostBack)
+        {
             if (Session["id"] == null)
                 Response.Redirect("~/Login.aspx");
-        allGroups = DB.Instance.GetPosGroups();
+            GroupsRep.DataSource = allGroups;
+            GroupsRep.DataBind();
+        }
     }
     protected void PrintGroups()
     {
@@ -55,7 +59,7 @@ public partial class groups : System.Web.UI.Page
         string contact = ContactPersonTxt.Text;
         if (!CheckGroupDetails())
         {
-            rawHTMLError = NewNameTxt.Text + " already exists";
+            rawHTMLError = NewNameTxt.Text + " already exists with the same branch";
             return;
         }
         if (contact.Equals(string.Empty))
@@ -65,7 +69,8 @@ public partial class groups : System.Web.UI.Page
             rawHTMLSuccess = NewNameTxt.Text + " created successfully";
         else
             rawHTMLError = "Group was not created, please contact database admin";
-        allGroups = DB.Instance.GetPosGroups();
+        GroupsRep.DataSource = DB.Instance.GetPosGroups();
+        GroupsRep.DataBind();
         ClearTextBoxes();
     }
 
@@ -75,5 +80,31 @@ public partial class groups : System.Web.UI.Page
             if (NewNameTxt.Text.Equals(allGroups.Rows[i][1]) && NewBranchTxt.Text.Equals(allGroups.Rows[i][2]))
                 return false;
         return true;
+    }
+
+    protected void DeleteGroupBtn_Click(object sender, EventArgs e)
+    {
+        int groupId;
+        for (int i = 0; i < GroupsRep.Items.Count; i++)
+        {
+            if ((GroupsRep.Items[i].Controls[1] as CheckBox).Checked)
+            {
+                groupId = Convert.ToInt32(allGroups.Rows[i][0]);
+                if (groupId == 1)
+                    rawHTMLError += "<li>Cannot delete the 'unassigned group'</li>";
+                else
+                {
+                    DB.Instance.UpdateGroupTerminalsGroup(groupId, 1);
+                    DB.Instance.DeleteGroup(groupId);
+                    rawHTMLSuccess += "<li>"+ allGroups.Rows[i][1] +" deleted successfully</li>";
+                }
+            }
+        }
+        for (int i = 0; i < GroupsRep.Items.Count; i++)
+        {
+            (GroupsRep.Items[i].Controls[1] as CheckBox).Checked = false;
+        }
+        GroupsRep.DataSource = DB.Instance.GetPosGroups();
+        GroupsRep.DataBind();
     }
 }

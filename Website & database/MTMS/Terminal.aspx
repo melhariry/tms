@@ -5,6 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="shortcut icon" type="image/x-icon" href="Resources/img/favicon.ico" />
 	<link type="text/css" href="Resources/css/bootstrap.min.css" rel="stylesheet"/>
 	<link type="text/css" href="Resources/css/bootstrap-responsive.min.css" rel="stylesheet"/>
 	<link type="text/css" href="Resources/css/theme.css" rel="stylesheet"/>
@@ -130,20 +131,54 @@
                                         <h3>
                                             File List</h3>
                                     </div>
-                                    <div class="module-body table">
-                                        <table id="fileList" border="0" class="datatable-1 table table-bordered table-striped  display dataTable"  aria-describedby="DataTables_Table_0_info" style="width: 100%;">
-								            <thead>
-									        <tr>
-                                                <th rowspan="1" colspan="1">Full Path</th>
-                                                <th rowspan="1" colspan="1">Size (Bytes)</th>
-                                                <th rowspan="1" colspan="1">Accessibility Level</th>
-									        </tr>
-								        </thead>
-								            <tbody role="alert" aria-live="polite" aria-relevant="all">
-                                                <% PrintTerminalFileList(); %>
-								            </tbody>
-                                        </table>
-							        </div>
+                                    <div class="module-body">
+                                        <h5>Select files you want to delete</h5>
+                                        <div class="acidjs-css3-treeview">
+	                                    <ul>
+		                                    <li>
+			                                    <input type="checkbox" id="node-0" checked="checked" /><label><input type="checkbox" /><span></span></label><label class="folder" for="node-0">Root</label>
+			                                    <ul>
+				                                    <li>
+					                                    <input type="checkbox" id="node-0-0" checked="checked" /><label><input type="checkbox" /><span></span></label><label class="folder" for="node-0-0">Public</label>
+					                                    <ul>
+						                                    <li>
+							                                    <input type="checkbox" id="node-0-0-0" checked="checked" /><label><input type="checkbox" /><span></span></label><label class="folder" for="node-0-0-0">MTMS</label>
+							                                    <ul>
+                                                                    <asp:Repeater runat="server" ID="MTMSListRep">
+                                                                        <ItemTemplate>
+								                                    <li>
+									                                    <label><asp:CheckBox runat="server" /><span></span></label><label class="file" ><%# Eval("Name") %> (<%# Eval("SizeInBytes") %> Bytes)</label>
+								                                    </li>
+                                                                        </ItemTemplate>
+                                                                    </asp:Repeater>
+							                                    </ul>
+						                                    </li>
+                                                            <asp:Repeater runat="server" ID="pubListRep">
+                                                                <ItemTemplate>
+								                            <li>
+									                            <label><asp:CheckBox runat="server" /><span></span></label><label class="file" ><%# Eval("Name") %> (<%# Eval("SizeInBytes") %> Bytes)</label>
+								                            </li>
+                                                                </ItemTemplate>
+                                                            </asp:Repeater>
+					                                    </ul>
+				                                    </li>
+				                                    <li>
+					                                    <input type="checkbox" id="node-0-1" checked="checked"/><label><input type="checkbox" /><span></span></label><label class="folder" for="node-0-1">Private</label>
+					                                    <ul>
+						                                    <asp:Repeater runat="server" ID="priListRep">
+                                                                <ItemTemplate>
+								                            <li>
+									                            <label><asp:CheckBox runat="server" /><span></span></label><label class="file" ><%# Eval("Name") %> (<%# Eval("SizeInBytes") %> Bytes)</label>
+								                            </li>
+                                                                </ItemTemplate>
+                                                            </asp:Repeater>
+					                                    </ul>
+				                                    </li>
+			                                    </ul>
+		                                    </li>
+	                                    </ul>
+                                    </div>
+                                    </div>
                                 </div>
                                 <div class="module">
                                     <div class="module-head">
@@ -253,7 +288,7 @@
                                 </div>
                                 <div class="align-right">
                                     <asp:CheckBox id="Schedule" runat="server" Text="Schedule this command"/>
-                                    <asp:Button ID="TerminalSubmitBtn" runat="server" CssClass="btn btn-large" Text="Submit" OnClick="TerminalSubmitBtn_Click"></asp:Button>
+                                    <asp:Button ID="TerminalSubmitBtn" runat="server" CssClass="btn btn-primary btn-large" Text="Submit" OnClick="TerminalSubmitBtn_Click"></asp:Button>
                                     <asp:Button ID="TerminalClearBtn" runat="server" CssClass="btn btn-large" Text="Clear" OnClick="TerminalClearBtn_Click"></asp:Button>
                                 </div>
 							</div>

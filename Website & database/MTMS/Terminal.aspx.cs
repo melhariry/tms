@@ -11,21 +11,33 @@ using System.Net;
 
 public partial class Terminal : System.Web.UI.Page
 {
-    DataTable terminalHistory, terminalHealthTest, terminalAppList, terminalFileList;
+    DataTable terminalHistory, terminalHealthTest, terminalAppList, terminalFileList, priFiles, pubFiles, mtmsFiles;
     DataRow commandToSend;
     int posId;
     string rawHTMLError = string.Empty, rawHTMLSuccess = string.Empty;
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack)
-            if (Session["id"] == null)
-                Response.Redirect("~/Login.aspx");
         posId = Convert.ToInt32(Context.Request.Params["id"]);
         terminalHistory = DB.Instance.GetPosCommandLog(posId);
         terminalHealthTest = DB.Instance.GetPosHealthTest(posId);
         terminalAppList = DB.Instance.GetPosAppList(posId);
         terminalFileList = DB.Instance.GetPosFileList(posId);
         commandToSend = DB.Instance.GetCommandToSend(posId);
+        mtmsFiles = terminalFileList.Select("ParentFolder='MTMS'").Length == 0 ? new DataTable() : terminalFileList.Select("ParentFolder='MTMS'").CopyToDataTable();
+        pubFiles = terminalFileList.Select("ParentFolder='pub'").Length == 0 ? new DataTable() : terminalFileList.Select("ParentFolder='pub'").CopyToDataTable();
+        priFiles = terminalFileList.Select("ParentFolder='pri'").Length == 0 ? new DataTable() : terminalFileList.Select("ParentFolder='pri'").CopyToDataTable();
+        Schedule.Checked = Convert.ToBoolean(commandToSend["isScheduled"]);
+        if (!IsPostBack)
+        {
+            if (Session["id"] == null)
+                Response.Redirect("~/Login.aspx");
+            MTMSListRep.DataSource = mtmsFiles;
+            MTMSListRep.DataBind();
+            pubListRep.DataSource = pubFiles;
+            pubListRep.DataBind();
+            priListRep.DataSource = priFiles;
+            priListRep.DataBind();
+        }
     }
 
     private void ClearCheckBoxes()
@@ -188,6 +200,23 @@ public partial class Terminal : System.Web.UI.Page
             Response.Write(rawHTML);
         }
     }
+
+    private string FormatDeleteParams()
+    {
+        string param = string.Empty;
+        for (int i = 0; i < MTMSListRep.Items.Count; i++)
+            if ((MTMSListRep.Items[i].Controls[1] as CheckBox).Checked)
+                param += "pub/MTMS/" + mtmsFiles.Rows[i][0] + ";";
+
+        for (int i = 0; i < pubListRep.Items.Count; i++)
+            if ((pubListRep.Items[i].Controls[1] as CheckBox).Checked)
+                param += "pub/" + pubFiles.Rows[i][0] + ";";
+
+        for (int i = 0; i < priListRep.Items.Count; i++)
+            if ((priListRep.Items[i].Controls[1] as CheckBox).Checked)
+                param += "pri/" + priFiles.Rows[i][0] + ";";
+        return param;
+    }
     protected void TerminalSubmitBtn_Click(object sender, EventArgs e)
     {
         //TODO: Handle delete files, modify exception handling
@@ -253,11 +282,13 @@ public partial class Terminal : System.Web.UI.Page
                     pushFileParams += "pub/trsc_configuration.txt;";
             }
             if (PULL_FILE.Checked)
-                pullFileParams += pull_file_src.FileName + ";";
+                pullFileParams += "pub/MTMS/" + pull_file_src.FileName + ";";
 
             if (UPDATE_APP.Checked)
                 updateAppParams += update_app_src.FileName + ";";
 
+            if (DELETE_FILE.Checked)
+                deleteFileParams += FormatDeleteParams();
 
             if (!DB.Instance.UpdateCommandToSend(Convert.ToInt32(commandToSend["Id"]), ongoingCommand, string.Empty, updateAppParams, deleteFileParams, pushFileParams, pullFileParams, Schedule.Checked))
                 rawHTMLError += "<li>" + "Database error, please contact Database adminstrator</li>";

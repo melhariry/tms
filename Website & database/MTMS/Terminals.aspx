@@ -5,6 +5,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="shortcut icon" type="image/x-icon" href="Resources/img/favicon.ico" />
 	<link type="text/css" href="Resources/css/bootstrap.min.css" rel="stylesheet"/>
 	<link type="text/css" href="Resources/css/bootstrap-responsive.min.css" rel="stylesheet"/>
 	<link type="text/css" href="Resources/css/theme.css" rel="stylesheet"/>

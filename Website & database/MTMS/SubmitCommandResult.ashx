@@ -63,6 +63,12 @@ public class SubmitCommandResult : IHttpHandler {
                     commandParams = context.Request.Params["Name"].Split(',');
                     string[] parentFolders = context.Request.Params["Parent"].Split(',');
                     string[] fileSizes = context.Request.Params["Size"].Split(',');
+                    if (!DB.Instance.DeletePosFileList(context.Request.Headers["SerialNumber"]))
+                    {
+                        context.Response.StatusCode = 500;
+                        context.Response.StatusDescription = "An error occurred while deleting the file list";
+                        return;
+                    }
                     for (int i = 0; i < commandParams.Length; i++)
                     {
                         if (!DB.Instance.SubmitPosFileList(context.Request.Headers["SerialNumber"], commandParams[i], Convert.ToInt64(fileSizes[i]), parentFolders[i]))

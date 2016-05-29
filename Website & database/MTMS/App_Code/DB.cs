@@ -752,4 +752,194 @@ public sealed class DB
             Conn.Close();
         }
     }
+
+    public bool UpdateGroupTerminalsGroup(int oldGroupId, int newGroupId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("UpdateGroupTerminalsGroup", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@OldGroupId", oldGroupId);
+            cmd.Parameters.AddWithValue("@NewGroupId", newGroupId);
+            SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            rowCount.Direction = ParameterDirection.ReturnValue;
+            Conn.Open();
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+            if (Convert.ToInt32(rowCount.Value) == 1)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
+
+    public bool UpdateTerminalGroup(int posId, int newGroupId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("UpdateTerminalGroup", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            cmd.Parameters.AddWithValue("@PosId", posId);
+            cmd.Parameters.AddWithValue("@NewGroupId", newGroupId);
+            SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            rowCount.Direction = ParameterDirection.ReturnValue;
+            Conn.Open();
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+            if (Convert.ToInt32(rowCount.Value) == 1)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
+    public bool DeleteGroup(int groupId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("DeleteGroup", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@GroupId", groupId);
+            SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            rowCount.Direction = ParameterDirection.ReturnValue;
+            Conn.Open();
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+            if (Int32.Parse(rowCount.Value.ToString()) == 1)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
+
+    public DataTable GetOuterTerminals(int groupId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("GetOuterTerminals", Conn);
+            cmd.Parameters.AddWithValue("@GroupId", groupId);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            return table;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
+
+    public bool DeletePosFileList(string serialNumber)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("DeletePosFileList", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@SerialNumber", serialNumber);
+            SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            rowCount.Direction = ParameterDirection.ReturnValue;
+            Conn.Open();
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+            if (Int32.Parse(rowCount.Value.ToString()) > 0)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
+    public DataRow GetGroupInfo(int groupId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("GetGroupInfo", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@GroupId", groupId);
+            Conn.Open();
+            adapter.Fill(table);
+            Conn.Close();
+            DataRow row = null;
+            if (table.Rows.Count > 0)
+                row = table.Rows[0];
+            return row;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
+
+    public int UpdateGroup(int groupId, string name, string branch, string contactPerson, string contactNumber)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("UpdatePosGroup", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@GroupId", groupId);
+            cmd.Parameters.AddWithValue("@Name", name);
+            cmd.Parameters.AddWithValue("@Branch", branch);
+            cmd.Parameters.AddWithValue("@ContactPerson", contactPerson);
+            cmd.Parameters.AddWithValue("@ContactNumber", contactNumber);
+            SqlParameter Id = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            Id.Direction = ParameterDirection.ReturnValue;
+            Conn.Open();
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+            return Int32.Parse((Id.Value.ToString()));
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
 }

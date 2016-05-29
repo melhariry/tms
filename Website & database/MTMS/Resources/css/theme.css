@@ -1694,3 +1694,119 @@ filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff5f5f5', end
 	border-radius: 0 0 3px 0
 }
 @media(max-width:767px){body{padding:0!important}.wrapper{padding:20px 15px}}
+
+.acidjs-css3-treeview,
+.acidjs-css3-treeview *
+{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+ 
+.acidjs-css3-treeview label[for]::before,
+.acidjs-css3-treeview label span::before
+{
+    content: "\25b6";
+    display: inline-block;
+    margin: 2px 0 0;
+    width: 13px;
+    height: 13px;
+    vertical-align: top;
+    text-align: center;
+    color: #e74c3c;
+    font-size: 8px;
+    line-height: 13px;
+}
+ 
+.acidjs-css3-treeview li ul
+{
+    margin: 0 0 0 22px;
+}
+ 
+.acidjs-css3-treeview *
+{
+    vertical-align: middle;
+}
+ 
+.acidjs-css3-treeview
+{
+    font: normal 11px/16px "Segoe UI", Arial, Sans-serif;
+}
+ 
+.acidjs-css3-treeview li
+{
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+ 
+.acidjs-css3-treeview input[type="checkbox"]
+{
+    display: none;
+}
+ 
+.acidjs-css3-treeview label
+{
+    display: inline !important;
+    cursor: pointer;
+}
+
+.acidjs-css3-treeview label[for].folder
+{
+    background: url("../img/folder.png") no-repeat;
+    padding-left: 6px;
+}
+
+.acidjs-css3-treeview label.file
+{
+    background: url("../img/file.png") no-repeat;
+    padding-left: 20px;
+}
+ 
+.acidjs-css3-treeview label[for]::before
+{
+    -webkit-transform: translatex(-40px);
+    -moz-transform: translatex(-40px);
+    -ms-transform: translatex(-40px);
+    -o-transform: translatex(-40px);
+    transform: translatex(-40px);
+}
+ 
+.acidjs-css3-treeview label span::before
+{
+    -webkit-transform: translatex(16px);
+    -moz-transform: translatex(16px);
+    -ms-transform: translatex(16px);
+    -o-transform: translatex(16px);
+    transform: translatex(16px);
+}
+ 
+.acidjs-css3-treeview input[type="checkbox"][id]:checked ~ label[for]::before
+{
+    content: "\25bc";
+}
+ 
+.acidjs-css3-treeview input[type="checkbox"][id]:not(:checked) ~ ul
+{
+    display: none;
+}
+ 
+.acidjs-css3-treeview label:not([for])
+{
+    margin: 0 20px 0 0;
+}
+ 
+.acidjs-css3-treeview label span::before
+{
+    content: "";
+    border: solid 1px #1375b3;
+    color: #1375b3;
+    opacity: .50;
+}
+ 
+.acidjs-css3-treeview label input:checked + span::before
+{
+    content: "\2714";
+    box-shadow: 0 0 2px rgba(0, 0, 0, .25) inset;
+    opacity: 1;
+}

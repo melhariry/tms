@@ -12,14 +12,25 @@ using System.Net;
 
 public partial class Group : System.Web.UI.Page
 {
-    DataTable groupTerminals, lastHealthTest;
+    DataTable groupTerminals, outerTerminals, lastHealthTest;
+    DataRow groupInfo;
     string rawHTMLError = string.Empty, rawHTMLSuccess = string.Empty;
     protected void Page_Load(object sender, EventArgs e)
     {
-        if (!IsPostBack)
-            if(Session["id"] == null)
-                Response.Redirect("~/Login.aspx");
         groupTerminals = DB.Instance.GetGroupTerminals(Convert.ToInt32(Context.Request.Params["id"]));
+        outerTerminals = DB.Instance.GetOuterTerminals(Convert.ToInt32(Context.Request.Params["id"]));
+        groupInfo = DB.Instance.GetGroupInfo(Convert.ToInt32(Context.Request.Params["id"]));
+        if (!IsPostBack)
+        {
+            if (Session["id"] == null)
+                Response.Redirect("~/Login.aspx");
+            OutersRep.DataSource = outerTerminals;
+            OutersRep.DataBind();
+            NewNameTxt.Text = groupInfo["Name"].ToString();
+            NewBranchTxt.Text = groupInfo["Branch"].ToString();
+            ContactNumTxt.Text = groupInfo["ContactNumber"].ToString();
+            ContactPersonTxt.Text = groupInfo["ContactPerson"].ToString();
+        }
     }
     protected void PrintGroupTerminals()
     {
@@ -181,5 +192,36 @@ public partial class Group : System.Web.UI.Page
         else
             rawHTMLSuccess += "<li>" + "Commands cleared sucessfully</li>";
         ClearCheckBoxes();
+    }
+    protected void MoveOuterToGroup_Click(object sender, EventArgs e)
+    {
+        for (int i = 0; i < OutersRep.Items.Count; i++)
+        {
+            if ((OutersRep.Items[i].Controls[1] as CheckBox).Checked)
+            {
+                if (DB.Instance.UpdateTerminalGroup(Convert.ToInt32(outerTerminals.Rows[i][0]), Convert.ToInt32(Context.Request.Params["id"])))
+                    rawHTMLSuccess += "<li>" + outerTerminals.Rows[i][0] + " added successfully</li>";
+                else
+                    rawHTMLError += "<li>Database error, please contact database admin</li>";
+                (OutersRep.Items[i].Controls[1] as CheckBox).Checked = false;
+            }
+        }
+        SelectAllOuters.Checked = false;
+        groupTerminals = DB.Instance.GetGroupTerminals(Convert.ToInt32(Context.Request.Params["id"]));
+        OutersRep.DataSource = DB.Instance.GetOuterTerminals(Convert.ToInt32(Context.Request.Params["id"]));
+        OutersRep.DataBind();
+    }
+    protected void EditGroupBtn_Click(object sender, EventArgs e)
+    {
+        string contact = ContactPersonTxt.Text;
+        int status = DB.Instance.UpdateGroup(Convert.ToInt32(Context.Request.Params["id"]), NewNameTxt.Text, NewBranchTxt.Text, contact, ContactNumTxt.Text);
+        if (contact.Equals(string.Empty))
+            contact = "N/A";
+        if (status == -1)
+            rawHTMLError += NewNameTxt.Text + " already exists with the same branch";
+        else if (status == 0)
+            rawHTMLError = "Group was not created, please contact database admin";
+        else
+            rawHTMLSuccess = NewNameTxt.Text + " edited successfully";
     }
 }
