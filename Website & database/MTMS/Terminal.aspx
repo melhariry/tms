@@ -132,52 +132,51 @@
                                             File List</h3>
                                     </div>
                                     <div class="module-body">
-                                        <h5>Select files you want to delete</h5>
-                                        <div class="acidjs-css3-treeview">
-	                                    <ul>
-		                                    <li>
-			                                    <input type="checkbox" id="node-0" checked="checked" /><label><input type="checkbox" /><span></span></label><label class="folder" for="node-0">Root</label>
-			                                    <ul>
-				                                    <li>
-					                                    <input type="checkbox" id="node-0-0" checked="checked" /><label><input type="checkbox" /><span></span></label><label class="folder" for="node-0-0">Public</label>
-					                                    <ul>
-						                                    <li>
-							                                    <input type="checkbox" id="node-0-0-0" checked="checked" /><label><input type="checkbox" /><span></span></label><label class="folder" for="node-0-0-0">MTMS</label>
-							                                    <ul>
-                                                                    <asp:Repeater runat="server" ID="MTMSListRep">
-                                                                        <ItemTemplate>
-								                                    <li>
-									                                    <label><asp:CheckBox runat="server" /><span></span></label><label class="file" ><%# Eval("Name") %> (<%# Eval("SizeInBytes") %> Bytes)</label>
-								                                    </li>
-                                                                        </ItemTemplate>
-                                                                    </asp:Repeater>
-							                                    </ul>
-						                                    </li>
-                                                            <asp:Repeater runat="server" ID="pubListRep">
-                                                                <ItemTemplate>
-								                            <li>
-									                            <label><asp:CheckBox runat="server" /><span></span></label><label class="file" ><%# Eval("Name") %> (<%# Eval("SizeInBytes") %> Bytes)</label>
-								                            </li>
-                                                                </ItemTemplate>
-                                                            </asp:Repeater>
-					                                    </ul>
-				                                    </li>
-				                                    <li>
-					                                    <input type="checkbox" id="node-0-1" checked="checked"/><label><input type="checkbox" /><span></span></label><label class="folder" for="node-0-1">Private</label>
-					                                    <ul>
-						                                    <asp:Repeater runat="server" ID="priListRep">
-                                                                <ItemTemplate>
-								                            <li>
-									                            <label><asp:CheckBox runat="server" /><span></span></label><label class="file" ><%# Eval("Name") %> (<%# Eval("SizeInBytes") %> Bytes)</label>
-								                            </li>
-                                                                </ItemTemplate>
-                                                            </asp:Repeater>
-					                                    </ul>
-				                                    </li>
-			                                    </ul>
-		                                    </li>
-	                                    </ul>
-                                    </div>
+                                        <div class="treeview-nocheckbox">
+	                                        <ul>
+		                                        <li>
+			                                        <input type="checkbox" id="node-0" checked="checked" /><label class="folder" for="node-0">Root</label>
+			                                        <ul>
+				                                        <li>
+					                                        <input type="checkbox" id="node-0-0" checked="checked" /><label class="folder" for="node-0-0">Public</label>
+					                                        <ul>
+						                                        <li>
+							                                        <input type="checkbox" id="node-0-0-0" checked="checked" /><label class="folder" for="node-0-0-0">MTMS</label>
+							                                        <ul>
+                                                                        <asp:Repeater runat="server" ID="MTMSFileListRep">
+                                                                            <ItemTemplate>
+								                                        <li>
+									                                        <label class="file" ><%# Eval("Name") %> (<%# Eval("SizeInBytes") %> Bytes)</label>
+								                                        </li>
+                                                                            </ItemTemplate>
+                                                                        </asp:Repeater>
+							                                        </ul>
+						                                        </li>
+                                                                <asp:Repeater runat="server" ID="pubFileListRep">
+                                                                    <ItemTemplate>
+								                                <li>
+									                                <label class="file" ><%# Eval("Name") %> (<%# Eval("SizeInBytes") %> Bytes)</label>
+								                                </li>
+                                                                    </ItemTemplate>
+                                                                </asp:Repeater>
+					                                        </ul>
+				                                        </li>
+				                                        <li>
+					                                        <input type="checkbox" id="node-0-1" checked="checked"/><label class="folder" for="node-0-1">Private</label>
+					                                        <ul>
+						                                        <asp:Repeater runat="server" ID="priFileListRep">
+                                                                    <ItemTemplate>
+								                                <li>
+									                                <label class="file" ><%# Eval("Name") %> (<%# Eval("SizeInBytes") %> Bytes)</label>
+								                                </li>
+                                                                    </ItemTemplate>
+                                                                </asp:Repeater>
+					                                        </ul>
+				                                        </li>
+			                                        </ul>
+		                                        </li>
+	                                        </ul>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="module">
@@ -285,6 +284,55 @@
                                             Transaction App conf file</h3>
                                     </div>
                                     <hr/>
+                                </div>
+                                <div id='delete_file_params' hidden="hidden">
+                                    <h5>Select files you want to delete</h5>
+                                    <div class="treeview">
+	                                    <ul>
+		                                    <li>
+			                                    <input type="checkbox" id="node-0" checked="checked" /><label><input type="checkbox" /><span></span></label><label class="folder" for="node-0">Root</label>
+			                                    <ul>
+				                                    <li>
+					                                    <input type="checkbox" id="node-0-0" checked="checked" /><label><input type="checkbox" /><span></span></label><label class="folder" for="node-0-0">Public</label>
+					                                    <ul>
+						                                    <li>
+							                                    <input type="checkbox" id="node-0-0-0" checked="checked" /><label><input type="checkbox" /><span></span></label><label class="folder" for="node-0-0-0">MTMS</label>
+							                                    <ul>
+                                                                    <asp:Repeater runat="server" ID="MTMSDeleteFileRep">
+                                                                        <ItemTemplate>
+								                                    <li>
+									                                    <label><asp:CheckBox runat="server" /><span></span></label><label class="file" ><%# Eval("Name") %> (<%# Eval("SizeInBytes") %> Bytes)</label>
+								                                    </li>
+                                                                        </ItemTemplate>
+                                                                    </asp:Repeater>
+							                                    </ul>
+						                                    </li>
+                                                            <asp:Repeater runat="server" ID="pubDeleteFileRep">
+                                                                <ItemTemplate>
+								                            <li>
+									                            <label><asp:CheckBox runat="server" /><span></span></label><label class="file" ><%# Eval("Name") %> (<%# Eval("SizeInBytes") %> Bytes)</label>
+								                            </li>
+                                                                </ItemTemplate>
+                                                            </asp:Repeater>
+					                                    </ul>
+				                                    </li>
+				                                    <li>
+					                                    <input type="checkbox" id="node-0-1" checked="checked"/><label><input type="checkbox" /><span></span></label><label class="folder" for="node-0-1">Private</label>
+					                                    <ul>
+						                                    <asp:Repeater runat="server" ID="priDeleteFileRep">
+                                                                <ItemTemplate>
+								                            <li>
+									                            <label><asp:CheckBox runat="server" /><span></span></label><label class="file" ><%# Eval("Name") %> (<%# Eval("SizeInBytes") %> Bytes)</label>
+								                            </li>
+                                                                </ItemTemplate>
+                                                            </asp:Repeater>
+					                                    </ul>
+				                                    </li>
+			                                    </ul>
+		                                    </li>
+	                                    </ul>
+                                    </div>
+                                    <hr />
                                 </div>
                                 <div class="align-right">
                                     <asp:CheckBox id="Schedule" runat="server" Text="Schedule this command"/>

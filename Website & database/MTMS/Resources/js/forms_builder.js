@@ -23,6 +23,14 @@
             $("#push_file_params").hide();
         }
     });
+    $("#DELETE_FILE").click(function () {
+        if ($("#DELETE_FILE").is(':checked')) {
+            $("#delete_file_params").show();
+        }
+        else {
+            $("#delete_file_params").hide();
+        }
+    });
     $("#GroupSubmitBtn").click(function (event) {
         if ($("#UPDATE_APP").is(':checked')) {
             if ($("#update_app_apk").get(0).files.length == 0 && $("#update_app_cab").get(0).files.length == 0) {
@@ -76,7 +84,18 @@
             $(this).prop('checked', $("#SelectAllOuters").is(':checked'));
         });
     });
-    $(".acidjs-css3-treeview").delegate("label input:checkbox", "change", function () {
+    $(".treeview").delegate("label input:checkbox", "change", function () {
+        var
+            checkbox = $(this),
+            nestedList = checkbox.parent().next().next(),
+            selectNestedListCheckbox = nestedList.find("label:not([for]) input:checkbox");
+
+        if (checkbox.is(":checked")) {
+            return selectNestedListCheckbox.prop("checked", true);
+        }
+        selectNestedListCheckbox.prop("checked", false);
+    });
+    $(".treeview-nocheckbox").delegate("label input:checkbox", "change", function () {
         var
             checkbox = $(this),
             nestedList = checkbox.parent().next().next(),

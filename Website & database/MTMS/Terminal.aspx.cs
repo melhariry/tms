@@ -31,12 +31,18 @@ public partial class Terminal : System.Web.UI.Page
         {
             if (Session["id"] == null)
                 Response.Redirect("~/Login.aspx");
-            MTMSListRep.DataSource = mtmsFiles;
-            MTMSListRep.DataBind();
-            pubListRep.DataSource = pubFiles;
-            pubListRep.DataBind();
-            priListRep.DataSource = priFiles;
-            priListRep.DataBind();
+            MTMSFileListRep.DataSource = mtmsFiles;
+            MTMSFileListRep.DataBind();
+            pubFileListRep.DataSource = pubFiles;
+            pubFileListRep.DataBind();
+            priFileListRep.DataSource = priFiles;
+            priFileListRep.DataBind();
+            MTMSDeleteFileRep.DataSource = mtmsFiles;
+            MTMSDeleteFileRep.DataBind();
+            pubDeleteFileRep.DataSource = pubFiles;
+            pubDeleteFileRep.DataBind();
+            priDeleteFileRep.DataSource = priFiles;
+            priDeleteFileRep.DataBind();
         }
     }
 
@@ -204,16 +210,16 @@ public partial class Terminal : System.Web.UI.Page
     private string FormatDeleteParams()
     {
         string param = string.Empty;
-        for (int i = 0; i < MTMSListRep.Items.Count; i++)
-            if ((MTMSListRep.Items[i].Controls[1] as CheckBox).Checked)
+        for (int i = 0; i < MTMSDeleteFileRep.Items.Count; i++)
+            if ((MTMSDeleteFileRep.Items[i].Controls[1] as CheckBox).Checked)
                 param += "pub/MTMS/" + mtmsFiles.Rows[i][0] + ";";
 
-        for (int i = 0; i < pubListRep.Items.Count; i++)
-            if ((pubListRep.Items[i].Controls[1] as CheckBox).Checked)
+        for (int i = 0; i < pubDeleteFileRep.Items.Count; i++)
+            if ((pubDeleteFileRep.Items[i].Controls[1] as CheckBox).Checked)
                 param += "pub/" + pubFiles.Rows[i][0] + ";";
 
-        for (int i = 0; i < priListRep.Items.Count; i++)
-            if ((priListRep.Items[i].Controls[1] as CheckBox).Checked)
+        for (int i = 0; i < priDeleteFileRep.Items.Count; i++)
+            if ((priDeleteFileRep.Items[i].Controls[1] as CheckBox).Checked)
                 param += "pri/" + priFiles.Rows[i][0] + ";";
         return param;
     }
