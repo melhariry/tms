@@ -335,7 +335,7 @@
                                     <hr />
                                 </div>
                                 <div class="align-right">
-                                    <asp:CheckBox id="Schedule" runat="server" Text="Schedule this command"/>
+                                    <label><asp:CheckBox id="Schedule" runat="server"/>Schedule this command</label>
                                     <asp:Button ID="TerminalSubmitBtn" runat="server" CssClass="btn btn-primary btn-large" Text="Submit" OnClick="TerminalSubmitBtn_Click"></asp:Button>
                                     <asp:Button ID="TerminalClearBtn" runat="server" CssClass="btn btn-large" Text="Clear" OnClick="TerminalClearBtn_Click"></asp:Button>
                                 </div>

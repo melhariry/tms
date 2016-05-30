@@ -187,7 +187,7 @@
                                     <hr/>
                                 </div>
                                 <div class="align-right">
-                                    <asp:CheckBox id="Schedule" runat="server" Text="Schedule this command"/>
+                                    <label><asp:CheckBox id="Schedule" runat="server"/>Schedule this command</label>
                                     <asp:Button ID="GroupSubmitBtn" runat="server" CssClass="btn btn-primary btn-large" Text="Submit" OnClick="GroupSubmitBtn_Click"></asp:Button>
                                     <asp:Button ID="GroupClearBtn" runat="server" CssClass="btn btn-large" Text="Clear" OnClick="GroupClearBtn_Click"></asp:Button>
                                 </div>
