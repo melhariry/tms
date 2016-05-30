@@ -10,6 +10,7 @@
 	<link type="text/css" href="Resources/css/bootstrap-responsive.min.css" rel="stylesheet"/>
 	<link type="text/css" href="Resources/css/theme.css" rel="stylesheet"/>
 	<link type="text/css" href="Resources/css/font-awesome.css" rel="stylesheet"/>
+    <link type="text/css" href="Resources/css/font-awesome43.css" rel="stylesheet"/>
 	<link type="text/css" href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600' rel='stylesheet'/>
     <title>MTMS - Terminal <%= Context.Request.Params["id"].ToString() %></title>
 </head>
@@ -210,34 +211,34 @@
 							<div class="btn-box-row row-fluid">
 								<a class="btn-box big span3">
                                     <asp:CheckBox id="TEST_HEALTH" runat="server" />
-                                    <label class="checkbox-label" for="TEST_HEALTH"><i class="icon-adjust"></i><br /><span class="checkbox-with-label"></span>Test Health</label>
+                                    <label class="checkbox-label" for="TEST_HEALTH"><i class="fa fa-heartbeat"></i><br /><span class="checkbox-with-label"></span>Test Health</label>
 								</a>
 								<a class="btn-box big span3">
                                     <asp:CheckBox id="LIST_FILES" runat="server" />
-                                    <label class="checkbox-label" for="LIST_FILES"><i class="icon-briefcase"></i><br /><span class="checkbox-with-label"></span>List Files</label>
+                                    <label class="checkbox-label" for="LIST_FILES"><i class="fa fa-file-text"></i><br /><span class="checkbox-with-label"></span>List Files</label>
 								</a>
 								<a class="btn-box big span3">
                                     <asp:CheckBox id="LIST_APPS" runat="server" />
-                                    <label class="checkbox-label" for="LIST_APPS"><i class="icon-gift"></i><br /><span class="checkbox-with-label"></span>List Apps</label>
+                                    <label class="checkbox-label" for="LIST_APPS"><i class="fa fa-list"></i><br /><span class="checkbox-with-label"></span>List Apps</label>
 								</a>
                                 <a class="btn-box big span3">
                                     <asp:CheckBox id="DELETE_FILE" runat="server" />
-                                    <label class="checkbox-label" for="DELETE_FILE"><i class="icon-gift"></i><br /><span class="checkbox-with-label"></span>Delete File</label>
+                                    <label class="checkbox-label" for="DELETE_FILE"><i class="fa fa-times"></i><br /><span class="checkbox-with-label"></span>Delete File</label>
 								</a>
 							</div>
 
 							<div class="btn-box-row row-fluid">
 							    <a class="btn-box big span4">
                                     <asp:CheckBox id="PUSH_FILE" runat="server" />
-                                    <label class="checkbox-label" for="PUSH_FILE"><i class="icon-adjust"></i><br /><span class="checkbox-with-label"></span>Push File</label>
+                                    <label class="checkbox-label" for="PUSH_FILE"><i class="fa fa-upload"></i><br /><span class="checkbox-with-label"></span>Push File</label>
 								</a>
 								<a class="btn-box big span4">
                                     <asp:CheckBox id="PULL_FILE" runat="server" />
-                                    <label class="checkbox-label" for="PULL_FILE"><i class="icon-briefcase"></i><br /><span class="checkbox-with-label"></span>Pull File</label>
+                                    <label class="checkbox-label" for="PULL_FILE"><i class="fa fa-download"></i><br /><span class="checkbox-with-label"></span>Pull File</label>
 								</a>
 								<a class="btn-box big span4">
 									<asp:CheckBox id="UPDATE_APP" runat="server" />
-                                    <label class="checkbox-label" for="UPDATE_APP"><i class="icon-gift"></i><br /><span class="checkbox-with-label"></span>Update App</label>
+                                    <label class="checkbox-label" for="UPDATE_APP"><i class="fa fa-angle-double-up"></i><br /><span class="checkbox-with-label"></span>Update App</label>
 								</a>
 							</div>
                         </div>
