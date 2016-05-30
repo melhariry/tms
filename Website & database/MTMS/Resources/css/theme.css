@@ -1899,3 +1899,42 @@ filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff5f5f5', end
 {
     display: none;
 }
+
+.inline-block-center {
+  text-align: center;
+}
+.inline-block-center div {
+  display: inline-block;
+  text-align: left;
+}
+
+.checkbox-without-label input[type="checkbox"] {
+    display:inline-block;
+    width:20px;
+    height:20px;
+    margin: auto;
+}
+
+input[type="checkbox"] {
+    display:none;
+}
+
+input[type="checkbox"] + label span.checkbox-with-label {
+    display:inline-block;
+    width:22px;
+    height:22px;
+    margin:-1px 4px 0 0;
+    vertical-align:middle;
+    background:url("../img/check_sheet.png") -22px top no-repeat;
+    cursor:pointer;
+}
+
+input[type="checkbox"]:checked + label span.checkbox-with-label {
+    background:url("../img/check_sheet.png") left top no-repeat;
+}
+
+label.checkbox-label {
+    margin-top: 10px;
+    color: #444;
+    font-size: 20px;
+}

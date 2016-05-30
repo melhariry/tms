@@ -210,41 +210,34 @@
 							<div class="btn-box-row row-fluid">
 								<a class="btn-box big span3">
                                     <asp:CheckBox id="TEST_HEALTH" runat="server" />
-									<i class="icon-adjust"></i>
-									<b>Test Health</b>
+                                    <label class="checkbox-label" for="TEST_HEALTH"><i class="icon-adjust"></i><br /><span class="checkbox-with-label"></span>Test Health</label>
 								</a>
 								<a class="btn-box big span3">
                                     <asp:CheckBox id="LIST_FILES" runat="server" />
-									<i class="icon-briefcase"></i>
-									<b>List Files</b>
+                                    <label class="checkbox-label" for="LIST_FILES"><i class="icon-briefcase"></i><br /><span class="checkbox-with-label"></span>List Files</label>
 								</a>
 								<a class="btn-box big span3">
                                     <asp:CheckBox id="LIST_APPS" runat="server" />
-									<i class="icon-gift"></i>
-									<b>List Apps</b>
+                                    <label class="checkbox-label" for="LIST_APPS"><i class="icon-gift"></i><br /><span class="checkbox-with-label"></span>List Apps</label>
 								</a>
                                 <a class="btn-box big span3">
                                     <asp:CheckBox id="DELETE_FILE" runat="server" />
-									<i class="icon-gift"></i>
-									<b>Delete File</b>
+                                    <label class="checkbox-label" for="DELETE_FILE"><i class="icon-gift"></i><br /><span class="checkbox-with-label"></span>Delete File</label>
 								</a>
 							</div>
 
 							<div class="btn-box-row row-fluid">
 							    <a class="btn-box big span4">
                                     <asp:CheckBox id="PUSH_FILE" runat="server" />
-									<i class="icon-adjust"></i>
-									<b>Push File</b>
+                                    <label class="checkbox-label" for="PUSH_FILE"><i class="icon-adjust"></i><br /><span class="checkbox-with-label"></span>Push File</label>
 								</a>
 								<a class="btn-box big span4">
                                     <asp:CheckBox id="PULL_FILE" runat="server" />
-									<i class="icon-briefcase"></i>
-									<b>Pull File</b>
+                                    <label class="checkbox-label" for="PULL_FILE"><i class="icon-briefcase"></i><br /><span class="checkbox-with-label"></span>Pull File</label>
 								</a>
 								<a class="btn-box big span4">
-                                    <asp:CheckBox id="UPDATE_APP" runat="server" />
-									<i class="icon-gift"></i>
-									<b>Update App</b>
+									<asp:CheckBox id="UPDATE_APP" runat="server" />
+                                    <label class="checkbox-label" for="UPDATE_APP"><i class="icon-gift"></i><br /><span class="checkbox-with-label"></span>Update App</label>
 								</a>
 							</div>
                         </div>
@@ -268,21 +261,12 @@
                                 </div>
                                 <div id='push_file_params' hidden="hidden">
                                     <h4>Push File Parameters</h4>
-                                    <div class="module-head">
-                                        <h3>
-                                            <asp:CheckBox id="hotlist_file" runat="server" />
-                                            Hotlist File</h3>
-                                    </div>
-                                    <div class="module-head">
-                                        <h3>
-                                            <asp:CheckBox id="tms_conf" runat="server"/>
-                                            TMS App conf file</h3>
-                                    </div>
-                                    <div class="module-head">
-                                        <h3>
-                                            <asp:CheckBox id="trsc_conf" runat="server"/>
-                                            Transaction App conf file</h3>
-                                    </div>
+                                    <asp:CheckBox id="hotlist_file" runat="server" />
+                                    <label for="hotlist_file"><span class="checkbox-with-label"></span>Hotlist File</label>
+                                    <asp:CheckBox id="tms_conf" runat="server"/>
+                                    <label for="tms_conf"><span class="checkbox-with-label"></span>TMS App conf file</label>
+                                    <asp:CheckBox id="trsc_conf" runat="server"/>
+                                    <label for="trsc_conf"><span class="checkbox-with-label"></span>Transaction App conf file</label>
                                     <hr/>
                                 </div>
                                 <div id='delete_file_params' hidden="hidden">
@@ -335,7 +319,8 @@
                                     <hr />
                                 </div>
                                 <div class="align-right">
-                                    <label><asp:CheckBox id="Schedule" runat="server"/>Schedule this command</label>
+                                    <asp:CheckBox id="Schedule" runat="server"/>
+                                    <label for="Schedule"><span class="checkbox-with-label"></span>Schedule this command</label>
                                     <asp:Button ID="TerminalSubmitBtn" runat="server" CssClass="btn btn-primary btn-large" Text="Submit" OnClick="TerminalSubmitBtn_Click"></asp:Button>
                                     <asp:Button ID="TerminalClearBtn" runat="server" CssClass="btn btn-large" Text="Clear" OnClick="TerminalClearBtn_Click"></asp:Button>
                                 </div>

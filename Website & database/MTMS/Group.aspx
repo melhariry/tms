@@ -91,7 +91,7 @@
                                     <table id="outers" border="0" class="datatable-1 table table-bordered table-striped  display dataTable"  aria-describedby="DataTables_Table_0_info" style="width: 100%;">
 								        <thead>
 									        <tr>
-                                                <th><asp:CheckBox runat="server" ID="SelectAllOuters"/></th>
+                                                <th><div class="inline-block-center"><asp:CheckBox runat="server" ID="SelectAllOuters" CssClass="checkbox-without-label"/></div></th>
                                                 <th rowspan="1" colspan="1">Id</th>
                                                 <th rowspan="1" colspan="1">Serial Number</th>
                                                 <th rowspan="1" colspan="1">Vendor</th>
@@ -103,7 +103,7 @@
                                             <asp:Repeater runat="server" ID="OutersRep">
                                                 <ItemTemplate>
                                                     <tr>
-                                                        <td><asp:CheckBox runat="server"/></td>
+                                                        <td><div class="inline-block-center"><asp:CheckBox runat="server" CssClass="checkbox-without-label"/></div></td>
                                                         <td><a href="terminal.aspx?id=<%# Eval("Id") %>"> <%# Eval("Id") %> </a></td>
                                                         <td> <%# Eval("SerialNumber") %> </td>
                                                         <td> <%# Eval("Vendor") %> </td>
@@ -133,36 +133,30 @@
 							<div class="btn-box-row row-fluid">
 								<a class="btn-box big span4">
                                     <asp:CheckBox id="TEST_HEALTH" runat="server" />
-									<i class="icon-adjust"></i>
-									<b>Test Health</b>
+                                    <label class="checkbox-label" for="TEST_HEALTH"><i class="icon-adjust"></i><br /><span class="checkbox-with-label"></span>Test Health</label>
 								</a>
 								<a class="btn-box big span4">
                                     <asp:CheckBox id="UPDATE_APP" runat="server"/>
-									<i class="icon-briefcase"></i>
-									<b>Update App</b>
+                                    <label class="checkbox-label" for="UPDATE_APP"><i class="icon-briefcase"></i><br /><span class="checkbox-with-label"></span>Update App</label>
 								</a>
 								<a class="btn-box big span4">
                                     <asp:CheckBox id="LIST_FILES" runat="server"/>
-									<i class="icon-gift"></i>
-									<b>List Files</b>
+                                    <label class="checkbox-label" for="LIST_FILES"><i class="icon-gift"></i><br /><span class="checkbox-with-label"></span>List Files</label>
 								</a>
 							</div>
 
 							<div class="btn-box-row row-fluid">
 							    <a class="btn-box big span4">
                                     <asp:CheckBox id="PULL_FILE" runat="server"/>
-									<i class="icon-adjust"></i>
-									<b>Update Hotlist</b>
+                                    <label class="checkbox-label" for="PULL_FILE"><i class="icon-adjust"></i><br /><span class="checkbox-with-label"></span>Update Hotlist</label>
 								</a>
 								<a class="btn-box big span4">
                                     <asp:CheckBox id="PUSH_FILE" runat="server"/>
-									<i class="icon-briefcase"></i>
-									<b>Get Transaction File </b>
+                                    <label class="checkbox-label" for="PUSH_FILE"><i class="icon-briefcase"></i><br /><span class="checkbox-with-label"></span>Get Transaction File</label>
 								</a>
 								<a class="btn-box big span4">
                                     <asp:CheckBox id="LIST_APPS" runat="server"/>
-									<i class="icon-gift"></i>
-									<b>List Apps</b>
+									<label class="checkbox-label" for="LIST_APPS"><i class="icon-gift"></i><br /><span class="checkbox-with-label"></span>List Apps</label>
 								</a>
 							</div>
                         </div>
@@ -187,7 +181,8 @@
                                     <hr/>
                                 </div>
                                 <div class="align-right">
-                                    <label><asp:CheckBox id="Schedule" runat="server"/>Schedule this command</label>
+                                    <asp:CheckBox id="Schedule" runat="server"/>
+                                    <label for="Schedule"><span class="checkbox-with-label"></span>Schedule this command</label>
                                     <asp:Button ID="GroupSubmitBtn" runat="server" CssClass="btn btn-primary btn-large" Text="Submit" OnClick="GroupSubmitBtn_Click"></asp:Button>
                                     <asp:Button ID="GroupClearBtn" runat="server" CssClass="btn btn-large" Text="Clear" OnClick="GroupClearBtn_Click"></asp:Button>
                                 </div>

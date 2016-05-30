@@ -56,7 +56,7 @@
                                     <table id="groups" border="0" class="datatable-1 table table-bordered table-striped  display dataTable"  aria-describedby="DataTables_Table_0_info" style="width: 100%;">
 								        <thead>
 									        <tr>
-                                                <th><asp:CheckBox runat="server" ID="SelectAllGroups"/></th>
+                                                <th><div class="inline-block-center"><asp:CheckBox runat="server" ID="SelectAllGroups" CssClass="checkbox-without-label"/><//div></th>
                                                 <th rowspan="1" colspan="1">Id</th>
                                                 <th rowspan="1" colspan="1">Group Name</th>
                                                 <th rowspan="1" colspan="1">Branch</th>
@@ -71,7 +71,7 @@
                                             <asp:Repeater runat="server" ID="GroupsRep">
                                                 <ItemTemplate>
                                                     <tr>
-                                                        <td><asp:CheckBox runat="server"/></td>
+                                                        <td><div class="inline-block-center"><asp:CheckBox runat="server" CssClass="checkbox-without-label"/></div></td>
                                                         <td><a href="group.aspx?id=<%# Eval("Id") %>&name=<%# Eval("Name") %>"> <%# Eval("Id") %> </a></td>
                                                         <td> <%# Eval("Name") %> </td>
                                                         <td> <%# Eval("Branch") %> </td>
