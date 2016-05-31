@@ -9,9 +9,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.elgp2.verifonetms.communication.Constants;
+import com.elgp2.verifonetms.models.CommInfo;
 import com.elgp2.verifonetms.models.FileInfo;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.List;
@@ -143,28 +147,6 @@ public class FileUtil {
         return file.delete();
     }
 
-    public static String getAbsolutePath(String relativePath,Context context){
-        Boolean isPub = relativePath.startsWith("pub") ? true : false;
-
-        String absPath  = "" ;
-        if(isPub){
-            relativePath = relativePath.replace("pub/","");
-            absPath =  Environment.getExternalStorageDirectory().getAbsolutePath() +"/"+ relativePath;
-            absPath.replace("/"+getFileName(absPath),"");
-        }
-        else{
-            relativePath = relativePath.replace("pri/","");
-            absPath =  context.getFilesDir().getAbsolutePath() + "/" + relativePath;
-            absPath.replace("/"+getFileName(absPath),"");
-        }
-        Log.d(Tag, "AbsolutePAth : "+ absPath);
-        return absPath;
-    }
-
-    public static String getFTPAbsolutePath(String relativePath){
-        Log.d(Tag , "FTPAbsolutePath:" + relativePath.replace("/"+getFileName(relativePath),""));
-        return relativePath.replace("/"+getFileName(relativePath),"");
-    }
 
     public static String getFileName(String path){
         if(path.contains("/")){
@@ -179,13 +161,49 @@ public class FileUtil {
         return filePath.contains("pub") ? true : false;
     }
 
-    /*Concat two File arrays */
-    public static File[] concat(File[] a, File[] b) {
-        int aLen = a.length;
-        int bLen = b.length;
-        File[] c= new File[aLen+bLen];
-        System.arraycopy(a, 0, c, 0, aLen);
-        System.arraycopy(b, 0, c, aLen, bLen);
-        return c;
+    /**
+     * retrieves comm data from commConfig file if exists, if not use deafult values from Constants file in Communication package
+     */
+    public static CommInfo getCommParameters(Context context){
+        File myDir = new File(context.getFilesDir().getAbsolutePath()+"/");
+        CommInfo commInfo = new CommInfo();
+        //default values
+        commInfo.setFirstServerIP(Constants.firstServerIP);
+        commInfo.setSecondServerIP(Constants.secondServerIP);
+        commInfo.setFTPUserName(Constants.FTPUserName);
+        commInfo.setFTPPassword(Constants.FTPPassWord);
+        commInfo.setWakeUpInterval(Constants.wakeupInterval);
+
+        //TODO remove this comment when we have a real IP XD
+        /*
+
+        try{
+            File file = new File(myDir,"commConfig.txt");
+            if(file.exists()) {
+
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                String line;
+
+                if ((line = br.readLine()) != null) {
+                    Log.d(Tag, " comm config file reading statrts");
+                    Log.d(Tag,"comm file line: "+line);
+;                    String [] params = null;
+                    params = line.split(",");
+                    Log.d(Tag , "comm paramters : "+ params[0]+" "+ params[1]+" "+params[2]+" "+params[3]+" "+params[4]);
+                    commInfo.setFirstServerIP(params[0]);
+                    commInfo.setSecondServerIP(params[1]);
+                    commInfo.setFTPUserName(params[2]);
+                    commInfo.setFTPPassword(params[3]);
+                    commInfo.setWakeUpInterval(Long.valueOf(params[4]));
+                }
+                br.close();
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        } */
+
+        return commInfo;
     }
+
 }

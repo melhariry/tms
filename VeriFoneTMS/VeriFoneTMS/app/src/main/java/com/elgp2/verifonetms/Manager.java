@@ -16,11 +16,15 @@ import android.widget.Toast;
 import com.elgp2.verifonetms.Executer.AppUpdater;
 import com.elgp2.verifonetms.Executer.Execute;
 import com.elgp2.verifonetms.communication.Communication;
+import com.elgp2.verifonetms.communication.Constants;
 import com.elgp2.verifonetms.communication.FtpClient;
 import com.elgp2.verifonetms.communication.MyVolley;
+import com.elgp2.verifonetms.communication.NukeSSLCerts;
 import com.elgp2.verifonetms.models.AppInfo;
+import com.elgp2.verifonetms.models.CommInfo;
 import com.elgp2.verifonetms.models.FileInfo;
 import com.elgp2.verifonetms.utilities.AppUtil;
+import com.elgp2.verifonetms.utilities.FileUtil;
 import com.elgp2.verifonetms.utilities.SystemUtil;
 
 import java.util.AbstractMap;
@@ -54,11 +58,14 @@ public class Manager extends Service {
     @Override
     public void onCreate() {
         MyVolley.init(this);
-        mCommunication = new Communication();
+        CommInfo commInfo = FileUtil.getCommParameters(this);
+        mCommunication = new Communication(commInfo);
         mExecute = new Execute(this);
-        ftpClient = new FtpClient();
+        ftpClient = new FtpClient(commInfo);
         mAppUpdater = new AppUpdater();
         Log.d(Tag, "Manager Service on Create");
+        //Trust all SSL Certificates
+        NukeSSLCerts.nuke();
     }
 
     @Override
@@ -99,7 +106,7 @@ public class Manager extends Service {
 
             alarmMgr.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,
                     SystemClock.elapsedRealtime() +
-                            5 * 60 * 60 * 1000, alarmIntent);
+                            Constants.wakeupInterval * 1000, alarmIntent);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -217,7 +224,7 @@ public class Manager extends Service {
         List<AppInfo> appList =mExecute.getInstalledApps();
         for(AppInfo appInfo: appList){
             params.add(new AbstractMap.SimpleEntry<>("Name", appInfo.getAppLabel()));
-            params.add(new AbstractMap.SimpleEntry<>("Version", String.valueOf(appInfo.getVersionCode())));
+            params.add(new AbstractMap.SimpleEntry<>("Version", String.valueOf(appInfo.getVersionName())));
             params.add(new AbstractMap.SimpleEntry<>("Com", appInfo.getCompanyName()));
         }
         mCommunication.submitCommandResults(params);

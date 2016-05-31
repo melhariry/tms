@@ -9,6 +9,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.elgp2.verifonetms.models.CommInfo;
 import com.elgp2.verifonetms.utilities.SystemUtil;
 
 import java.util.AbstractMap;
@@ -60,10 +61,10 @@ public class Communication {
      */
     private List<Map.Entry<String,String>> params;
 
-    public Communication(){
+    public Communication(CommInfo commInfo){
         requestQueue = MyVolley.getRequestQueue();
         status = commStatus.UNINITIALIZED;
-        publicIP = Constants.publicIP;
+        publicIP = commInfo.getFirstServerIP();
         params= new ArrayList<Map.Entry<String,String>>();
     }
 
@@ -156,7 +157,7 @@ public class Communication {
      * @return String contains request Uri
      */
     private String buildUri(String pageName ){
-        String uri = "http://" + publicIP + "/MTMS/" + pageName;
+        String uri = "https://" + publicIP +"/MTMS/" + pageName;
         if(params != null &&params .size() > 0 ) {
             uri += "?";
             for(Map.Entry<String, String> entry : params){

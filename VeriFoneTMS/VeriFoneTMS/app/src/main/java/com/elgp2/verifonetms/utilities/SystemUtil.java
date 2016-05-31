@@ -18,8 +18,6 @@ public class SystemUtil {
 
     private SystemUtil(){}
 
-    private static StatFs statfs = new StatFs(Environment.getRootDirectory().getAbsolutePath());
-
     public static String getMachineSerial(){
         return Build.SERIAL;
     }
@@ -48,22 +46,22 @@ public class SystemUtil {
 
     public static long getFreeRamSize(){
         ActivityManager.MemoryInfo memoryInfo = getSystemMemoryInfo(TMSApplication.getInstance());
-        return memoryInfo.availMem;
+        return memoryInfo.availMem/(1024*1024);
     }
 
     public static long getTotalRamSize(){
         ActivityManager.MemoryInfo memoryInfo = getSystemMemoryInfo(TMSApplication.getInstance());
-        return memoryInfo.totalMem;
+        return memoryInfo.totalMem/(1024*1024);
     }
 
     public static long getFreeDiskSpace(Context context){
         File internalStorageFile=context.getFilesDir();
-        return internalStorageFile.getFreeSpace();
+        return internalStorageFile.getFreeSpace()/(1024*1024);
     }
 
     public static long getTotalDiskSpace(Context context){
         File internalStorageFile=context.getFilesDir();
-       return internalStorageFile.getTotalSpace();
+       return internalStorageFile.getTotalSpace()/(1024*1024);
     }
 
     /*source: http://stackoverflow.com/questions/7115016/how-to-find-the-amount-of-free-storage-disk-space-left-on-android*/

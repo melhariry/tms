@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.elgp2.verifonetms.TMSApplication;
+import com.elgp2.verifonetms.models.CommInfo;
 import com.elgp2.verifonetms.utilities.FileUtil;
 import com.elgp2.verifonetms.utilities.SystemUtil;
 
@@ -46,12 +47,12 @@ public class FtpClient {
      */
     protected FTPClient ftpClient;
 
-    public FtpClient(){
-        userName = Constants.FTPUserName;
-        passWord = Constants.FTPPassWord;
+    public FtpClient(CommInfo commInfo){
+        userName  = commInfo.getFTPUserName();
+        passWord  = commInfo.getFTPPassword();
         ftpClient = new FTPClient();
-        publicIP = Constants.publicIP;
-        status = ftpStatus.FTPUNINITIALIZED;
+        publicIP  = commInfo.getFirstServerIP();
+        status    = ftpStatus.FTPUNINITIALIZED;
     }
 
     public ftpStatus getStatus() {
