@@ -109,6 +109,10 @@
                                     <div class="controls">
 										<asp:TextBox runat="server" id="ContactNumTxt" placeholder="Contact Number" CssClass="span3" />
 										<asp:RequiredFieldValidator runat="server" ErrorMessage="*" ControlToValidate="ContactNumTxt" ForeColor="Red" />
+                                        <asp:RegularExpressionValidator ID="ContactNumValidator" runat="server" ErrorMessage="Invalid Phone Number"
+                                            ValidationExpression="^01[0-2]{1}[0-9]{8}"
+                                            ControlToValidate="ContactNumTxt"
+                                            ForeColor="Red" />
                                     </div>
                                     <div class="controls">
 										<asp:TextBox runat="server" id="ContactPersonTxt" placeholder="Contact Person" CssClass="span3" />

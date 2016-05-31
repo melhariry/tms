@@ -170,9 +170,18 @@
                                 <div id='update_app_params' hidden="hidden">
                                     <h4>Update App parameters</h4>
                                     <label>CAB File:</label>
-                                    <asp:FileUpload id='update_app_cab' runat="server" /><br/>
+                                    <asp:FileUpload id='update_app_cab' runat="server" />
+                                    <asp:RegularExpressionValidator ID="CabValidator" runat="server" ErrorMessage="Invalid .cab source"
+                                            ValidationExpression="(.+\.([Cc][Aa][Bb]))"
+                                            ControlToValidate="update_app_cab"
+                                            ForeColor="Red" />
+                                    <br/>
                                     <label>APK File:</label>
                                     <asp:FileUpload id='update_app_apk' runat="server" />
+                                    <asp:RegularExpressionValidator ID="ApkValidator" runat="server" ErrorMessage="Invalid .apk source"
+                                            ValidationExpression="(.+\.([Aa][Pp][Kk]))"
+                                            ControlToValidate="update_app_apk"
+                                            ForeColor="Red" />
                                     <hr/>
                                 </div>
                                 <div id='update_hotlist_params' hidden="hidden">

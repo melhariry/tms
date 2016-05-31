@@ -12,7 +12,7 @@ using System.Net;
 public partial class Terminal : System.Web.UI.Page
 {
     DataTable terminalHistory, terminalHealthTest, terminalAppList, terminalFileList, priFiles, pubFiles, mtmsFiles;
-    DataRow commandToSend;
+    DataRow commandToSend, terminalInfo;
     int posId;
     string rawHTMLError = string.Empty, rawHTMLSuccess = string.Empty;
     protected void Page_Load(object sender, EventArgs e)
@@ -23,10 +23,15 @@ public partial class Terminal : System.Web.UI.Page
         terminalAppList = DB.Instance.GetPosAppList(posId);
         terminalFileList = DB.Instance.GetPosFileList(posId);
         commandToSend = DB.Instance.GetCommandToSend(posId);
+        terminalInfo = DB.Instance.GetTerminalInfo(posId);
         mtmsFiles = terminalFileList.Select("ParentFolder='MTMS'").Length == 0 ? new DataTable() : terminalFileList.Select("ParentFolder='MTMS'").CopyToDataTable();
         pubFiles = terminalFileList.Select("ParentFolder='pub'").Length == 0 ? new DataTable() : terminalFileList.Select("ParentFolder='pub'").CopyToDataTable();
         priFiles = terminalFileList.Select("ParentFolder='pri'").Length == 0 ? new DataTable() : terminalFileList.Select("ParentFolder='pri'").CopyToDataTable();
         Schedule.Checked = Convert.ToBoolean(commandToSend["isScheduled"]);
+        if (terminalInfo["Vendor"].ToString().Equals("Castles"))
+            AppValidator.ValidationExpression="(.+\\.([Cc][Aa][Bb]))";
+        else
+            AppValidator.ValidationExpression = "(.+\\.([Aa][Pp][Kk]))";
         if (!IsPostBack)
         {
             if (Session["id"] == null)
@@ -55,7 +60,7 @@ public partial class Terminal : System.Web.UI.Page
                 (ctrl as CheckBox).Checked = false;
             }
         }
-        Schedule.Checked = false;
+        Schedule.Checked = Convert.ToBoolean(commandToSend["isScheduled"]);
     }
 
     protected void PrintStatus()
@@ -228,14 +233,9 @@ public partial class Terminal : System.Web.UI.Page
         //TODO: Handle delete files, modify exception handling
         BitArray cmd = new BitArray(32, false);
         int ongoingCommand = 0, index = 0;
-        string updateAppParams, pullFileParams, pushFileParams, deleteFileParams, serNumber = string.Empty, vendor = string.Empty;
-        DataRow terminalInfo = DB.Instance.GetTerminalInfo(posId);
-        if (terminalInfo != null)
-        {
-            serNumber = terminalInfo["SerialNumber"].ToString();
-            vendor = terminalInfo["Vendor"].ToString();
-        }
-        string appPath = "Apps/" + vendor + "/", filesPath = "Terminals/" + vendor + "/" + serNumber + "/pub/MTMS/";
+        string updateAppParams, pullFileParams, pushFileParams, deleteFileParams;
+        string appPath = "Apps/" + terminalInfo["Vendor"].ToString() + "/";
+        string filesPath = "Terminals/" + terminalInfo["Vendor"].ToString() + "/" + terminalInfo["SerialNumber"].ToString() + "/pub/MTMS/";
         try
         {
             foreach (Control ctrl in TerminalForm.Controls)

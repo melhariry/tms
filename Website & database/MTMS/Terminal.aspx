@@ -251,7 +251,11 @@
                                 <div id='update_app_params' hidden="hidden">
                                     <h4>Update App parameters</h4>
                                     <label>App Source:</label>
-                                    <asp:FileUpload id='update_app_src' runat="server" /><br/>
+                                    <asp:FileUpload id='update_app_src' runat="server" />
+                                    <asp:RegularExpressionValidator ID="AppValidator" runat="server" ErrorMessage="Invalid app source"
+                                            ControlToValidate="update_app_src"
+                                            ForeColor="Red" />
+                                    <br/>
                                     <hr/>
                                 </div>
                                 <div id='pull_file_params' hidden="hidden">
