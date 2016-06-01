@@ -55,6 +55,7 @@
                                     <h3>Config File Params</h3>
                                 </div>
                                 <div class="module-body" runat="server">
+                                    <h5>This form generates the configuration file for the TMS app and forces all the terminals to pull the generated file.</h5>
                                     <div class="control-group">
 									    <div class="controls">
 										    <asp:TextBox runat="server" id="FirstIpTxt" placeholder="First IP" CssClass="span3" />

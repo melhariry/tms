@@ -74,7 +74,7 @@
                                                 <ItemTemplate>
                                                     <tr>
                                                         <td><div class="inline-block-center"><asp:CheckBox runat="server" CssClass="checkbox-without-label"/></div></td>
-                                                        <td><a href="group.aspx?id=<%# Eval("Id") %>&name=<%# Eval("Name") %>"> <%# Eval("Id") %> </a></td>
+                                                        <td><a href="group.aspx?id=<%# Eval("Id") %>&name=<%# Eval("Name") %>&branch=<%# Eval("Branch") %>""> <%# Eval("Id") %> </a></td>
                                                         <td> <%# Eval("Name") %> </td>
                                                         <td> <%# Eval("Branch") %> </td>
                                                         <td> <%# Eval("ContactNumber") %> </td>

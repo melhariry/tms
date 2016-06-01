@@ -54,6 +54,8 @@
                                 <h1 class="btn-box big span12">
                                     <p class="text-muted">
                                         Group</p><b> <%= Context.Request.Params["name"].ToString() %> </b>
+                                    <p class="text-muted">
+                                        Branch</p><b> <%= Context.Request.Params["branch"].ToString() %> </b>
                                 </h1>
                             </div>
                             

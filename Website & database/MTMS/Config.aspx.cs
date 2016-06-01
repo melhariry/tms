@@ -41,24 +41,26 @@ public partial class Config : System.Web.UI.Page
     {
         string filePath = Server.MapPath("~/Resources/TMSConfig.csv"), param = string.Empty;
         bool commandSuccess = true;
-        if (IntervalTxt.Text.Equals("0"))
+        int interval = Convert.ToInt32(IntervalTxt.Text);
+        if (interval < 0)
         {
             rawHTMLError = "Please Enter a valid interval";
             return;
         }
         if (TimeList.SelectedIndex == 0)
-            IntervalTxt.Text = (Convert.ToInt32(IntervalTxt.Text) * 60).ToString();
+            IntervalTxt.Text = (interval * 60).ToString();
         string config = FirstIpTxt.Text + ',' + SecondIpTxt.Text + ',' + FTPUserTxt.Text + ',' + FTPPassTxt.Text + ',' + IntervalTxt.Text;
         System.IO.File.WriteAllText(filePath, config);
         using (Stream fileStream = File.OpenRead(filePath))
         {
-            if (Methods.UploadToFtp("test.csv", (int)fileStream.Length, string.Empty, fileStream))
+            if (Methods.UploadToFtp("TMSConfig.csv", (int)fileStream.Length, string.Empty, fileStream))
                 rawHTMLSuccess += "<li>Config file uploaded successfully</li>";
             else
             {
                 rawHTMLError += "<li>Config file failed to upload</li>";
                 return;
             }
+            File.Delete(filePath);
         }
         ClearTextBoxes();
         for (int i = 0; i < allTerminals.Rows.Count; i++)

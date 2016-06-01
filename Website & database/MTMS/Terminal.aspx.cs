@@ -12,7 +12,7 @@ using System.Net;
 public partial class Terminal : System.Web.UI.Page
 {
     DataTable terminalHistory, terminalHealthTest, terminalAppList, terminalFileList, priFiles, pubFiles, mtmsFiles;
-    DataRow commandToSend, terminalInfo;
+    protected DataRow commandToSend, terminalInfo;
     int posId;
     string rawHTMLError = string.Empty, rawHTMLSuccess = string.Empty;
     protected void Page_Load(object sender, EventArgs e)
@@ -29,9 +29,15 @@ public partial class Terminal : System.Web.UI.Page
         priFiles = terminalFileList.Select("ParentFolder='pri'").Length == 0 ? new DataTable() : terminalFileList.Select("ParentFolder='pri'").CopyToDataTable();
         Schedule.Checked = Convert.ToBoolean(commandToSend["isScheduled"]);
         if (terminalInfo["Vendor"].ToString().Equals("Castles"))
-            AppValidator.ValidationExpression="(.+\\.([Cc][Aa][Bb]))";
+        {
+            AppSource.InnerText = "Cab Source:";
+            AppValidator.ValidationExpression = "(.+\\.([Cc][Aa][Bb]))";
+        }
         else
+        {
+            AppSource.InnerText = "Apk Source:";
             AppValidator.ValidationExpression = "(.+\\.([Aa][Pp][Kk]))";
+        }
         if (!IsPostBack)
         {
             if (Session["id"] == null)

@@ -51,7 +51,8 @@
                         <div class="btn-controls">
                             <div class="btn-box-row row-fluid">
                                 <h1 class="btn-box big span12">
-                                    <p class="text-muted">Terminal</p><b> <%= Context.Request.Params["id"].ToString() %> </b>
+                                    <p class="text-muted">Serial Number</p><b> <%= terminalInfo["SerialNumber"] %> </b>
+                                    <p class="text-muted">Vendor</p><b> <%= terminalInfo["Vendor"] %> </b>
                                 </h1>
                             </div>
                             
@@ -251,7 +252,7 @@
                             <div class="module-body" id="inputs_div">
                                 <div id='update_app_params' hidden="hidden">
                                     <h4>Update App parameters</h4>
-                                    <label>App Source:</label>
+                                    <label id="AppSource" runat="server"></label>
                                     <asp:FileUpload AllowMultiple="true" id='update_app_src' runat="server" />
                                     <asp:RegularExpressionValidator ID="AppValidator" runat="server" ErrorMessage="Invalid app source"
                                             ControlToValidate="update_app_src"
