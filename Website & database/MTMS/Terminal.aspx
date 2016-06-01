@@ -71,14 +71,30 @@
                                                 <th rowspan="1" colspan="1">Command</th>
                                                 <th rowspan="1" colspan="1">Status</th>
                                                 <th rowspan="1" colspan="1">Timestamp</th>
-                                                <th rowspan="1" colspan="1">Parameters</th>
+                                                <th rowspan="1" colspan="1">App/File Name</th>
+                                                <th><div class="inline-block-center"><asp:CheckBox runat="server" ID="SelectAllFiles" CssClass="checkbox-without-label"/></div></th>
 									        </tr>
 								        </thead>
 								            <tbody role="alert" aria-live="polite" aria-relevant="all">
-                                                <% PrintTerminalHistory(); %>
+                                                <asp:Repeater runat="server" ID="CommandsRep" OnItemDataBound="FilesRep_ItemDataBound">
+                                                    <ItemTemplate>
+                                                        <tr>                                                            
+                                                            <td runat="server"> <%# Eval("CommandExecuted") %> </td>
+                                                            <td runat="server"><%# Eval("Status") %></td>
+                                                            <td> <%# Eval("Timestamp") %> </td>
+                                                            <td runat="server"><%# Eval("Parameters") %></td>
+                                                            <td><div class="inline-block-center"><asp:CheckBox runat="server" CssClass="checkbox-without-label"/></div></td>
+                                                        </tr>
+                                                    </ItemTemplate>
+                                                </asp:Repeater>
 								            </tbody>
                                         </table>
 							        </div>
+                                    <div class="module-body">
+                                        <div class="align-right">
+                                            <asp:Button ID="DownloadFtpBtn" runat="server" CssClass="btn btn-primary btn-large" Text="Download" OnClick="DownloadFtpBtn_Click"></asp:Button>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="module">
@@ -200,6 +216,11 @@
 								            </tbody>
                                         </table>
 							        </div>
+                                    <div class="module-body">
+                                        <div class="align-right">
+                                            <asp:Button ID="CommandClearBtn" runat="server" CssClass="btn btn-primary btn-large" Text="Clear" OnClick="TerminalClearBtn_Click"></asp:Button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         <div class="module">

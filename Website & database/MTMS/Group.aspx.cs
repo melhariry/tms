@@ -115,6 +115,13 @@ public partial class Group : System.Web.UI.Page
         }
         int[] newCommand = new int[1];
         cmd.CopyTo(newCommand, 0);
+
+        if (newCommand[0] == 0)
+        {
+            rawHTMLError += "<li>Please select at least one command</li>";
+            return;
+        }
+
         if (UPDATE_APP.Checked)
         {
             if (update_app_cab.HasFiles)

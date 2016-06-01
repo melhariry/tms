@@ -61,18 +61,23 @@
     });
 
     $("#SelectAllGroups").change(function () {
-        $('input:checkbox').each(function() {
+        $('#groups input:checkbox').each(function() {
             $(this).prop('checked', $("#SelectAllGroups").is(':checked'));
         });
     });
     $("#SelectAllTerminals").change(function () {
-        $('input:checkbox').each(function () {
+        $('#terminals input:checkbox').each(function () {
             $(this).prop('checked', $("#SelectAllTerminals").is(':checked'));
         });
     });
     $("#SelectAllOuters").change(function () {
-        $('input:checkbox').each(function () {
+        $('#outers_table input:checkbox').each(function () {
             $(this).prop('checked', $("#SelectAllOuters").is(':checked'));
+        });
+    });
+    $("#SelectAllFiles").change(function () {
+        $('#history input:checkbox').each(function () {
+            $(this).prop('checked', $("#SelectAllFiles").is(':checked'));
         });
     });
     $(".treeview").delegate("label input:checkbox", "change", function () {

@@ -8,6 +8,7 @@ using System.Web.UI.WebControls;
 using System.Collections;
 using System.IO;
 using System.Net;
+using System.Web.UI.HtmlControls;
 
 public partial class Terminal : System.Web.UI.Page
 {
@@ -60,6 +61,9 @@ public partial class Terminal : System.Web.UI.Page
             pubPushFileRep.DataBind();
             priPushFileRep.DataSource = priFiles;
             priPushFileRep.DataBind();
+            terminalHistory = ModifyCommandHistory();
+            CommandsRep.DataSource = terminalHistory;
+            CommandsRep.DataBind();
         }
     }
 
@@ -73,6 +77,29 @@ public partial class Terminal : System.Web.UI.Page
             }
         }
         Schedule.Checked = Convert.ToBoolean(commandToSend["isScheduled"]);
+    }
+
+    private DataTable ModifyCommandHistory()
+    {
+        DataTable newHistory = new DataTable();
+        string rawHTML = string.Empty;
+        newHistory.Columns.Add("CommandExecuted", typeof(String));
+        newHistory.Columns.Add("Status", typeof(String));
+        newHistory.Columns.Add("Timestamp", typeof(DateTime));
+        newHistory.Columns.Add("Parameters", typeof(String));
+        for (int i = 0; i < terminalHistory.Rows.Count; i++)
+        {
+            if (terminalHistory.Rows[i][1].ToString().Split(';').Length > 1)
+            {
+                string[] commandStatus = terminalHistory.Rows[i][1].ToString().Split(';');
+                string[] commandParams = terminalHistory.Rows[i][3].ToString().Split(';');
+                for (int j = 0; j < commandStatus.Length - 1; j++)
+                    newHistory.Rows.Add(terminalHistory.Rows[i][0], (commandStatus[j].Equals("0") ? "Success" : "Failed"), terminalHistory.Rows[i][2], commandParams[j]);
+            }
+            else
+                newHistory.Rows.Add(terminalHistory.Rows[i][0], (terminalHistory.Rows[i][1].ToString().Equals("0") ? "Success" : "Failed"), terminalHistory.Rows[i][2], (terminalHistory.Rows[i][3].ToString().Equals(string.Empty) ? "N/A" : terminalHistory.Rows[i][3].ToString()));
+        }
+        return newHistory;
     }
 
     protected void PrintStatus()
@@ -291,6 +318,12 @@ public partial class Terminal : System.Web.UI.Page
             int[] newCommand = new int[1];
             cmd.CopyTo(newCommand, 0);
 
+            if (newCommand[0] == 0)
+            {
+                rawHTMLError += "<li>Please select at least one command</li>";
+                return;
+            }
+
             if (UPDATE_APP.Checked)
             {
                 if (update_app_src.HasFiles)
@@ -369,5 +402,44 @@ public partial class Terminal : System.Web.UI.Page
             rawHTMLSuccess += "<li>" + "Commands cleared successfully</li>";
         commandToSend = DB.Instance.GetCommandToSend(posId);
         ClearCheckBoxes();
+    }
+    protected void FilesRep_ItemDataBound(object sender, RepeaterItemEventArgs e)
+    {
+        string rawHTML = string.Empty;
+        HtmlTableCell statusCell = (e.Item.Controls[3] as HtmlTableCell);
+        if (!(e.Item.Controls[1] as HtmlTableCell).InnerHtml.Trim().Equals("PushFile") || statusCell.InnerHtml.Trim().Equals("Failed"))
+            e.Item.Controls[7].Visible = false;
+        statusCell.Attributes.CssStyle.Add("color", "white");
+        if (statusCell.InnerHtml.Trim().Equals("Success"))
+            statusCell.Attributes.CssStyle.Add("background-color", "#10EB14");
+        else
+            statusCell.Attributes.CssStyle.Add("background-color", "#F51616");
+    }
+    protected void DownloadFtpBtn_Click(object sender, EventArgs e)
+    {
+        bool selected = false;
+        string localPath = string.Empty;
+        string ftpPath = "Terminals/" + terminalInfo["Vendor"] + '/' + terminalInfo["SerialNumber"] + '/' + "pub/MTMS/";
+        string fileName = string.Empty;
+        for (int i = 0; i < CommandsRep.Items.Count; i++)
+        {
+            if ((CommandsRep.Items[i].Controls[7] as CheckBox).Checked)
+            {
+                fileName = (CommandsRep.Items[i].Controls[5] as HtmlTableCell).InnerHtml.Trim();
+                localPath = "D:\\University\\GP\\FTPLocal\\" + fileName.Replace(".", "_" + terminalInfo["SerialNumber"].ToString() + ".");
+                if (Methods.DownloadFromFtp(fileName, localPath, ftpPath))
+                    rawHTMLSuccess += "<li>" + fileName + " downloaded successfully</li>";
+                else
+                    rawHTMLError += "<li>" + fileName + " download failed</li>";
+                selected = true;
+                (CommandsRep.Items[i].Controls[7] as CheckBox).Checked = false;
+            }
+        }
+        if (!selected)
+        {
+            rawHTMLError += "<li>Please select at least one file to download</li>";
+            return;
+        }
+        SelectAllFiles.Checked = false;
     }
 }

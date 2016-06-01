@@ -108,7 +108,7 @@
                                                 <th rowspan="1" colspan="1">Group</th>
 									        </tr>
 								        </thead>
-								        <tbody role="alert" aria-live="polite" aria-relevant="all">
+								        <tbody role="alert" aria-live="polite" aria-relevant="all" id="outers_table">
                                             <asp:Repeater runat="server" ID="OutersRep">
                                                 <ItemTemplate>
                                                     <tr>
