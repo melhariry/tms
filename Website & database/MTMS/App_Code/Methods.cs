@@ -54,7 +54,7 @@ public static class Methods
         return Convert.ToInt32(DB.Instance.GetGroupsCount()[0]);
     }
 
-    public static bool UploadToFtp(string name, int contentLength, string path, Stream inputStream)
+    public static bool UploadToFtp(string name, int contentLength, string path, Stream inputStream, bool configFlag = false)
     {
         DataRow terminalInfo = DB.Instance.GetTerminalInfo(Convert.ToInt32(HttpContext.Current.Request.Params["id"]));
         string ftpDirectory = "ftp://localhost/" + path;
@@ -77,7 +77,8 @@ public static class Methods
                 {
                     while (totalBytes > 0)
                     {
-                        fileStream.Seek(0, SeekOrigin.Begin);
+                        if (configFlag)
+                            fileStream.Seek(0, SeekOrigin.Begin);
                         bytesWritten = fileStream.Read(buffer, 0, buffer.Length);
                         requestStream.Write(buffer, 0, bytesWritten);
                         totalBytes -= bytesWritten;

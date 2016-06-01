@@ -311,8 +311,11 @@ public partial class Terminal : System.Web.UI.Page
                     break;
                 if (ctrl is CheckBox)
                 {
-                    cmd.Set((int)Enum.Parse(typeof(AppParameters.Commands), ctrl.ID), (ctrl as CheckBox).Checked);
-                    index++;
+                    if (!ctrl.ID.Equals("SelectAllFiles"))
+                    {
+                        cmd.Set((int)Enum.Parse(typeof(AppParameters.Commands), ctrl.ID), (ctrl as CheckBox).Checked);
+                        index++;
+                    }
                 }
             }
             int[] newCommand = new int[1];

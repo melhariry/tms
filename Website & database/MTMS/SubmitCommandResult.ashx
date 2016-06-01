@@ -50,6 +50,10 @@ public class SubmitCommandResult : IHttpHandler {
                     parentFolders = context.Request.Params["ParentFolder"].Split(',');
                     for (int i = 0; i < commandParams.Length; i++)
                     {
+                        if (commandParams[i].Contains("/"))
+                        {
+                            commandParams[i] = System.IO.Path.GetFileName(commandParams[i]);
+                        }
                         if (Convert.ToInt32(commandStatus[i]) == 0)
                         {
                             DB.Instance.DeletePosFileFromList(context.Request.Headers["SerialNumber"], commandParams[i], parentFolders[i]);

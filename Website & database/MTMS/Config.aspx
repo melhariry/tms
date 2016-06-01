@@ -89,7 +89,7 @@
                                         <div class="controls">
 										    <asp:TextBox runat="server" id="FTPPassConfirm" TextMode="Password" placeholder="Confirm FTP Password" CssClass="span3" />
 										    <asp:RequiredFieldValidator runat="server" ErrorMessage="*" ControlToValidate="FTPPassConfirm" ForeColor="Red"  />
-									        <asp:CompareValidator runat="server" id="cmpPass" controltovalidate="FTPPassTxt" controltocompare="FTPPassConfirm" errormessage="Passwords do not match." ForeColor="Red" />
+									        <asp:CompareValidator runat="server" id="cmpPass" controltovalidate="FTPPassTxt" controltocompare="FTPPassConfirm" errormessage="Passwords do not match" ForeColor="Red" />
                                         </div>
                                         <div class="align-right">
                                             <asp:Button ID="GenerateConfigBtn" runat="server" CssClass="btn btn-primary btn-large" Text="Generate" OnClick="GenerateConfigBtn_Click"></asp:Button>

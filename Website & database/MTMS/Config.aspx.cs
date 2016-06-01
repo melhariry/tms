@@ -49,11 +49,11 @@ public partial class Config : System.Web.UI.Page
         }
         if (TimeList.SelectedIndex == 0)
             IntervalTxt.Text = (interval * 60).ToString();
-        string config = FirstIpTxt.Text + ',' + SecondIpTxt.Text + ',' + FTPUserTxt.Text + ',' + FTPPassTxt.Text + ',' + IntervalTxt.Text;
+        string config = FirstIpTxt.Text + '\n' + SecondIpTxt.Text + '\n' + FTPUserTxt.Text + '\n' + FTPPassTxt.Text + '\n' + IntervalTxt.Text;
         System.IO.File.WriteAllText(filePath, config);
         using (Stream fileStream = File.OpenRead(filePath))
         {
-            if (Methods.UploadToFtp("TMSConfig.csv", (int)fileStream.Length, string.Empty, fileStream))
+            if (Methods.UploadToFtp("TMSConfig.csv", (int)fileStream.Length, string.Empty, fileStream, true))
                 rawHTMLSuccess += "<li>Config file uploaded successfully</li>";
             else
             {

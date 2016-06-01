@@ -18,7 +18,6 @@ public class PosUp : IHttpHandler {
             {
                 //send commands
                 DataRow commandToSend = DB.Instance.GetCommandToSend(posId);
-                //No command to send
                 context.Response.StatusCode = 200;
                 context.Response.Write("0" + commandToSend["Command"]);
             }
