@@ -47,6 +47,7 @@
                     </div>
                     <!--/.span3-->
                     <form runat="server" class="span9">
+                        <% PrintStatus(); %>
                         <div class="content">
 
                             <div class="module" id="groups_module">

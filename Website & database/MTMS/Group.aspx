@@ -178,14 +178,14 @@
                                     <label>CAB File:</label>
                                     <asp:FileUpload AllowMultiple="true" id='update_app_cab' runat="server" />
                                     <asp:RegularExpressionValidator ID="CabValidator" runat="server" ErrorMessage="Invalid .cab source"
-                                            ValidationExpression="(.+\.([Cc][Aa][Bb]))"
+                                            ValidationExpression="^([a-zA-Z].*|[1-9].*)\.(((c|C)(a|A)(b|B)))$"
                                             ControlToValidate="update_app_cab"
                                             ForeColor="Red" />
                                     <br/>
                                     <label>APK File:</label>
                                     <asp:FileUpload AllowMultiple="true" id='update_app_apk' runat="server" />
                                     <asp:RegularExpressionValidator ID="ApkValidator" runat="server" ErrorMessage="Invalid .apk source"
-                                            ValidationExpression="(.+\.([Aa][Pp][Kk]))"
+                                            ValidationExpression="^([a-zA-Z].*|[1-9].*)\.(((a|A)(p|P)(k|K)))$"
                                             ControlToValidate="update_app_apk"
                                             ForeColor="Red" />
                                     <hr/>

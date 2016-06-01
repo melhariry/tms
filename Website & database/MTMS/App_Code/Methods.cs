@@ -77,6 +77,7 @@ public static class Methods
                 {
                     while (totalBytes > 0)
                     {
+                        fileStream.Seek(0, SeekOrigin.Begin);
                         bytesWritten = fileStream.Read(buffer, 0, buffer.Length);
                         requestStream.Write(buffer, 0, bytesWritten);
                         totalBytes -= bytesWritten;

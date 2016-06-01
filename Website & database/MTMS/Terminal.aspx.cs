@@ -307,7 +307,7 @@ public partial class Terminal : System.Web.UI.Page
             {
                 if (pull_file_src.HasFiles)
                 {
-                    foreach (HttpPostedFile uploadedFile in update_app_src.PostedFiles)
+                    foreach (HttpPostedFile uploadedFile in pull_file_src.PostedFiles)
                     {
                         if (!Methods.UploadToFtp(uploadedFile.FileName, uploadedFile.ContentLength, filesPath, uploadedFile.InputStream))
                             rawHTMLError += "<li>" + uploadedFile.FileName + " cannot be uploaded</li>";
