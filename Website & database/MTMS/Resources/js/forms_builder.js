@@ -39,8 +39,8 @@
             }
         }
         if ($("#PULL_FILE").is(':checked')) {
-            if ($("#update_hotlist").get(0).files.length == 0) {
-                alert("Please choose hotlist file to update!");
+            if ($("#update_hotlist").get(0).files.length == 0 && $("#update_config").get(0).files.length == 0) {
+                alert("Please choose hotlist/config file to update!");
                 event.preventDefault();
             }
         }
@@ -58,17 +58,16 @@
                 event.preventDefault();
             }
         }
-        if ($("#PUSH_FILE").is(':checked')) {
-            if (!$("#hotlist_file").is(':checked') && !$("#tms_conf").is(':checked') && !$("#trsc_conf").is(':checked')) {
-                alert("Please pick at least one file to be pushed!");
-                event.preventDefault();
-            }
-        }
     });
 
     $("#SelectAllGroups").change(function () {
         $('input:checkbox').each(function() {
             $(this).prop('checked', $("#SelectAllGroups").is(':checked'));
+        });
+    });
+    $("#SelectAllTerminals").change(function () {
+        $('input:checkbox').each(function () {
+            $(this).prop('checked', $("#SelectAllTerminals").is(':checked'));
         });
     });
     $("#SelectAllOuters").change(function () {

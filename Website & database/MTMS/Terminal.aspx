@@ -40,6 +40,7 @@
                             <ul class="widget widget-menu unstyled">
                                 <li><a href="groups.aspx"><i class="menu-icon icon-group"></i>Groups <b class="label green pull-right"> <%= Methods.getGroupsCount() %> </b></a></li>
                                 <li><a href="terminals.aspx"><i class="menu-icon icon-hdd"></i>Terminals<b class="label orange pull-right"> <%= Methods.getTerminalsCount() %> </b></a></li>
+                                <li><a href="config.aspx"><i class="menu-icon icon-hdd"></i>Generate Config File<b class="label orange pull-right"></b></a></li>
                             </ul>
                             <!--/.widget-nav-->
                         </div>
@@ -94,8 +95,8 @@
                                                 <th rowspan="1" colspan="1">Buzzer</th>
                                                 <th rowspan="1" colspan="1">Led</th>
                                                 <th rowspan="1" colspan="1">Rtc</th>
-                                                <th rowspan="1" colspan="1">RamUsed(KB)</th>
-                                                <th rowspan="1" colspan="1">DiskUsed(KB)</th>
+                                                <th rowspan="1" colspan="1">RamUsed(MB)</th>
+                                                <th rowspan="1" colspan="1">DiskUsed(MB)</th>
                                                 <th rowspan="1" colspan="1">Timestamp</th>
 									        </tr>
 								        </thead>
@@ -251,7 +252,7 @@
                                 <div id='update_app_params' hidden="hidden">
                                     <h4>Update App parameters</h4>
                                     <label>App Source:</label>
-                                    <asp:FileUpload id='update_app_src' runat="server" />
+                                    <asp:FileUpload AllowMultiple="true" id='update_app_src' runat="server" />
                                     <asp:RegularExpressionValidator ID="AppValidator" runat="server" ErrorMessage="Invalid app source"
                                             ControlToValidate="update_app_src"
                                             ForeColor="Red" />
@@ -261,18 +262,57 @@
                                 <div id='pull_file_params' hidden="hidden">
                                     <h4>Pull File Parameters</h4>
                                     <label>File Source:</label>
-                                    <asp:FileUpload id='pull_file_src' runat="server" />
+                                    <asp:FileUpload AllowMultiple="true" id='pull_file_src' runat="server" />
                                     <hr/>
                                 </div>
                                 <div id='push_file_params' hidden="hidden">
-                                    <h4>Push File Parameters</h4>
-                                    <asp:CheckBox id="hotlist_file" runat="server" />
-                                    <label for="hotlist_file"><span class="checkbox-with-label"></span>Hotlist File</label>
-                                    <asp:CheckBox id="tms_conf" runat="server"/>
-                                    <label for="tms_conf"><span class="checkbox-with-label"></span>TMS App conf file</label>
-                                    <asp:CheckBox id="trsc_conf" runat="server"/>
-                                    <label for="trsc_conf"><span class="checkbox-with-label"></span>Transaction App conf file</label>
-                                    <hr/>
+                                    <h5>Select files you want to push</h5>
+                                    <div class="treeview">
+	                                    <ul>
+		                                    <li>
+			                                    <input type="checkbox" id="node-0" checked="checked" /><label><input type="checkbox" /><span></span></label><label class="folder" for="node-0">Root</label>
+			                                    <ul>
+				                                    <li>
+					                                    <input type="checkbox" id="node-0-0" checked="checked" /><label><input type="checkbox" /><span></span></label><label class="folder" for="node-0-0">Public</label>
+					                                    <ul>
+						                                    <li>
+							                                    <input type="checkbox" id="node-0-0-0" checked="checked" /><label><input type="checkbox" /><span></span></label><label class="folder" for="node-0-0-0">MTMS</label>
+							                                    <ul>
+                                                                    <asp:Repeater runat="server" ID="MTMSPushFileRep">
+                                                                        <ItemTemplate>
+								                                    <li>
+									                                    <label><asp:CheckBox runat="server" /><span></span></label><label class="file" ><%# Eval("Name") %> (<%# Eval("SizeInBytes") %> Bytes)</label>
+								                                    </li>
+                                                                        </ItemTemplate>
+                                                                    </asp:Repeater>
+							                                    </ul>
+						                                    </li>
+                                                            <asp:Repeater runat="server" ID="pubPushFileRep">
+                                                                <ItemTemplate>
+								                            <li>
+									                            <label><asp:CheckBox runat="server" /><span></span></label><label class="file" ><%# Eval("Name") %> (<%# Eval("SizeInBytes") %> Bytes)</label>
+								                            </li>
+                                                                </ItemTemplate>
+                                                            </asp:Repeater>
+					                                    </ul>
+				                                    </li>
+				                                    <li>
+					                                    <input type="checkbox" id="node-0-1" checked="checked"/><label><input type="checkbox" /><span></span></label><label class="folder" for="node-0-1">Private</label>
+					                                    <ul>
+						                                    <asp:Repeater runat="server" ID="priPushFileRep">
+                                                                <ItemTemplate>
+								                            <li>
+									                            <label><asp:CheckBox runat="server" /><span></span></label><label class="file" ><%# Eval("Name") %> (<%# Eval("SizeInBytes") %> Bytes)</label>
+								                            </li>
+                                                                </ItemTemplate>
+                                                            </asp:Repeater>
+					                                    </ul>
+				                                    </li>
+			                                    </ul>
+		                                    </li>
+	                                    </ul>
+                                    </div>
+                                    <hr />
                                 </div>
                                 <div id='delete_file_params' hidden="hidden">
                                     <h5>Select files you want to delete</h5>

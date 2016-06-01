@@ -41,6 +41,7 @@
                             <ul class="widget widget-menu unstyled">
                                 <li><a href="groups.aspx"><i class="menu-icon icon-group"></i>Groups <b class="label green pull-right"> <%= Methods.getGroupsCount() %> </b></a></li>
                                 <li><a href="terminals.aspx"><i class="menu-icon icon-hdd"></i>Terminals<b class="label orange pull-right"> <%= Methods.getTerminalsCount() %> </b></a></li>
+                                <li><a href="config.aspx"><i class="menu-icon icon-hdd"></i>Generate Config File<b class="label orange pull-right"></b></a></li>
                             </ul>
                             <!--/.widget-nav-->
                         </div>
@@ -83,6 +84,11 @@
 								        </tbody>
                                     </table>
 							    </div>
+                                <div class="module-body">
+                                    <div class="align-right">
+                                        <asp:Button ID="FreezeGroupBtn" CausesValidation="false" runat="server" CssClass="btn btn-primary btn-large" Text="Freeze Terminals" OnClick="FreezeGroupBtn_Click"/>
+                                    </div>
+                                </div>
                             </div>
                             <div class="module">
                                 <div class="module-head">
@@ -149,7 +155,7 @@
 							<div class="btn-box-row row-fluid">
 							    <a class="btn-box big span4">
                                     <asp:CheckBox id="PULL_FILE" runat="server"/>
-                                    <label class="checkbox-label" for="PULL_FILE"><i class="fa fa-download"></i><br /><span class="checkbox-with-label"></span>Update Hotlist</label>
+                                    <label class="checkbox-label" for="PULL_FILE"><i class="fa fa-download"></i><br /><span class="checkbox-with-label"></span>Update Hotlist/Config</label>
 								</a>
 								<a class="btn-box big span4">
                                     <asp:CheckBox id="PUSH_FILE" runat="server"/>
@@ -170,14 +176,14 @@
                                 <div id='update_app_params' hidden="hidden">
                                     <h4>Update App parameters</h4>
                                     <label>CAB File:</label>
-                                    <asp:FileUpload id='update_app_cab' runat="server" />
+                                    <asp:FileUpload AllowMultiple="true" id='update_app_cab' runat="server" />
                                     <asp:RegularExpressionValidator ID="CabValidator" runat="server" ErrorMessage="Invalid .cab source"
                                             ValidationExpression="(.+\.([Cc][Aa][Bb]))"
                                             ControlToValidate="update_app_cab"
                                             ForeColor="Red" />
                                     <br/>
                                     <label>APK File:</label>
-                                    <asp:FileUpload id='update_app_apk' runat="server" />
+                                    <asp:FileUpload AllowMultiple="true" id='update_app_apk' runat="server" />
                                     <asp:RegularExpressionValidator ID="ApkValidator" runat="server" ErrorMessage="Invalid .apk source"
                                             ValidationExpression="(.+\.([Aa][Pp][Kk]))"
                                             ControlToValidate="update_app_apk"
@@ -188,6 +194,8 @@
                                     <h4>Update Hotlist parameters</h4>
                                     <label>Hotlist File:</label>
                                     <asp:FileUpload id='update_hotlist' runat="server" />
+                                    <label>Config File:</label>
+                                    <asp:FileUpload id='update_config' runat="server" />
                                     <hr/>
                                 </div>
                                 <div class="align-right">
@@ -215,6 +223,10 @@
                                     <div class="controls">
 										<asp:TextBox runat="server" id="ContactNumTxt" placeholder="Contact Number" CssClass="span3" />
 										<asp:RequiredFieldValidator runat="server" ErrorMessage="*" ControlToValidate="ContactNumTxt" ForeColor="Red" />
+                                        <asp:RegularExpressionValidator ID="ContactNumValidator" runat="server" ErrorMessage="Invalid Phone Number"
+                                            ValidationExpression="^01[0-2]{1}[0-9]{8}"
+                                            ControlToValidate="ContactNumTxt"
+                                            ForeColor="Red" />
                                     </div>
                                     <div class="controls">
 										<asp:TextBox runat="server" id="ContactPersonTxt" placeholder="Contact Person" CssClass="span3" />

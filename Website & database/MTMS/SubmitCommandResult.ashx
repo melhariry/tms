@@ -8,8 +8,7 @@ public class SubmitCommandResult : IHttpHandler {
     public void ProcessRequest (HttpContext context) {
         string status = string.Empty, parameters = string.Empty;
         context.Response.ContentType = "text/plain";
-        string[] commandParams;
-        string[] commandStatus;
+        string[] commandParams, commandStatus, parentFolders;
         try
         {
             string command = context.Request.Params["Command"];
@@ -48,20 +47,24 @@ public class SubmitCommandResult : IHttpHandler {
                 case "DeleteFile":
                     commandParams = context.Request.Params["Name"].Split(',');
                     commandStatus = context.Request.Params["Status"].Split(',');
+                    parentFolders = context.Request.Params["ParentFolder"].Split(',');
                     for (int i = 0; i < commandParams.Length; i++)
                     {
                         if (Convert.ToInt32(commandStatus[i]) == 0)
                         {
-                            DB.Instance.DeletePosFileFromList(context.Request.Headers["SerialNumber"], commandParams[i]);
+                            DB.Instance.DeletePosFileFromList(context.Request.Headers["SerialNumber"], commandParams[i], parentFolders[i]);
                         }
-                        parameters += commandParams[i] + ';';
+                        if (parentFolders[i].Equals("MTMS"))
+                            parameters += "pub/MTMS/" + commandParams[i] + ';';
+                        else
+                            parameters += parentFolders[i] + '/' + commandParams[i] + ';';
                         status += commandStatus[i] + ';';
                     }
                 break;
                     
                 case "ListFiles":
                     commandParams = context.Request.Params["Name"].Split(',');
-                    string[] parentFolders = context.Request.Params["Parent"].Split(',');
+                    parentFolders = context.Request.Params["Parent"].Split(',');
                     string[] fileSizes = context.Request.Params["Size"].Split(',');
                     if (!DB.Instance.DeletePosFileList(context.Request.Headers["SerialNumber"]))
                     {

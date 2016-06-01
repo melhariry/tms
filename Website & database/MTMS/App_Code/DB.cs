@@ -356,7 +356,7 @@ public sealed class DB
             Conn.Close();
         }
     }
-    public bool DeletePosFileFromList(string serialNumber, string fileName)
+    public bool DeletePosFileFromList(string serialNumber, string fileName, string parentFolder)
     {
         try
         {
@@ -365,6 +365,7 @@ public sealed class DB
             DataTable table = new DataTable();
             cmd.Parameters.AddWithValue("@SerialNumber", serialNumber);
             cmd.Parameters.AddWithValue("@FileName", fileName);
+            cmd.Parameters.AddWithValue("@ParentFolder", parentFolder);
             SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
             rowCount.Direction = ParameterDirection.ReturnValue;
             Conn.Open();
@@ -714,7 +715,8 @@ public sealed class DB
             Conn.Open();
             cmd.ExecuteNonQuery();
             Conn.Close();
-            if (Int32.Parse(rowCount.Value.ToString()) > 0)
+            int count = Int32.Parse(rowCount.Value.ToString());
+            if (count > 0 || count == -1)
                 return true;
             else
                 return false;
@@ -873,7 +875,8 @@ public sealed class DB
             Conn.Open();
             cmd.ExecuteNonQuery();
             Conn.Close();
-            if (Int32.Parse(rowCount.Value.ToString()) > 0)
+            int count = Int32.Parse(rowCount.Value.ToString());
+            if (count > 0 || count == -1)
                 return true;
             else
                 return false;
@@ -918,7 +921,7 @@ public sealed class DB
     {
         try
         {
-            SqlCommand cmd = new SqlCommand("UpdatePosGroup", Conn);
+            SqlCommand cmd = new SqlCommand("UpdateGroup", Conn);
             cmd.CommandType = CommandType.StoredProcedure;
             DataTable table = new DataTable();
             cmd.Parameters.AddWithValue("@GroupId", groupId);
@@ -932,6 +935,62 @@ public sealed class DB
             cmd.ExecuteNonQuery();
             Conn.Close();
             return Int32.Parse((Id.Value.ToString()));
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
+
+    public bool FreezeGroup(int groupId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("FreezeGroup", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@GroupId", groupId);
+            SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            rowCount.Direction = ParameterDirection.ReturnValue;
+            Conn.Open();
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+            if (Int32.Parse(rowCount.Value.ToString()) > 0)
+                return true;
+            else
+                return false;
+        }
+        catch (Exception EX)
+        {
+            throw (EX);
+        }
+        finally
+        {
+            Conn.Close();
+        }
+    }
+
+    public bool FreezeTerminal(int posId)
+    {
+        try
+        {
+            SqlCommand cmd = new SqlCommand("FreezeTerminal", Conn);
+            cmd.CommandType = CommandType.StoredProcedure;
+            DataTable table = new DataTable();
+            cmd.Parameters.AddWithValue("@PosId", posId);
+            SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
+            rowCount.Direction = ParameterDirection.ReturnValue;
+            Conn.Open();
+            cmd.ExecuteNonQuery();
+            Conn.Close();
+            if (Int32.Parse(rowCount.Value.ToString()) > 0)
+                return true;
+            else
+                return false;
         }
         catch (Exception EX)
         {

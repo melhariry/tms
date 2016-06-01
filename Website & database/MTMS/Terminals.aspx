@@ -39,41 +39,63 @@
                             <ul class="widget widget-menu unstyled">
                                 <li><a href="groups.aspx"><i class="menu-icon icon-group"></i>Groups <b class="label green pull-right"> <%= Methods.getGroupsCount() %> </b></a></li>
                                 <li><a href="terminals.aspx"><i class="menu-icon icon-hdd"></i>Terminals<b class="label orange pull-right"> <%= Methods.getTerminalsCount() %> </b></a></li>
+                                <li><a href="config.aspx"><i class="menu-icon icon-hdd"></i>Generate Config File<b class="label orange pull-right"></b></a></li>
                             </ul>
                             <!--/.widget-nav-->
                         </div>
                         <!--/.sidebar-->
                     </div>
                     <!--/.span3-->
-                    <div class="span9">
+                    <form runat="server" class="span9">
+                        <% PrintStatus(); %>
                         <div class="content">
                             <div class="module">
-                            <div class="module-head">
-                                <h3>Terminals</h3>
+                                <div class="module-head">
+                                    <h3>Terminals</h3>
+                                </div>
+                                <div class="module-body table">
+                                    <table id="terminals" border="0" class="datatable-1 table table-bordered table-striped  display dataTable" aria-describedby="DataTables_Table_0_info" style="width: 100%;">
+								        <thead>
+									        <tr>
+                                                <th><div class="inline-block-center"><asp:CheckBox runat="server" ID="SelectAllTerminals" CssClass="checkbox-without-label"/><//div></th>
+                                                <th rowspan="1" colspan="1">Id</th>
+                                                <th rowspan="1" colspan="1">Serial Number</th>
+                                                <th rowspan="1" colspan="1">Vendor</th>
+                                                <th rowspan="1" colspan="1">Model</th>
+                                                <th rowspan="1" colspan="1">Last Online</th>
+                                                <th rowspan="1" colspan="1">Date Added</th>
+                                                <th rowspan="1" colspan="1">Group</th>
+                                                <th rowspan="1" colspan="1">Health State</th>
+									        </tr>
+								        </thead>
+								        <tbody role="alert" aria-live="polite" aria-relevant="all">
+                                            <asp:Repeater runat="server" ID="TerminalsRep" OnItemDataBound="TerminalsRep_ItemDataBound">
+                                                    <ItemTemplate>
+                                                        <tr>
+                                                            <td><div class="inline-block-center"><asp:CheckBox runat="server" CssClass="checkbox-without-label"/></div></td>
+                                                            <td><a href="terminal.aspx?id=<%# Eval("Id") %>"> <%# Eval("Id") %> </a></td>
+                                                            <td> <%# Eval("SerialNumber") %> </td>
+                                                            <td> <%# Eval("Vendor") %> </td>
+                                                            <td> <%# Eval("Model") %> </td>
+                                                            <td runat="server"> <%# Eval("LastSeenOnline") %> </td>
+                                                            <td> <%# Eval("DateAdded") %> </td>
+                                                            <td> <%# Eval("Name") %> </td>
+                                                            <td runat="server"></td>
+                                                        </tr>
+                                                    </ItemTemplate>
+                                                </asp:Repeater>
+								        </tbody>
+                                    </table>
+							    </div>
+                                <div class="module-body">
+                                    <div class="align-right">
+                                        <asp:Button ID="FreezeTerminalBtn" CausesValidation="false" runat="server" CssClass="btn btn-primary btn-large" Text="Freeze" OnClick="FreezeTerminalBtn_Click"/>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="module-body table">
-                                <table id="terminals" border="0" class="datatable-1 table table-bordered table-striped  display dataTable" aria-describedby="DataTables_Table_0_info" style="width: 100%;">
-								    <thead>
-									    <tr>
-                                            <th rowspan="1" colspan="1">Id</th>
-                                            <th rowspan="1" colspan="1">Serial Number</th>
-                                            <th rowspan="1" colspan="1">Vendor</th>
-                                            <th rowspan="1" colspan="1">Model</th>
-                                            <th rowspan="1" colspan="1">Last Online</th>
-                                            <th rowspan="1" colspan="1">Date Added</th>
-                                            <th rowspan="1" colspan="1">Group</th>
-                                            <th rowspan="1" colspan="1">Health State</th>
-									    </tr>
-								    </thead>
-								    <tbody role="alert" aria-live="polite" aria-relevant="all">
-                                        <% PrintTerminals(); %>
-								    </tbody>
-                                </table>
-							</div>
-                        </div>
                         </div>
                         <!--/.content-->
-                    </div>
+                    </form>
                     <!--/.span9-->
                 </div>
             </div>
@@ -90,7 +112,7 @@
 	<script src="Resources/js/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
 	<script src="Resources/js/bootstrap.min.js" type="text/javascript"></script>
     <script src="Resources/js/jquery.dataTables.js" type="text/javascript"></script>
-    
+    <script src="Resources/js/forms_builder.js" type="text/javascript"></script>
     <script>
         $(document).ready(function () {
             $('#terminals').DataTable();

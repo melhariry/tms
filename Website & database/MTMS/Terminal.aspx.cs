@@ -48,6 +48,12 @@ public partial class Terminal : System.Web.UI.Page
             pubDeleteFileRep.DataBind();
             priDeleteFileRep.DataSource = priFiles;
             priDeleteFileRep.DataBind();
+            MTMSPushFileRep.DataSource = mtmsFiles;
+            MTMSPushFileRep.DataBind();
+            pubPushFileRep.DataSource = pubFiles;
+            pubPushFileRep.DataBind();
+            priPushFileRep.DataSource = priFiles;
+            priPushFileRep.DataBind();
         }
     }
 
@@ -108,9 +114,12 @@ public partial class Terminal : System.Web.UI.Page
     protected void PrintTerminalHealthTest()
     {
         string rawHTML = string.Empty;
+        double ramUsed, diskUsed;
         for (int i = 0; i < terminalHealthTest.Rows.Count; i++)
         {
             rawHTML += "<tr>";
+            ramUsed = Convert.ToInt64(terminalHealthTest.Rows[i][6]) / Convert.ToInt64(terminalInfo["TotalRamSize"]);
+            diskUsed = Convert.ToInt64(terminalHealthTest.Rows[i][7]) / Convert.ToInt64(terminalInfo["TotalDiskCapacity"]);
             for (int j = 0; j < 6; j++)
             {
                 if (terminalHealthTest.Rows[i][j].ToString().Equals("0"))
@@ -119,8 +128,16 @@ public partial class Terminal : System.Web.UI.Page
                     rawHTML += "<td style=\"background-color:#F51616; color:white;\">Error</td>";
             }
 
-            rawHTML += "<td>" + Convert.ToInt64(terminalHealthTest.Rows[i][6]) / 1024 +"</td>";
-            rawHTML += "<td>" + Convert.ToInt64(terminalHealthTest.Rows[i][7]) / 1024 + "</td>";
+            if (ramUsed > 0.9)
+                rawHTML += "<td style=\"background-color:#F51616; color:white;\">" + terminalHealthTest.Rows[i][6].ToString() + "/" + terminalInfo["TotalRamSize"] + "</td>";
+            else
+                rawHTML += "<td>" + terminalHealthTest.Rows[i][6].ToString() + "/" + terminalInfo["TotalRamSize"] + "</td>";
+
+            if (diskUsed > 0.9)
+                rawHTML += "<td style=\"background-color:#F51616; color:white;\">" + terminalHealthTest.Rows[i][7].ToString() + "/" + terminalInfo["TotalDiskCapacity"] + "</td>";
+            else
+                rawHTML += "<td>" + terminalHealthTest.Rows[i][7].ToString() + "/" + terminalInfo["TotalDiskCapacity"] + "</td>";
+            
             rawHTML += "<td>" + terminalHealthTest.Rows[i][8] + "</td>";
             rawHTML += "</tr>";
         }
@@ -228,12 +245,29 @@ public partial class Terminal : System.Web.UI.Page
                 param += "pri/" + priFiles.Rows[i][0] + ";";
         return param;
     }
+
+    private string FormatPushParams()
+    {
+        string param = string.Empty;
+        for (int i = 0; i < MTMSPushFileRep.Items.Count; i++)
+            if ((MTMSPushFileRep.Items[i].Controls[1] as CheckBox).Checked)
+                param += "pub/MTMS/" + mtmsFiles.Rows[i][0] + ";";
+
+        for (int i = 0; i < pubPushFileRep.Items.Count; i++)
+            if ((pubPushFileRep.Items[i].Controls[1] as CheckBox).Checked)
+                param += "pub/" + pubFiles.Rows[i][0] + ";";
+
+        for (int i = 0; i < priPushFileRep.Items.Count; i++)
+            if ((priPushFileRep.Items[i].Controls[1] as CheckBox).Checked)
+                param += "pri/" + priFiles.Rows[i][0] + ";";
+        return param;
+    }
     protected void TerminalSubmitBtn_Click(object sender, EventArgs e)
     {
-        //TODO: Handle delete files, modify exception handling
         BitArray cmd = new BitArray(32, false);
         int ongoingCommand = 0, index = 0;
         string updateAppParams, pullFileParams, pushFileParams, deleteFileParams;
+        string uploadSrcs = string.Empty, uploadFiles = string.Empty;
         string appPath = "Apps/" + terminalInfo["Vendor"].ToString() + "/";
         string filesPath = "Terminals/" + terminalInfo["Vendor"].ToString() + "/" + terminalInfo["SerialNumber"].ToString() + "/pub/MTMS/";
         try
@@ -253,19 +287,39 @@ public partial class Terminal : System.Web.UI.Page
 
             if (UPDATE_APP.Checked)
             {
-                if (update_app_src.HasFile)
-                    if (!Methods.UploadToFtp(Path.GetFileName(update_app_src.FileName), update_app_src.PostedFile.ContentLength, appPath, update_app_src.PostedFile.InputStream))
-                        rawHTMLError += "<li>" + Path.GetFileName(update_app_src.FileName) + " cannot be uploaded</li>";
-                    else
-                        rawHTMLSuccess += "<li>" + Path.GetFileName(update_app_src.FileName) + " uploaded successfully</li>";
+                if (update_app_src.HasFiles)
+                {
+                    foreach (HttpPostedFile uploadedSrc in update_app_src.PostedFiles)
+                    {
+                        if (!Methods.UploadToFtp(uploadedSrc.FileName, uploadedSrc.ContentLength, appPath, uploadedSrc.InputStream))
+                            rawHTMLError += "<li>" + uploadedSrc.FileName + " cannot be uploaded</li>";
+                        else
+                        {
+                            rawHTMLSuccess += "<li>" + uploadedSrc.FileName + " uploaded successfully</li>";
+                            uploadSrcs += uploadedSrc.FileName + ";";
+                        }
+                    }
+                }
+                else
+                    rawHTMLError += "<li>No or empty app source</li>";
             }
             if (PULL_FILE.Checked)
             {
-                if (pull_file_src.HasFile)
-                    if (!Methods.UploadToFtp(Path.GetFileName(pull_file_src.FileName), pull_file_src.PostedFile.ContentLength, filesPath, pull_file_src.PostedFile.InputStream))
-                        rawHTMLError += "<li>" + Path.GetFileName(pull_file_src.FileName) + " cannot be uploaded</li>";
-                    else
-                        rawHTMLSuccess += "<li>" + Path.GetFileName(pull_file_src.FileName) + " uploaded successfully</li>";
+                if (pull_file_src.HasFiles)
+                {
+                    foreach (HttpPostedFile uploadedFile in update_app_src.PostedFiles)
+                    {
+                        if (!Methods.UploadToFtp(uploadedFile.FileName, uploadedFile.ContentLength, filesPath, uploadedFile.InputStream))
+                            rawHTMLError += "<li>" + uploadedFile.FileName + " cannot be uploaded</li>";
+                        else
+                        {
+                            uploadFiles += uploadedFile.FileName + ";";
+                            rawHTMLSuccess += "<li>" + uploadedFile.FileName + " uploaded successfully</li>";
+                        }
+                    }
+                }
+                else
+                    rawHTMLError += "<li>No or empty file source</li>";
             }
 
             if (Convert.ToInt32(commandToSend["Command"]) != 0)
@@ -278,20 +332,13 @@ public partial class Terminal : System.Web.UI.Page
             pushFileParams = commandToSend["PushFileParameters"].ToString();
             deleteFileParams = commandToSend["DeleteFileParameters"].ToString();
             if (PUSH_FILE.Checked)
-            {
-                //TODO:: Check with both terminals file names and exact paths
-                if (hotlist_file.Checked)
-                    pushFileParams += "pub/hotlist.txt;";
-                if (tms_conf.Checked)
-                    pushFileParams += "pub/MTMS/tms_configuration.txt;";
-                if (trsc_conf.Checked)
-                    pushFileParams += "pub/trsc_configuration.txt;";
-            }
+                pushFileParams += FormatPushParams();
+
             if (PULL_FILE.Checked)
                 pullFileParams += "pub/MTMS/" + pull_file_src.FileName + ";";
 
             if (UPDATE_APP.Checked)
-                updateAppParams += update_app_src.FileName + ";";
+                updateAppParams += uploadSrcs;
 
             if (DELETE_FILE.Checked)
                 deleteFileParams += FormatDeleteParams();
@@ -299,15 +346,13 @@ public partial class Terminal : System.Web.UI.Page
             if (!DB.Instance.UpdateCommandToSend(Convert.ToInt32(commandToSend["Id"]), ongoingCommand, string.Empty, updateAppParams, deleteFileParams, pushFileParams, pullFileParams, Schedule.Checked))
                 rawHTMLError += "<li>" + "Database error, please contact Database adminstrator</li>";
             else
-                rawHTMLSuccess += "<li>" + "Commands submitted successfully</li>";
+                rawHTMLSuccess += "<li>Commands submitted successfully</li>";
             ClearCheckBoxes();
             commandToSend = DB.Instance.GetCommandToSend(posId);
         }
         catch (WebException ex)
         {
-            Response.StatusCode = 500;
-            Response.StatusDescription = ex.Message;
-            Response.Write(ex.Message);
+            rawHTMLError += "<li>" + ex.Message + "</li>";
         }
     }
     protected void TerminalClearBtn_Click(object sender, EventArgs e)
@@ -316,6 +361,7 @@ public partial class Terminal : System.Web.UI.Page
             rawHTMLError += "<li>" + "Database error, please contact Database adminstrator</li>";
         else
             rawHTMLSuccess += "<li>" + "Commands cleared successfully</li>";
+        commandToSend = DB.Instance.GetCommandToSend(posId);
         ClearCheckBoxes();
     }
 }
