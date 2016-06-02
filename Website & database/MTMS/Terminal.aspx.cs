@@ -158,7 +158,7 @@ public partial class Terminal : System.Web.UI.Page
                 if (terminalHealthTest.Rows[i][j].ToString().Equals("0"))
                     rawHTML += "<td>Success</td>";
                 else
-                    rawHTML += "<td style=\"background-color:#F51616; color:white;\">Error</td>";
+                    rawHTML += "<td style=\"background-color:#F51616; color:white;\">" + Methods.GetErrorMessage(Convert.ToInt32(terminalHealthTest.Rows[i][j])) + "</td>";
             }
 
             if (ramUsed > 0.9)
@@ -420,29 +420,21 @@ public partial class Terminal : System.Web.UI.Page
     }
     protected void DownloadFtpBtn_Click(object sender, EventArgs e)
     {
-        bool selected = false;
-        string localPath = string.Empty;
+        string localPath = string.Empty, fileName = string.Empty;
         string ftpPath = "Terminals/" + terminalInfo["Vendor"] + '/' + terminalInfo["SerialNumber"] + '/' + "pub/MTMS/";
-        string fileName = string.Empty;
-        for (int i = 0; i < CommandsRep.Items.Count; i++)
+        string[] filePath;
+
+        filePath = ((sender as Button).Parent.Controls[5] as HtmlTableCell).InnerHtml.Trim().Split('/');
+        fileName = filePath[filePath.Length - 1].Replace(".", "_" + terminalInfo["SerialNumber"].ToString() + ".");
+        localPath = Server.MapPath("~/Dump/" + fileName);
+        if (Methods.DownloadFromFtp(filePath[filePath.Length - 1], localPath, ftpPath))
         {
-            if ((CommandsRep.Items[i].Controls[7] as CheckBox).Checked)
-            {
-                fileName = (CommandsRep.Items[i].Controls[5] as HtmlTableCell).InnerHtml.Trim();
-                localPath = "D:\\University\\GP\\FTPLocal\\" + fileName.Replace(".", "_" + terminalInfo["SerialNumber"].ToString() + ".");
-                if (Methods.DownloadFromFtp(fileName, localPath, ftpPath))
-                    rawHTMLSuccess += "<li>" + fileName + " downloaded successfully</li>";
-                else
-                    rawHTMLError += "<li>" + fileName + " download failed</li>";
-                selected = true;
-                (CommandsRep.Items[i].Controls[7] as CheckBox).Checked = false;
-            }
+            Response.ContentType = "application/octet-stream";
+            Response.AppendHeader("Content-Disposition", "attachment; filename=" + fileName);
+            Response.TransmitFile(localPath);
+            Response.End();
         }
-        if (!selected)
-        {
-            rawHTMLError += "<li>Please select at least one file to download</li>";
-            return;
-        }
-        SelectAllFiles.Checked = false;
+        else
+            rawHTMLError += "<li>" + fileName + " download failed</li>";
     }
 }

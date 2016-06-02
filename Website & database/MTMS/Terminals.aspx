@@ -39,7 +39,7 @@
                             <ul class="widget widget-menu unstyled">
                                 <li><a href="groups.aspx"><i class="menu-icon icon-group"></i>Groups <b class="label green pull-right"> <%= Methods.getGroupsCount() %> </b></a></li>
                                 <li><a href="terminals.aspx"><i class="menu-icon icon-hdd"></i>Terminals<b class="label orange pull-right"> <%= Methods.getTerminalsCount() %> </b></a></li>
-                                <li><a href="config.aspx"><i class="menu-icon icon-hdd"></i>Generate Config File<b class="label orange pull-right"></b></a></li>
+                                <li><a href="config.aspx"><i class="menu-icon icon-hdd"></i>Configuration<b class="label orange pull-right"></b></a></li>
                             </ul>
                             <!--/.widget-nav-->
                         </div>

@@ -39,7 +39,7 @@
                             <ul class="widget widget-menu unstyled">
                                 <li><a href="groups.aspx"><i class="menu-icon icon-group"></i>Groups <b class="label green pull-right"> <%= Methods.getGroupsCount() %> </b></a></li>
                                 <li><a href="terminals.aspx"><i class="menu-icon icon-hdd"></i>Terminals<b class="label orange pull-right"> <%= Methods.getTerminalsCount() %> </b></a></li>
-                                <li><a href="config.aspx"><i class="menu-icon icon-hdd"></i>Generate Config File<b class="label orange pull-right"></b></a></li>
+                                <li><a href="config.aspx"><i class="menu-icon icon-hdd"></i>Configuration<b class="label orange pull-right"></b></a></li>
                             </ul>
                             <!--/.widget-nav-->
                         </div>
@@ -55,7 +55,7 @@
                                     <h3>Config File Params</h3>
                                 </div>
                                 <div class="module-body" runat="server">
-                                    <h5>This form generates the configuration file for the TMS app and forces all the terminals to pull the generated file.</h5>
+                                    <h5>This form generates the configuration file for the TMS app and forces all the terminals to pull the generated file</h5>
                                     <div class="control-group">
 									    <div class="controls">
 										    <asp:TextBox runat="server" id="FirstIpTxt" placeholder="First IP" CssClass="span3" />
@@ -96,6 +96,17 @@
                                         </div>
 								        
 							        </div>
+                                </div>
+                            </div>
+                            <div class="module" id="dump_module">
+                                <div class="module-head">
+                                    <h3>Delete Dump Files</h3>
+                                </div>
+                                <div class="module-body">
+                                    <h5>There are currently <%=GetFilesCount() %> dump files </h5>
+                                    <div class="align-right">
+                                        <asp:Button ID="DeleteDumpBtn" runat="server" CssClass="btn btn-primary btn-large" Text="Delete Files" CausesValidation="false" OnClick="DeleteDumpBtn_Click"></asp:Button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

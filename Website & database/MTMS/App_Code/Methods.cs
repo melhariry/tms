@@ -148,4 +148,67 @@ public static class Methods
         return rawHTML;
     }
 
+    public static string GetErrorMessage(int errorCode)
+    {
+        string message = string.Empty;
+        switch (errorCode)
+        {
+            case (2049):
+                message = "Crypto Invalid Params";
+                break;
+            case (2050):
+                message = "Crypto fault";
+                break;
+            case (2051):
+                message = "RNG Timeout";
+                break;
+            case (2052):
+                message = "RSA Key Gen Failed";
+                break;
+            case (5634):
+                message = "Overheat";
+                break;
+            case (5635):
+                message = "Out of paper";
+                break;
+            case (1025):
+                message = "Timer Invalid Params";
+                break;
+            case (1026):
+                message = "Timer fault";
+                break;
+            case (1537):
+                message = "Rtc Invalid Params";
+                break;
+            case (1538):
+                message = "Rtc fault";
+                break;
+            case (1539):
+                message = "Tz Overrange";
+                break;
+            case (4097):
+                message = "Buzzer Invalid Params";
+                break;
+            case (4098):
+                message = "Buzzer fault";
+                break;
+            case (3585):
+                message = "LED Invalid Params";
+                break;
+            case (3586):
+                message = "Led fault";
+                break;
+            case (7937):
+                message = "Not supported";
+                break;
+            case (7938):
+                message = "Backlight Invalid Params";
+                break;
+            default:
+                message = "Error";
+                break;
+        }
+        return message;
+    }
+
 }

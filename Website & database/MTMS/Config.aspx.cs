@@ -13,10 +13,13 @@ public partial class Config : System.Web.UI.Page
     List<string> time = new List<string>();
     DataTable allTerminals;
     DataRow commandToSend;
-    string rawHTMLError = string.Empty, rawHTMLSuccess = string.Empty;
+    int filesCount;
+    string rawHTMLError = string.Empty, rawHTMLSuccess = string.Empty, dumpPath = string.Empty;
     protected void Page_Load(object sender, EventArgs e)
     {
         allTerminals = DB.Instance.GetTerminals();
+        dumpPath = Server.MapPath("~/Dump/");
+        filesCount = GetFilesCount();
         if (!IsPostBack)
         {
             if (Session["id"] == null)
@@ -39,7 +42,7 @@ public partial class Config : System.Web.UI.Page
     }
     protected void GenerateConfigBtn_Click(object sender, EventArgs e)
     {
-        string filePath = Server.MapPath("~/Resources/TMSConfig.csv"), param = string.Empty;
+        string filePath = Server.MapPath("~/Dump/TMSConfig.csv"), param = string.Empty;
         bool commandSuccess = true;
         int interval = Convert.ToInt32(IntervalTxt.Text);
         if (interval < 0)
@@ -82,5 +85,33 @@ public partial class Config : System.Web.UI.Page
         SecondIpTxt.Text = string.Empty;
         FTPUserTxt.Text = string.Empty;
         IntervalTxt.Text = string.Empty;
+    }
+
+    protected int GetFilesCount()
+    {
+        filesCount = Directory.GetFiles(dumpPath, "*", SearchOption.TopDirectoryOnly).Length;
+        return filesCount;
+    }
+
+    protected void DeleteDumpBtn_Click(object sender, EventArgs e)
+    {
+        if (filesCount == 0)
+        {
+            rawHTMLError += "<li>No dump files to delete</li>";
+            return;
+        }
+        try
+        {
+            System.IO.DirectoryInfo dumpInfo = new DirectoryInfo(dumpPath);
+            foreach (FileInfo file in dumpInfo.GetFiles())
+            {
+                file.Delete();
+            }
+            rawHTMLSuccess += "<li>Files deleted successfully</li>";
+        }
+        catch (Exception)
+        {
+            rawHTMLError += "<li>Failed to delete files</li>";
+        }
     }
 }

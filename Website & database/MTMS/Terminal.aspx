@@ -40,7 +40,7 @@
                             <ul class="widget widget-menu unstyled">
                                 <li><a href="groups.aspx"><i class="menu-icon icon-group"></i>Groups <b class="label green pull-right"> <%= Methods.getGroupsCount() %> </b></a></li>
                                 <li><a href="terminals.aspx"><i class="menu-icon icon-hdd"></i>Terminals<b class="label orange pull-right"> <%= Methods.getTerminalsCount() %> </b></a></li>
-                                <li><a href="config.aspx"><i class="menu-icon icon-hdd"></i>Generate Config File<b class="label orange pull-right"></b></a></li>
+                                <li><a href="config.aspx"><i class="menu-icon icon-hdd"></i>Configuration<b class="label orange pull-right"></b></a></li>
                             </ul>
                             <!--/.widget-nav-->
                         </div>
@@ -72,7 +72,7 @@
                                                 <th rowspan="1" colspan="1">Status</th>
                                                 <th rowspan="1" colspan="1">Timestamp</th>
                                                 <th rowspan="1" colspan="1">App/File Name</th>
-                                                <th><div class="inline-block-center"><asp:CheckBox runat="server" ID="SelectAllFiles" CssClass="checkbox-without-label"/></div></th>
+                                                <th>Download File</th>
 									        </tr>
 								        </thead>
 								            <tbody role="alert" aria-live="polite" aria-relevant="all">
@@ -83,18 +83,13 @@
                                                             <td runat="server"><%# Eval("Status") %></td>
                                                             <td> <%# Eval("Timestamp") %> </td>
                                                             <td runat="server"><%# Eval("Parameters") %></td>
-                                                            <td><div class="inline-block-center"><asp:CheckBox runat="server" CssClass="checkbox-without-label"/></div></td>
+                                                            <td><asp:Button ID="Download" runat="server" CssClass="btn btn-primary btn-large" Text="Download" OnClick="DownloadFtpBtn_Click"></asp:Button></td>
                                                         </tr>
                                                     </ItemTemplate>
                                                 </asp:Repeater>
 								            </tbody>
                                         </table>
 							        </div>
-                                    <div class="module-body">
-                                        <div class="align-right">
-                                            <asp:Button ID="DownloadFtpBtn" runat="server" CssClass="btn btn-primary btn-large" Text="Download" OnClick="DownloadFtpBtn_Click"></asp:Button>
-                                        </div>
-                                    </div>
                                 </div>
 
                                 <div class="module">
