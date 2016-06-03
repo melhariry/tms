@@ -173,10 +173,10 @@
                             <div class="module-body" id="inputs_div" runat="server">
                                 <div id='update_app_params' hidden="hidden">
                                     <h4>Update App parameters</h4>
-                                    <label>CAB File:</label>
+                                    <label>CAP File:</label>
                                     <asp:FileUpload AllowMultiple="true" id='update_app_cab' runat="server" />
-                                    <asp:RegularExpressionValidator ID="CabValidator" runat="server" ErrorMessage="Invalid .cab source"
-                                            ValidationExpression="(.+\.([Cc][Aa][Bb]))"
+                                    <asp:RegularExpressionValidator ID="CabValidator" runat="server" ErrorMessage="Invalid .cap source"
+                                            ValidationExpression="(.+\.([Cc][Aa][Pp]))"
                                             ControlToValidate="update_app_cab"
                                             ForeColor="Red" />
                                     <br/>

@@ -31,8 +31,8 @@ public partial class Terminal : System.Web.UI.Page
         Schedule.Checked = Convert.ToBoolean(commandToSend["isScheduled"]);
         if (terminalInfo["Vendor"].ToString().Equals("Castles"))
         {
-            AppSource.InnerText = "Cab Source:";
-            AppValidator.ValidationExpression = "(.+\\.([Cc][Aa][Bb]))";
+            AppSource.InnerText = "Cap Source:";
+            AppValidator.ValidationExpression = "(.+\\.([Cc][Aa][Pp]))";
         }
         else
         {
