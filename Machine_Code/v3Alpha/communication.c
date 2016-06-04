@@ -26,9 +26,7 @@
 * I N C L U D E S *
 *========================================*/
 #include "communication.h"
-#include "util.h"
-#include "GPRS.h"
-#include "httpclient.h"
+
 
 
 /*==========================================*
@@ -40,11 +38,6 @@
 *==========================================*/
   
 
-
-#define SIZE_HTTP_BUFF 1224
-#define SIZE_HTTP_MESSAGE 200
-#define SIZE_HTTP_HEADER 100
-#define SIZE_HTTP_PARAM 50
 
 /*==========================================*
 * C O N S T A N T S *
@@ -63,8 +56,9 @@ const BYTE tmsPaths[][50]={"/MTMS/PosUp.ashx",
 
 CURL *curl;
 CURLcode res;
+USHORT Retry;
 
-BYTE baTmsUrl[50]="41.47.138.212";
+BYTE baTmsUrl[50]="41.47.137.136";
 
 USHORT usTmsPort=80;
 //BYTE ftpUser[100]="MTMS_FTP"; //moneer
@@ -72,12 +66,9 @@ BYTE ftpUser[100]="MTMS_USER";
 
 BYTE ftpPass[100]="1234";
 
+BYTE commbuff[512];
 
-BYTE baHttpParam[SIZE_HTTP_PARAM];
-BYTE baHttpHeader[SIZE_HTTP_HEADER];
-BYTE baHttpMessage[SIZE_HTTP_MESSAGE];
-BYTE baHttpBuff[SIZE_HTTP_BUFF];
-USHORT usHttpBuffLen=SIZE_HTTP_BUFF;
+
 
 /*==========================================*
 * M A C R O S *
@@ -100,16 +91,13 @@ WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void **userp)
     if(mem == NULL)
     {
         /* out of memory! */ 
-        CTOS_LCDTPrint("not enough memory \n(realloc returned NULL)\n");
+        
         return 0;
     }
      memcpy(mem, contents, realsize);
     mem[realsize] = 0;
     *userp=mem;
-    //sprintf(baHttpBuff,"\n%p->%s",*userp,(BYTE*)*userp);
-    //CTOS_LCDTPrint(baHttpBuff);
-    //CTOS_LCDTPrint(userp);
-    //CTOS_KBDGet(&key);
+   
     return realsize;
 }
 USHORT commConfig(IN char *cpHostName,IN char *cpFTPUserName,IN char *cpFTPPass)
@@ -124,6 +112,7 @@ USHORT commInit()
   gprsOpen();  
   gprsConnect(baTmsUrl,usTmsPort);  
   GetSerialNumber(baSerialNumber);
+  Retry=2;
 }
 USHORT commClose()
 {
@@ -135,17 +124,14 @@ USHORT commSendTms(INOUT BYTE *baMessage,IN USHORT usPathIndex)
     //local variables
     BYTE key;
     USHORT usret;
-    BYTE baUrl[100];
     enuGprsStateType gprsState;
     BYTE *baResponse;
     gprsState = gprsGetState();
-
+    USHORT try=0;
   
     //memory allocation 
     baResponse=(BYTE*)malloc(2);
-   // sprintf(baHttpBuff,"\n%p->%s",(void*)baResponse,(BYTE*)&baResponse);
-   // CTOS_LCDTPrint(baHttpBuff);
-
+   
     //check GPRS connection
     if(gprsState!=GPRS_ESTABLISHED)
     {
@@ -166,15 +152,15 @@ USHORT commSendTms(INOUT BYTE *baMessage,IN USHORT usPathIndex)
         /* First set the URL that is about to receive our POST. This URL can
            just as well be a https:// URL if that is what should receive the
            data. */
-        sprintf(baUrl,"http://%s/%s",baTmsUrl,tmsPaths[usPathIndex]); 
-        curl_easy_setopt(curl, CURLOPT_URL, baUrl);
+        sprintf(commbuff,"http://%s/%s",baTmsUrl,tmsPaths[usPathIndex]); 
+        curl_easy_setopt(curl, CURLOPT_URL, commbuff);
         /* Now specify the POST data */ 
         curl_easy_setopt(curl, CURLOPT_POSTFIELDS,(char*)baMessage);
 
         //HEADER
         /* Add a custom header */ 
-        sprintf(baHttpHeader,"SerialNumber:%s",baSerialNumber);
-        params = curl_slist_append(params, baHttpHeader);
+        sprintf(commbuff,"SerialNumber:%s",baSerialNumber);
+        params = curl_slist_append(params, commbuff);
         res = curl_easy_setopt(curl, CURLOPT_HTTPHEADER, params);
 
         //Time to wait response
@@ -199,44 +185,38 @@ USHORT commSendTms(INOUT BYTE *baMessage,IN USHORT usPathIndex)
             usret=gprsConnect(baTmsUrl,usTmsPort);
             if(usret!=d_OK)return usret;
         }
-        res = curl_easy_perform(curl);
-        //CTOS_LCDTPrint("\n after Perf");
-        //CTOS_KBDGet(&key);
-        
-        /* Check for errors */ 
-        if(res != CURLE_OK){
-          //fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
-            sprintf(baUrl,"curl() f:%s\n",curl_easy_strerror(res));
-            CTOS_LCDTPrint("\n");
-            CTOS_LCDTPrint(baUrl);
-            CTOS_LCDTPrint("\n");
-            CTOS_LCDTPrint(baUrl+20);
-            CTOS_LCDTPrint("\n");
-            CTOS_LCDTPrint(baUrl+40);
-            CTOS_KBDGet(&key);
-            strcpy(baMessage,"0");
-
-        }
-
-        else
+        do
         {
-           // CTOS_LCDTPrint("\n after pref\n");
-    //        sprintf(baHttpBuff,"\n%p->%s",(void*)baResponse,(BYTE*)baResponse);
-            //CTOS_LCDTPrint(baHttpBuff);
-            //CTOS_LCDTPrint(baResponse);
-            strcpy(baMessage,baResponse);
-            //CTOS_LCDTPrint("\n after cpy");
-            //CTOS_LCDTPrint(baMessage);
-            //CTOS_KBDGet(&key);
-        }
+            res = curl_easy_perform(curl);
+            
+            
+            /* Check for errors */ 
+            if(res != CURLE_OK){
+              //fprintf(stderr, "curl_easy_perform() failed: %s\n",curl_easy_strerror(res));
+                sprintf(commbuff,"Error: commSendTms: curl_easy_perform(): %s\n",curl_easy_strerror(res));
+                sysLog(commbuff);
+                strcpy(baMessage,"0");
+
+            }
+
+            else
+            {
+                
+                strcpy(baMessage,baResponse);
+                break;
+            }
+            ++try;
+        }while(try<Retry);
         /* always cleanup */ 
         
         curl_easy_cleanup(curl);        
     }
     curl_global_cleanup();
-    //CTOS_LCDTPrint("\n after clean");
-    //CTOS_KBDGet(&key);
-    return usret;
+   
+    //sprintf(commbuff,"Event: commSendTms :Terminated cleanly with%04x\n",usret);
+    //sysLog(commbuff);
+    sysLogRet("commSendTms",res);
+    return res;
 }
 
 
@@ -250,24 +230,25 @@ USHORT commSendFile(IN BYTE *baSrcPath,IN BYTE * baFileName)
         usret=gprsConnect(baTmsUrl,21);
         if(usret!=d_OK)return usret;
     }
-    return ftpUpload(baSrcPath,baFileName);
+    usret=ftpUpload(baSrcPath,baFileName);
+    //sprintf(commbuff,"Event: commSendFile :Terminated cleanly with%04x\n",usret);
+    //sysLog(commbuff);
+    sysLogRet("commSendFile",usret);
+    return usret;
     
 }
 
 
 USHORT ftpUpload(BYTE *baSrcPath,BYTE *baDstPath)
 {
-    BYTE baUrl[100];
-    BYTE baStderr[200];
+   
     CURL *curl;
     CURLcode res;
     LONG codep;
     struct stat file_info;
     double speed_upload, total_time;
     FILE *fd;
-    BYTE baFilePath[100];
-    //sprintf(baFilePath,"%s/%s",baSrcPath,baFileName);
-    //strcat(baSrcPath,baFileName);
+    
     fd = fopen(baSrcPath, "rb"); /* open file to upload */ 
     if(!fd) {
         return 1; /* can't continue */ 
@@ -277,7 +258,7 @@ USHORT ftpUpload(BYTE *baSrcPath,BYTE *baDstPath)
     if(fstat(fileno(fd), &file_info) != 0) {
         return 1; /* can't continue */ 
     }
-    sprintf(baUrl,"ftp://%s:%s@%s/Terminals/Castles/%s/%s",ftpUser,ftpPass,baTmsUrl,baSerialNumber,baDstPath);//serial number folder
+    sprintf(commbuff,"ftp://%s:%s@%s/Terminals/Castles/%s/%s",ftpUser,ftpPass,baTmsUrl,baSerialNumber,baDstPath);//serial number folder
 
 
 
@@ -285,7 +266,7 @@ USHORT ftpUpload(BYTE *baSrcPath,BYTE *baDstPath)
     curl = curl_easy_init();
     if(curl) {
         /* upload to this place */ 
-        curl_easy_setopt(curl, CURLOPT_URL,baUrl);
+        curl_easy_setopt(curl, CURLOPT_URL,commbuff);
         /* tell it to "upload" to the URL */ 
         curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
 
@@ -302,23 +283,14 @@ USHORT ftpUpload(BYTE *baSrcPath,BYTE *baDstPath)
         res = curl_easy_perform(curl);
         
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &codep);
-        CTOS_LCDTPrint("state=");
-        utilPrintI(codep);
-        CTOS_LCDTPrint("\n");
+        //CTOS_LCDTPrint("state=");
+        //utilPrintI(codep);
+        //CTOS_LCDTPrint("\n");
         /* Check for errors */ 
         if(res != CURLE_OK) {
           
-            sprintf(baStderr, "curl_easy_perform() failed: %s\n",
+            sprintf(commbuff, "curl_easy_perform() failed: %s\n",
             curl_easy_strerror(res));
-            CTOS_LCDTPrint(baStderr);
-            CTOS_LCDTPrint("\n");
-            CTOS_LCDTPrint(baStderr+20);
-            CTOS_LCDTPrint("\n");
-            CTOS_LCDTPrint(baStderr+40);
-            CTOS_LCDTPrint("\n");
-            CTOS_LCDTPrint(baStderr+60);
-            CTOS_LCDTPrint("\n");
-            CTOS_LCDTPrint(baStderr+80);
 
         }
         else {
@@ -326,9 +298,9 @@ USHORT ftpUpload(BYTE *baSrcPath,BYTE *baDstPath)
             curl_easy_getinfo(curl, CURLINFO_SPEED_UPLOAD, &speed_upload);
             curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &total_time);
 
-            //sprintf(baStderr, "Speed: %.3f bytes/sec during %.3f seconds\n",
+            //sprintf(commbuff, "Speed: %.3f bytes/sec during %.3f seconds\n",
             //speed_upload, total_time);
-            //CTOS_LCDTPrint(baStderr);
+            ////CTOS_LCDTPrint(commbuff);
         }
     /* always cleanup */ 
     curl_easy_cleanup(curl);
@@ -340,41 +312,26 @@ USHORT ftpUpload(BYTE *baSrcPath,BYTE *baDstPath)
 
 USHORT ftpDownload(BYTE *baSrcPath,BYTE *baDstPath)
 {
-    BYTE baUrl[100];
-    BYTE baStderr[200];
     CURL *curl;
     CURLcode res;
     LONG codep;
     struct stat file_info;
     double speed_upload, total_time;
     FILE *fd;
-    BYTE baFilePath[100];
-    ///sprintf(baFilePath,"%s/%s",baSrcPath,baFileName);
-    //strcat(baSrcPath,baFileName);
+   
     fd = fopen(baDstPath, "wb"); /* open file to upload */ 
     if(!fd) {
         return 1; /* can't continue */ 
     }
 
-    /* to get the file size */ 
-    /*if(fstat(fileno(fd), &file_info) != 0) {
-        return 1; /* can't continue */ 
-    //}
-    sprintf(baUrl,"ftp://%s:%s@%s/%s",ftpUser,ftpPass,baTmsUrl,baSrcPath);
-    CTOS_LCDTPrint(baUrl);
-    CTOS_LCDTPrint("\n");
-    CTOS_LCDTPrint(baUrl+20);
-    CTOS_LCDTPrint("\n");
-    CTOS_LCDTPrint(baUrl+40);
-
-
-
+   
+    sprintf(commbuff,"ftp://%s:%s@%s/%s",ftpUser,ftpPass,baTmsUrl,baSrcPath);
 
     curl_global_init(CURL_GLOBAL_ALL);//could be called once
     curl = curl_easy_init();
     if(curl) {
         /* upload to this place */ 
-        curl_easy_setopt(curl, CURLOPT_URL,baUrl);
+        curl_easy_setopt(curl, CURLOPT_URL,commbuff);
         
         
        
@@ -390,23 +347,16 @@ USHORT ftpDownload(BYTE *baSrcPath,BYTE *baDstPath)
         res = curl_easy_perform(curl);
         
         curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &codep);
-        CTOS_LCDTPrint("xxstate=");
-        utilPrintI(codep);
-        CTOS_LCDTPrint("\n");
+        //CTOS_LCDTPrint("xxstate=");
+        //utilPrintI(codep);
+        //CTOS_LCDTPrint("\n");
         /* Check for errors */ 
         if(res != CURLE_OK) {
           
-            sprintf(baStderr, "curl_easy_perform() failed: %s\n",
-            curl_easy_strerror(res));
-            CTOS_LCDTPrint(baStderr);
-            CTOS_LCDTPrint("\n");
-            CTOS_LCDTPrint(baStderr+20);
-            CTOS_LCDTPrint("\n");
-            CTOS_LCDTPrint(baStderr+40);
-            CTOS_LCDTPrint("\n");
-            CTOS_LCDTPrint(baStderr+60);
-            CTOS_LCDTPrint("\n");
-            CTOS_LCDTPrint(baStderr+80);
+            
+            sprintf(commbuff,"Error: ftpDownload: curl_easy_perform(): %s\n",curl_easy_strerror(res));
+            sysLog(commbuff);
+            
 
         }
         
@@ -433,7 +383,11 @@ USHORT commRecieveFile(BYTE *baSrcPath,BYTE *baDstPath)
 
     sprintf(srcPath,"Terminals/Castles/%s/%s",baSerialNumber,baSrcPath);
 
-    return ftpDownload(srcPath,baDstPath);
+    usret=ftpDownload(srcPath,baDstPath);
+    //sprintf(commbuff,"Event: commRecieveFile :Terminated cleanly with%04x\n",usret);
+    //sysLog(commbuff);
+    sysLogRet("commRecieveFile",usret);
+    return usret;
     
 }
 USHORT commRecieveRoot(BYTE *baSrcPath,BYTE *baDstPath)
@@ -447,14 +401,17 @@ USHORT commRecieveRoot(BYTE *baSrcPath,BYTE *baDstPath)
         usret=gprsConnect(baTmsUrl,21);
         if(usret!=d_OK)return usret;
     }
-    return ftpDownload(baSrcPath,baDstPath);
+    usret=ftpDownload(baSrcPath,baDstPath);
+    //sprintf(commbuff,"Event: commRecieveRoot :Terminated cleanly with%04x\n",usret);
+    //sysLog(commbuff);
+    sysLogRet("commRecieveRoot",usret);
+    return usret;
     
 }
 USHORT commRecieveCAP(BYTE *baSrcPath,BYTE *baDstPath)
 {
     enuGprsStateType gprsState;
     USHORT usret;
-    BYTE cmdline[300];
     BYTE srcPath[100];
 
     //gprsConnect(baTmsUrl,21);
@@ -468,7 +425,11 @@ USHORT commRecieveCAP(BYTE *baSrcPath,BYTE *baDstPath)
     }
     sprintf(srcPath,"Apps/Castles/%s",baSrcPath);
 
-    return ftpDownload(srcPath,baDstPath);
+    usret=ftpDownload(srcPath,baDstPath);
+    //sprintf(commbuff,"Event: commRecieveCAP :Terminated cleanly with%04x\n",usret);
+    //sysLog(commbuff);
+    sysLogRet("commRecieveCAP",usret);
+    return usret;
     
 }
 

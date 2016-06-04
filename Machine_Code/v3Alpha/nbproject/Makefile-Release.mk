@@ -36,6 +36,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/GPRS.o \
+	${OBJECTDIR}/logger.o \
 	${OBJECTDIR}/appmain.o \
 	${OBJECTDIR}/communication.o \
 	${OBJECTDIR}/util.o \
@@ -72,6 +73,10 @@ dist/V3/App/v3Alpha.exe: ${OBJECTFILES}
 ${OBJECTDIR}/GPRS.o: GPRS.c 
 	${MKDIR} -p ${OBJECTDIR}
 	$(COMPILE.c) -O2 -I/cygdrive/C/Program\ Files/Castles/VEGA3000/include -I/cygdrive/C/Program\ Files\ \(x86\)/Castles/VEGA3000/include -o ${OBJECTDIR}/GPRS.o GPRS.c
+
+${OBJECTDIR}/logger.o: logger.c 
+	${MKDIR} -p ${OBJECTDIR}
+	$(COMPILE.c) -O2 -I/cygdrive/C/Program\ Files/Castles/VEGA3000/include -I/cygdrive/C/Program\ Files\ \(x86\)/Castles/VEGA3000/include -o ${OBJECTDIR}/logger.o logger.c
 
 ${OBJECTDIR}/appmain.o: appmain.c 
 	${MKDIR} -p ${OBJECTDIR}

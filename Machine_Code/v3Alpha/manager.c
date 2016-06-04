@@ -67,7 +67,7 @@
 * V A R I A B L E S *
 *==========================================*/
 BYTE baResponse[3*1024];
-BYTE baStr[3*1024];
+BYTE manbuff[3*1024];
 /*==========================================*
 * M A C R O S *
 *==========================================*/
@@ -164,10 +164,11 @@ int getParamsCount(IN BYTE * baRaw)
 
 USHORT manUp()
 {
+	sysLogCall("manUp");
 	USHORT usCommand,usret,usResult;
 	FILE *Config;
 	int i;
-	char buff[100];
+	//char manbuff[100];
 	char *token;
 	char pArr[5][50];
 	BYTE iscorrupted=0;
@@ -183,17 +184,17 @@ USHORT manUp()
 
 		
 		//commConfig(pArr[0],pArr[2],pArr[3]);
-		CTOS_LCDTPrint(pArr[0]);
-		CTOS_LCDTPrint("\n");
-		CTOS_LCDTPrint(pArr[2]);
-		CTOS_LCDTPrint("\n");
-		CTOS_LCDTPrint(pArr[3]);
-		CTOS_LCDTPrint("\n");
+		//CTOS_LCDTPrint(pArr[0]);
+		//CTOS_LCDTPrint("\n");
+		//CTOS_LCDTPrint(pArr[2]);
+		//CTOS_LCDTPrint("\n");
+		//CTOS_LCDTPrint(pArr[3]);
+		//CTOS_LCDTPrint("\n");
        
 		sscanf(pArr[4],"%d",&timer);
 		
 		fclose(Config);
-        CTOS_KBDGet(&i);
+        //CTOS_KBDGet(&i);
 	}
 	*/
 	commInit();
@@ -202,108 +203,120 @@ USHORT manUp()
 	//if(usret!=0)return usret;
 	if(!strlen(baResponse))
 	{
-		CTOS_LCDTPrint("NO RESPONSE");
-		CTOS_KBDGet(&usret);
+		//CTOS_LCDTPrint("NO RESPONSE");
+		//CTOS_KBDGet(&usret);
 		return 0xffff;
 	}
 	sscanf(baResponse,"%hu",&usCommand);
-	CTOS_LCDTClearDisplay();
+	//CTOS_LCDTClearDisplay();
 
-	CTOS_LCDTPrint(baResponse);
-	CTOS_KBDGet(&usret);
+	//CTOS_LCDTPrint(baResponse);
+	//CTOS_KBDGet(&usret);
 
 	if(TESTBIT(usCommand,CMD_CREATE_POS_RECORD))
 	{
-		CTOS_LCDTPrint("\nCreatePosRecord");
+		//CTOS_LCDTPrint("\nCreatePosRecord");
 		manCreatePosRecord();
 
 	}
 	if(TESTBIT(usCommand,CMD_DELETE_FILES))
 	{
-		CTOS_LCDTPrint("\nDeleteFiles");
+		//CTOS_LCDTPrint("\nDeleteFiles");
 		if(!manDeleteFile())usResult|=CMD_DELETE_FILES;
 	}
 	if(TESTBIT(usCommand,CMD_UPDATE_APPS))
 	{
-		CTOS_LCDTPrint("\nUpdateApp");
+		//CTOS_LCDTPrint("\nUpdateApp");
 		if(!manUpdateApp())usResult|=CMD_UPDATE_APPS;
 		
 	}
 	if(TESTBIT(usCommand,CMD_PUSH_FILES))
 	{
-		CTOS_LCDTPrint("\nPushFiles");
+		//CTOS_LCDTPrint("\nPushFiles");
 		if(!manPushFile())usResult|=CMD_PUSH_FILES;
 	}
 	if(TESTBIT(usCommand,CMD_PULL_FILES))
 	{
-		CTOS_LCDTPrint("\nPullFiles");
+		//CTOS_LCDTPrint("\nPullFiles");
 		if(!manPullFile())usResult|=CMD_PULL_FILES;
 	}
 	
 	if(TESTBIT(usCommand,CMD_TEST_POS))
 	{
-		CTOS_LCDTPrint("\nTEST");
+		//CTOS_LCDTPrint("\nTEST");
 		if(!manTest())usResult|=CMD_TEST_POS;
 	}
 	if(TESTBIT(usCommand,CMD_LIST_FILES))
 	{
-		CTOS_LCDTPrint("\nListFiles");
+		//CTOS_LCDTPrint("\nListFiles");
 		if(!manFileList())usResult|=CMD_LIST_FILES;
 	}
 	if(TESTBIT(usCommand,CMD_LIST_APPS))
 	{
-		CTOS_LCDTPrint("\nListApps");
+		//CTOS_LCDTPrint("\nListApps");
 		if(!manAppList())usResult|=CMD_LIST_APPS;
 	}
 
 	
 	//send res
-	CTOS_LCDTPrint("\nFinish");
+	//CTOS_LCDTPrint("\nFinish");
 	strcpy(baResponse,"Command=Finish");
 	usret=commSendTms(baResponse,PATH_SUBMIT_COMMAND_RESULT);
 	
 	//commClose();
+	sysLogRet("manUp",usResult);
 	return usResult;
 
 }
 USHORT manCreatePosRecord()
 {
+	sysLogCall("manCreatePosRecord");
 	USHORT ret;
     ULONG  ulUsedDiskSize,  ulTotalDiskSize, ulUsedRamSize, ulTotalRamSize;
     ret = CTOS_SystemMemoryStatus (&ulUsedDiskSize ,&ulTotalDiskSize,&ulUsedRamSize,&ulTotalRamSize );
     sprintf(baResponse,"Vendor=Castles&Model=Vega3000&TotalDiskCapacity=%lu&TotalRamSize=%lu",ulTotalDiskSize/1024,ulTotalRamSize/1024);//MB
+	
 	ret=commSendTms(baResponse,PATH_CREATE_POS_RECORD);
+
+	sysLogRet("manCreatePosRecord",0);
 	return 0x00;
 }
 USHORT manTest()
 {
-	USHORT usResult = exeSystemTest(baStr);
-	sprintf(baResponse,"Command=TestHealth%s\n",baStr);
+	sysLogCall("manTest");
+	USHORT usResult = exeSystemTest(manbuff);
+	sprintf(baResponse,"Command=TestHealth%s\n",manbuff);
 	usResult=commSendTms(baResponse,PATH_SUBMIT_COMMAND_RESULT);
+	sysLogRet("manTest",0);
 	return 0x00;
 }
 
 USHORT manAppList()
 {
+	sysLogCall("manAppList");
 	BYTE key;
 	//max 50 apps xD
-	USHORT usResult = exeListApps(baStr);
-	sprintf(baResponse,"Command=ListApps%s",baStr);
+	USHORT usResult = exeListApps(manbuff);
+	sprintf(baResponse,"Command=ListApps%s",manbuff);
 	usResult=commSendTms(baResponse,PATH_SUBMIT_COMMAND_RESULT);
+	sysLogRet("manAppList",0);
 	return 0x00;
 }
 
 USHORT manFileList()
 {
+	sysLogCall("manFileList");
 	BYTE key;
-	memset(baStr,0,sizeof baStr);
-	USHORT usResult = exeListFiles(baStr);
-	sprintf(baResponse,"Command=ListFiles%s",baStr);
+	memset(manbuff,0,sizeof manbuff);
+	USHORT usResult = exeListFiles(manbuff);
+	sprintf(baResponse,"Command=ListFiles%s",manbuff);
 	usResult=commSendTms(baResponse,PATH_SUBMIT_COMMAND_RESULT);
+	sysLogRet("manFileList",0);
 	return 0x00; 
 }
 USHORT manDeleteFile()
 {
+	sysLogCall("manDeleteFile");
 	BYTE key;
 	USHORT usResult;
 	USHORT paramsCount;
@@ -314,16 +327,16 @@ USHORT manDeleteFile()
 	sprintf(baResponse,"Command=DeleteFile");
 	usResult=commSendTms(baResponse,PATH_REQUEST_COMMAND_PARAMETERS);
 	
-	CTOS_LCDTPrint("\nafter request");
-	CTOS_LCDTPrint("\n");
-	CTOS_LCDTPrint(baResponse);
-	CTOS_KBDGet(&key);
+	//CTOS_LCDTPrint("\nafter request");
+	//CTOS_LCDTPrint("\n");
+	//CTOS_LCDTPrint(baResponse);
+	//CTOS_KBDGet(&key);
 	
 	paramsCount=getParamsCount(baResponse);
 	
-	sprintf(baStr,"\ncount:%d",paramsCount);
-	CTOS_LCDTPrint(baStr);
-	//CTOS_KBDGet(&key);
+	sprintf(manbuff,"\ncount:%d",paramsCount);
+	//CTOS_LCDTPrint(manbuff);
+	////CTOS_KBDGet(&key);
 	
 	if(paramsCount==0)return 0xFF;
 	paramsList=(BYTE **)malloc(sizeof(BYTE*)*(paramsCount+5));
@@ -341,8 +354,8 @@ USHORT manDeleteFile()
 	paramsCount=0;
 	parser(paramsList , &paramsCount , baResponse , DELETE_PARAMS); 
 	
-	//CTOS_LCDTPrint("\nafter parse");
-	//CTOS_KBDGet(&key);
+	////CTOS_LCDTPrint("\nafter parse");
+	////CTOS_KBDGet(&key);
 	
 
 	//execute
@@ -353,12 +366,12 @@ USHORT manDeleteFile()
 	
 	/*if(usResult!=0)
 		{
-			CTOS_LCDTPrint("\nafter exefailed");
+			//CTOS_LCDTPrint("\nafter exefailed");
 		}
 	else
-	CTOS_LCDTPrint("\nafter exe");
+	//CTOS_LCDTPrint("\nafter exe");
 	*/
-	//CTOS_KBDGet(&key);
+	////CTOS_KBDGet(&key);
 	//send response
 
 	sprintf(baResponse,"Command=DeleteFile%s",baDelResp);
@@ -367,12 +380,14 @@ USHORT manDeleteFile()
 
 	free(paramsList);
 	free(baDelResp);
-	CTOS_LCDTPrint("\nafter free");
-	CTOS_KBDGet(&key);
+	//CTOS_LCDTPrint("\nafter free");
+	//CTOS_KBDGet(&key);
+	sysLogRet("manDeleteFile",0);
 	return 0x00;
 }
 USHORT manPushFile()
 {
+	sysLogCall("manPushFile");
 	BYTE key;
 	USHORT usResult,i;
 	USHORT paramsCount;
@@ -385,16 +400,16 @@ USHORT manPushFile()
 	sprintf(baResponse,"Command=PushFile");
 	usResult=commSendTms(baResponse,PATH_REQUEST_COMMAND_PARAMETERS);
 	
-	CTOS_LCDTPrint("\nafter request");
-	CTOS_LCDTPrint("\n");
-	CTOS_LCDTPrint(baResponse);
-	CTOS_KBDGet(&key);
+	//CTOS_LCDTPrint("\nafter request");
+	//CTOS_LCDTPrint("\n");
+	//CTOS_LCDTPrint(baResponse);
+	//CTOS_KBDGet(&key);
 	
 	paramsCount=getParamsCount(baResponse);
 	
-	sprintf(baStr,"\ncount:%d",paramsCount);
-	CTOS_LCDTPrint(baStr);
-	//CTOS_KBDGet(&key);
+	sprintf(manbuff,"\ncount:%d",paramsCount);
+	//CTOS_LCDTPrint(manbuff);
+	////CTOS_KBDGet(&key);
 	
 	if(paramsCount==0)return 0xFF;
 	paramsList=(BYTE **)malloc(sizeof(BYTE*)*(paramsCount+5));
@@ -412,28 +427,28 @@ USHORT manPushFile()
 	paramsCount=0;
 	parser(paramsList , &paramsCount , baResponse , PUSH_PARAMS); 
 	
-	//CTOS_LCDTPrint("\nafter parse");
-	//CTOS_KBDGet(&key);
+	////CTOS_LCDTPrint("\nafter parse");
+	////CTOS_KBDGet(&key);
 	
 	
 	//execute
 	memset(baPushResp,0,sizeof baPushResp);
 	for (i = 0; i < paramsCount; ++i)
 	{
-		CTOS_LCDTClearDisplay();
+		//CTOS_LCDTClearDisplay();
 		
 		
-		CTOS_LCDTPrint(paramsList[i]);
+		//CTOS_LCDTPrint(paramsList[i]);
 		
 		//check public / private
 		if(strncmp(paramsList[i],"pub",3)==0)
 		{//public
 			sprintf(baPath,"/home/ap/pub/%s",paramsList[i]+4);
-			CTOS_LCDTPrint("\n");
-			CTOS_LCDTPrint(baPath);
+			//CTOS_LCDTPrint("\n");
+			//CTOS_LCDTPrint(baPath);
 			if(access(baPath,F_OK)!=-1)
 			{
-				CTOS_LCDTPrint("\nxfound");
+				//CTOS_LCDTPrint("\nxfound");
 				usResult=commSendFile(baPath,paramsList[i]);
 			}
 			else
@@ -441,11 +456,11 @@ USHORT manPushFile()
 		}
 		else
 		{
-			CTOS_LCDTPrint("\nxpri");
+			//CTOS_LCDTPrint("\nxpri");
 			sprintf(baPath,"%s",paramsList[i]+4);
 			if(access(baPath,F_OK)!=-1)
 			{
-				CTOS_LCDTPrint("\nxfound");
+				//CTOS_LCDTPrint("\nxfound");
 				usResult=commSendFile(baPath,paramsList[i]);
 			}
 			else
@@ -455,7 +470,7 @@ USHORT manPushFile()
 		sprintf(baFile,"&Path=%s&Status=%d",paramsList[i],usResult==226?0:usResult);
 		strcat(baPushResp,baFile);
 
-		CTOS_KBDGet(&key);
+		//CTOS_KBDGet(&key);
 	}
 	
 	
@@ -469,14 +484,16 @@ USHORT manPushFile()
 
 	free(paramsList);
 	free(baPushResp);
-	CTOS_LCDTPrint("\nafter free");
-	CTOS_KBDGet(&key);
+	//CTOS_LCDTPrint("\nafter free");
+	//CTOS_KBDGet(&key);
+	sysLogRet("manPushFile",0);
 	return 0x00;
 }
 
 
 USHORT manPullFile()
 {
+	sysLogCall("manPullFile");
 	BYTE key;
 	USHORT usResult,i;
 	USHORT paramsCount;
@@ -487,17 +504,19 @@ USHORT manPullFile()
 	//request parameters
 	sprintf(baResponse,"Command=PullFile");
 	usResult=commSendTms(baResponse,PATH_REQUEST_COMMAND_PARAMETERS);
+	sprintf(manbuff,"Event: manPullFile :Requesting Params=%04x\n",usResult);
+    sysLog(manbuff);
 	
-	CTOS_LCDTPrint("\nafter request");
-	CTOS_LCDTPrint("\n");
-	CTOS_LCDTPrint(baResponse);
-	CTOS_KBDGet(&key);
+	//CTOS_LCDTPrint("\nafter request");
+	//CTOS_LCDTPrint("\n");
+	//CTOS_LCDTPrint(baResponse);
+	//CTOS_KBDGet(&key);
 	
 	paramsCount=getParamsCount(baResponse);
 	
-	sprintf(baStr,"\ncount:%d",paramsCount);
-	CTOS_LCDTPrint(baStr);
-	//CTOS_KBDGet(&key);
+	sprintf(manbuff,"\ncount:%d",paramsCount);
+	//CTOS_LCDTPrint(manbuff);
+	////CTOS_KBDGet(&key);
 	
 	if(paramsCount==0)return 0xFF;
 	paramsList=(BYTE **)malloc(sizeof(BYTE*)*(paramsCount+5));
@@ -516,22 +535,22 @@ USHORT manPullFile()
 	paramsCount=0;
 	parser(paramsList , &paramsCount , baResponse , PULL_PARAMS); 
 	
-	CTOS_LCDTPrint("\nafter parse");
-	CTOS_KBDGet(&key);
+	//CTOS_LCDTPrint("\nafter parse");
+	//CTOS_KBDGet(&key);
 	
 	
 	//execute
 	memset(baPullResp,0,sizeof baPullResp);
 	for (i = 0; i < paramsCount; ++i)
 	{
-		CTOS_LCDTClearDisplay();
+		//CTOS_LCDTClearDisplay();
 		
 		
 		USHORT isPublic;
 		if(strncmp(paramsList[i],"pub/",4)==0)
 		{//public
 			sprintf(baPath,"/home/ap/pub/%s",paramsList[i]+4);
-			CTOS_LCDTPrint("\n7lw\n");
+			//CTOS_LCDTPrint("\n7lw\n");
 			usResult=commRecieveFile(paramsList[i],baPath);
 			
 			
@@ -548,14 +567,6 @@ USHORT manPullFile()
 		if(strncmp(paramsList[i],"hot",3)==0||strncmp(paramsList[i],"Tran",4)==0)
 		{
 			sprintf(baPath,"/home/ap/pub/MTMS/%s",paramsList[i]);
-			CTOS_LCDTPrint(baPath);
-			CTOS_LCDTPrint("\n");
-			CTOS_LCDTPrint(baPath+20);
-			CTOS_LCDTPrint("\n");
-			CTOS_LCDTPrint(baPath+40);
-			CTOS_LCDTPrint("\n");
-			CTOS_KBDGet(&key);
-
 			usResult=commRecieveRoot(paramsList[i],baPath);
 		}
 		else
@@ -566,12 +577,13 @@ USHORT manPullFile()
 		}
 
 		sprintf(baFile,"&Path=%s&Status=%d",paramsList[i],usResult==226?0:usResult);
-		
+		sprintf(manbuff,"Event: manPullFile :PullFile=%04x\n",usResult);
+	    sysLog(manbuff);
 		
 		strcat(baPullResp,baFile);
-		CTOS_LCDTPrint("\n");
-		CTOS_LCDTPrint(baFile);
-		CTOS_KBDGet(&key);
+		//CTOS_LCDTPrint("\n");
+		//CTOS_LCDTPrint(baFile);
+		//CTOS_KBDGet(&key);
 	}
 	
 
@@ -586,12 +598,15 @@ USHORT manPullFile()
 
 	free(paramsList);
 	free(baPullResp);
-	CTOS_LCDTPrint("\nafter free");
-	CTOS_KBDGet(&key);
+	
+	//sprintf(manbuff,"Event: manPullFile :return=%04x\n",usResult);
+    //sysLog(manbuff);
+    sysLogRet("manPullFile",0);
 	return 0x00;
 }
 USHORT manUpdateApp()
 {
+	sysLogCall("manUpdateApp");
 	BYTE key;
 	pid_t pid;
 	USHORT usResult,i;
@@ -608,15 +623,12 @@ USHORT manUpdateApp()
 	sprintf(baResponse,"Command=UpdateApp");
 	usResult=commSendTms(baResponse,PATH_REQUEST_COMMAND_PARAMETERS);
 
-	CTOS_LCDTPrint("\nafter request");
-	CTOS_LCDTPrint("\n");
-	CTOS_LCDTPrint(baResponse);
-	CTOS_KBDGet(&key);
+
 	
 	paramsCount=getParamsCount(baResponse);
 	
-	sprintf(baStr,"\ncount:%d",paramsCount);
-	CTOS_LCDTPrint(baStr);
+	sprintf(manbuff,"\ncount:%d",paramsCount);
+	//CTOS_LCDTPrint(manbuff);
 	
 	
 	if(paramsCount==0)return 0xFF;
@@ -657,9 +669,9 @@ USHORT manUpdateApp()
 	    NewFile("app.mmci", &ulHandle,0,d_FA_PUBLIC);
     FileWrite("app.mci","app.mmci");*/
 	strcat(pathname,"/update.mmci"); //m3ana el path xD
-	CTOS_LCDTPrint("\n");
-	CTOS_LCDTPrint(pathname);
-	CTOS_KBDGet(&key);
+	//CTOS_LCDTPrint("\n");
+	//CTOS_LCDTPrint(pathname);
+	//CTOS_KBDGet(&key);
 
 
 
@@ -667,7 +679,9 @@ USHORT manUpdateApp()
 	if(pid==0)
 	{
 		CTOS_UpdateFromMMCI(pathname,1);//w rabina yostor xD feha khabth xD
+
 		kill(pid, SIGTERM);
+		CTOS_LCDTPrint("tabaaan\n");
 	}
 	sleep(4);
 	commInit();
@@ -678,8 +692,8 @@ USHORT manUpdateApp()
 	memset(baUpdateResp,0,sizeof baUpdateResp);
 	for (i = 0; i < paramsCount; ++i)
 	{
-		sprintf(baStr,"&Name=%s&Status=%d",paramsList[i],usResult==0x64?0:0xFF);
-		strcat(baUpdateResp,baStr);
+		sprintf(manbuff,"&Name=%s&Status=%d",paramsList[i],usResult==0x64?0:0xFF);
+		strcat(baUpdateResp,manbuff);
 
 	}
 
@@ -687,12 +701,13 @@ USHORT manUpdateApp()
 	//delete apps srcs
 
 	//send response
-	
+	 
 	sprintf(baResponse,"Command=UpdateApp%s",baUpdateResp);
 	usResult=commSendTms(baResponse,PATH_SUBMIT_COMMAND_RESULT); 
 
 	free(paramsList);
-	CTOS_LCDTPrint("\nafter free");
-	CTOS_KBDGet(&key);
+	//CTOS_LCDTPrint("\nafter free");
+	//CTOS_KBDGet(&key);
+	sysLogRet("manPullFile",0);
 	return 0x00;
 }

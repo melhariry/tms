@@ -107,14 +107,21 @@ int main(int argc,char *argv[])
 
 		CTOS_LCDTPrint("\nDeleted?\n");
 	}*/
-		system("chmod 0777 /home/ap/pub/MTMS/* >/home/ap/pub/MTMS/chmod.txt");
+		//system("chmod 0777 /home/ap/pub/MTMS/* >/home/ap/pub/MTMS/chmod.txt");
 	system("ls -lR /home/ap/pub >/home/ap/pub/MTMS/ls.txt");
 	//return 0;
+	/*if(daemon(0,1)!=0)
+	{
+		CTOS_LCDTPrint(strerror(errno));
+		CTOS_KBDGet(&key);
+		return 1;
+	}*/
 	//while(1)
 	{
 	  	manUp();
-
+	  //	sleep(50);
 	    //sleep(timer);
+	    //CTOS_LCDTPrintXY(5,5,"end\n");
 		CTOS_KBDGet(&key);
 	}
 	

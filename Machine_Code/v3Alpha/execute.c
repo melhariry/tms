@@ -58,7 +58,8 @@
 * V A R I A B L E S *
 *==========================================*/
 BYTE absPath[PATHMAX];
-BYTE buff[1024];
+BYTE exebuff[1024];
+BYTE appNames[1000];
 /*==========================================*
 * M A C R O S *
 *==========================================*/
@@ -107,14 +108,14 @@ int file_select(struct direct   *entry)
 }
 USHORT  exeListApps(BYTE* baAppList)
 {
+  sysLogCall("exeListApps");
   BYTE key;
   CTOS_stCAPInfo appInfo;
-  BYTE appNames[1000];
+  
   BYTE *tokens[50];
   int i;
   USHORT index;
   USHORT usNoTokens ;
-  BYTE baTemp[100];
   ls("/home/ap/",appNames,TRUE);
   split(appNames, "\n", tokens,&usNoTokens);
   memset(baAppList,0,sizeof baAppList);
@@ -122,12 +123,16 @@ USHORT  exeListApps(BYTE* baAppList)
   {
     sscanf(tokens[i],"%d",&index);
     CTOS_APGet(index,&appInfo);//API
-    memset(baTemp,0,sizeof baTemp);
-    sprintf(baTemp,"&Name=%s&Version=%d&Com=%s",appInfo.baName,(int)appInfo.baVersion[0]<<8|appInfo.baVersion[1],appInfo.baCompany);
-    //strcpy(baAppList,baTemp);
-    strcat(baAppList,baTemp);
+    memset(exebuff,0,sizeof exebuff);
+    /*CTOS_LCDTPrint(appInfo.baName);
+    CTOS_LCDTPrint("\n");
+*/
+    sprintf(exebuff,"&Name=%s&Version=%d&Com=%s",appInfo.baName,(int)appInfo.baVersion[0]<<8|appInfo.baVersion[1],appInfo.baCompany);
+    //strcpy(baAppList,exebuff);
+    strcat(baAppList,exebuff);
 
   }
+  sysLogRet("exeListApps",0);
   return 0;
 }
 unsigned long fsize(char* file)
@@ -182,17 +187,17 @@ USHORT lsR(BYTE *pathname,BYTE *parent,BYTE* list,BOOL app)
 }
 USHORT  exeListFiles(BYTE* baFileList)
 {
+  sysLogCall("exeListFiles");
   USHORT usFileNo;
   USHORT usRet;
   int i;
-  BYTE baTemp[100];
+  
   
   memset(baFileList,0,sizeof baFileList);
   lsR("/home/ap/pub","pub",baFileList,0);
-  //CTOS_KBDGet(&usRet);
   lsR(".","pri",baFileList,0);
 
- 
+  sysLogRet("exeListFiles",0);
   return 0;
 }
 
@@ -246,10 +251,11 @@ void exeparser(void *list,OUT USHORT * uslistLen, IN BYTE* baRaw,IN BYTE *delimi
 }
 USHORT  exeDeleteFiles(IN BYTE * filePath[],IN int length, OUT BYTE deleteResults[])
 {
+    sysLogCall("exeDeleteFiles");
     int i,j;
     USHORT usret=0;
     SHORT sfile;
-    BYTE baTemp[100];
+    
     
     USHORT depth=0;
     BYTE **path;
@@ -285,9 +291,9 @@ USHORT  exeDeleteFiles(IN BYTE * filePath[],IN int length, OUT BYTE deleteResult
         }
 
         sfile=exeDeleteFile(absPath);
-
-        sprintf(buff,"&error=%s&path=%s&Name=%s&Status=%d&ParentFolder=%s",strerror(errno),absPath,path[depth-1],sfile==0?0:255,path[depth-2]);
-        strcat(deleteResults,buff);
+        usret|=(sfile==0)<<i;
+        sprintf(exebuff,"&error=%s&path=%s&Name=%s&Status=%d&ParentFolder=%s",strerror(errno),absPath,path[depth-1],sfile,path[depth-2]);
+        strcat(deleteResults,exebuff);
         for(j=0;j<depth;++j)
         {
           /*CTOS_LCDTPrint("\n");
@@ -302,7 +308,7 @@ USHORT  exeDeleteFiles(IN BYTE * filePath[],IN int length, OUT BYTE deleteResult
           //usfile= DeleteFile(fileNames[i]);    
           if(strncmp(fileNames[i],"pub",3)==0)
           {
-              sprintf(baTemp,"/home/ap/%s",fileNames[i]);
+              sprintf(exebuff,"/home/ap/%s",fileNames[i]);
               if(strncmp(fileNames[i]+4,"MTMS",4)==0)
                 strcpy(baParent,"MTMS");
               else
@@ -312,21 +318,21 @@ USHORT  exeDeleteFiles(IN BYTE * filePath[],IN int length, OUT BYTE deleteResult
           else
           {
             strcpy(baParent,"pri");
-            sprintf(baTemp,"./%s",fileNames[i]+4);
+            sprintf(exebuff,"./%s",fileNames[i]+4);
           }
           
-          CTOS_LCDTPrint(baTemp);
-          sfile=exeDeleteFile(baTemp);
+          CTOS_LCDTPrint(exebuff);
+          sfile=exeDeleteFile(exebuff);
           usret|=sfile==0?0:255;
-          sprintf(baTemp,"&Name=%s&Status=%d&ParentFolder=%s",fileNames[i],sfile==0?0:255,baParent);// can be done in manager
-          strcat(deleteResults,baTemp);
+          sprintf(exebuff,"&Name=%s&Status=%d&ParentFolder=%s",fileNames[i],sfile==0?0:255,baParent);// can be done in manager
+          strcat(deleteResults,exebuff);
           */
         }
 
         
     }
   
-
+    sysLogRet("exeDeleteFiles",usret);
     return usret;
 }
 
@@ -334,6 +340,7 @@ USHORT  exeDeleteFiles(IN BYTE * filePath[],IN int length, OUT BYTE deleteResult
 
 USHORT  exeSystemTest(BYTE* baTestResult)
 {
+  sysLogCall("exeSystemTest");
   //CTOS_LCDTClearDisplay();
           
   //CTOS_LCDTPrintXY(1, 1, "Please wait\n system testing is running\n");
@@ -352,24 +359,25 @@ USHORT  exeSystemTest(BYTE* baTestResult)
   memset(str,0,sizeof(str));
 
   //Test failed 
-  if(ret == d_OK)
+  if(ret != d_OK)
   {
-    // sprintf(str , ",%lu" , ulTotalDiskSize);
-    //strcat(baBuffer,str);
-    //memset(str, 0 , sizeof(str)); 
-    sprintf(str , "&UsedDiskSize=%lu" , ulUsedDiskSize/1024);
-    strcat(baBuffer,str);
-    memset(str, 0 , sizeof(str));
+    ulUsedDiskSize=-1;
+    ulUsedRamSize=-1;
+  } 
+  sprintf(str , "&UsedDiskSize=%lu" , ulUsedDiskSize/1024);
+  strcat(baBuffer,str);
+  memset(str, 0 , sizeof(str));
 
-    //sprintf(str , ",%lu" , ulTotalRamSize);
-    //strcat(baBuffer,str);
-    //memset(str, 0 , sizeof(str)); 
+  //sprintf(str , ",%lu" , ulTotalRamSize);
+  //strcat(baBuffer,str);
+  //memset(str, 0 , sizeof(str)); 
 
-    sprintf(str , "&UsedRamSize=%lu" , ulUsedRamSize/1024);
-    strcat(baBuffer,str);
-    memset(str, 0 , sizeof(str));
+  sprintf(str , "&UsedRamSize=%lu" , ulUsedRamSize/1024);
+  strcat(baBuffer,str);
+  memset(str, 0 , sizeof(str));
           
-  }
+  
+
     
   //write memory test results to file
   strcat(baTestResult , baBuffer);
@@ -445,7 +453,7 @@ USHORT  exeSystemTest(BYTE* baTestResult)
   strcat(baTestResult , baBuffer);
   memset(baBuffer,0,sizeof baBuffer);
 
-
+  sysLogRet("exeSystemTest",0);
   return d_OK;
     
 }
