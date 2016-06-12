@@ -1,19 +1,19 @@
 /**
-******************************************************************************
-* file          common.h
-* author        
-* component     common
-* description   common file contains constants and variable 
-*               that maybe used by different components in application.
-******************************************************************************
-* copyright POS_GP_TEAM_2016
-*
-******************************************************************************
-*/
+  ******************************************************************************
+  * file          logger.h
+  * author        
+  * component     logger
+  *               
+  ******************************************************************************
+  * copyright POS_GP_TEAM_2016
+  *
+  ******************************************************************************
+  */
+
 /* Define to prevent recursive inclusions ------------------------------------*/
 
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef LOGGER_H
+#define LOGGER_H
 
 /*========================================*
 * I N C L U D E S *
@@ -21,7 +21,8 @@
 #include <string.h>
 #include <ctosapi.h>
 #include <stdint.h>
-
+#include <errno.h>
+#include <stdio.h>
 /*==========================================*
 ****************P U B L I C ****************
 *==========================================*/
@@ -41,17 +42,8 @@
 /*==========================================*
 * V A R I A B L E S *
 *==========================================*/
-//first ip
-char firstIP[15];
-//second ip
-char secondIP[15];
-//time interval
-uint32_t timer;//sec
-char ftpUserName[128];
-char ftpPassword[128];
-
-BYTE baSerialNumber[40];
-
+FILE* fpDebugLog;
+FILE* fpSysLog;
 /*==========================================*
 * M A C R O S *
 *==========================================*/
@@ -60,9 +52,12 @@ BYTE baSerialNumber[40];
 * F U N C T I O N S *
 *==========================================*/
 
-
-
-
+int16_t dLogOpen(void);
+int16_t sysLogOpen(void);
+int16_t dLog(char *str);
+int16_t sysLog(char *str);
+int16_t sysLogCall(char *str);
+int16_t sysLogRet(char *str,int32_t value);
 
 
 

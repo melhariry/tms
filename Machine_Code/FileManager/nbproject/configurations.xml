@@ -4,14 +4,6 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>GPRS.h</itemPath>
-      <itemPath>common.h</itemPath>
-      <itemPath>communication.h</itemPath>
-      <itemPath>execute.h</itemPath>
-      <itemPath>logger.h</itemPath>
-      <itemPath>manager.h</itemPath>
-      <itemPath>test.h</itemPath>
-      <itemPath>util.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -20,14 +12,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>GPRS.c</itemPath>
       <itemPath>appmain.c</itemPath>
-      <itemPath>communication.c</itemPath>
-      <itemPath>execute.c</itemPath>
-      <itemPath>logger.c</itemPath>
-      <itemPath>manager.c</itemPath>
-      <itemPath>test.c</itemPath>
-      <itemPath>util.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -62,7 +47,7 @@
           <commandLine>"-I${SDKV3INC}" -fsigned-char -Wundef -Wno-trigraphs -Wimplicit -Wformat</commandLine>
         </ccTool>
         <linkerTool>
-          <output>dist/V3/App/v3Alpha</output>
+          <output>dist/V3/App/FileManager</output>
           <commandlineTool>arm-brcm-linux-gnueabi-g++</commandlineTool>
           <linkerLibItems>
             <linkerLibLibItem>caethernet</linkerLibLibItem>
@@ -118,7 +103,7 @@
           <commandLine>"-I${SDKV3INC}" -fsigned-char -Wundef -Wno-trigraphs -Wimplicit -Wformat</commandLine>
         </ccTool>
         <linkerTool>
-          <output>dist/V3/Debug/v3Alpha</output>
+          <output>dist/V3/Debug/FileManager</output>
           <commandlineTool>arm-brcm-linux-gnueabi-g++</commandlineTool>
           <linkerLibItems>
             <linkerLibLibItem>caethernet</linkerLibLibItem>

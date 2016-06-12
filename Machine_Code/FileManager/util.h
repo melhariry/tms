@@ -1,26 +1,26 @@
 /**
-******************************************************************************
-* file          common.h
-* author        
-* component     common
-* description   common file contains constants and variable 
-*               that maybe used by different components in application.
-******************************************************************************
-* copyright POS_GP_TEAM_2016
-*
-******************************************************************************
-*/
-/* Define to prevent recursive inclusions ------------------------------------*/
-
-#ifndef COMMON_H
-#define COMMON_H
-
+  ******************************************************************************
+  * file          util.h
+  * author        
+  * component     utilites
+  * description   
+  *               
+  *               
+  ******************************************************************************
+  * copyright POS_GP_TEAM_2016
+  *
+  ******************************************************************************
+  */
+#ifndef UTIL_H
+#define UTIL_H
 /*========================================*
 * I N C L U D E S *
 *========================================*/
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <ctosapi.h>
-#include <stdint.h>
 
 /*==========================================*
 ****************P U B L I C ****************
@@ -29,7 +29,7 @@
 /*==========================================*
 * D E F I N E S *
 *==========================================*/
-
+	
 /*==========================================*
 * C O N S T A N T S *
 *==========================================*/
@@ -41,16 +41,6 @@
 /*==========================================*
 * V A R I A B L E S *
 *==========================================*/
-//first ip
-char firstIP[15];
-//second ip
-char secondIP[15];
-//time interval
-uint32_t timer;//sec
-char ftpUserName[128];
-char ftpPassword[128];
-
-BYTE baSerialNumber[40];
 
 /*==========================================*
 * M A C R O S *
@@ -59,11 +49,12 @@ BYTE baSerialNumber[40];
 /*==========================================*
 * F U N C T I O N S *
 *==========================================*/
-
-
-
-
-
-
+void split(IN BYTE* baStr,BYTE* baDelimiters,OUT BYTE *tokens[],USHORT* usNoToken);
+void unpack(OUT char* pStr, IN BYTE* pData, IN USHORT Len, IN char* pSpilt);
+USHORT GetSerialNumber(OUT BYTE * SerialNumber);
+USHORT GetGPRSIP(OUT BYTE * GPRSIP);
+BYTE ith(BYTE hex_digit);
+BYTE IntToStr(BYTE* buf, DWORD v);
+void util_strncpy(BYTE *dest,const BYTE *source,ULONG ulLen);
 
 #endif

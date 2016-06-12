@@ -171,7 +171,8 @@ USHORT lsR(BYTE *pathname,BYTE *parent,BYTE* list,BOOL app)
         files[i]->d_type=1;
       }
       
-      sprintf(bufStr,"&Name=%s&Type=%d&Parent=%s&Size=%d",files[i]->d_name,files[i]->d_type,parent,size);
+      //sprintf(bufStr,"&Name=%s&Type=%d&Parent=%s&Size=%d",files[i]->d_name,files[i]->d_type,parent,size);
+      sprintf(bufStr,"%s\n",files[i]->d_name);//|%d|%s|%d,files[i]->d_type,parent,size);
       //CTOS_LCDTClearDisplay();
       //CTOS_LCDTPrint(bufStr);
       strcat(list,bufStr);
@@ -187,7 +188,7 @@ USHORT lsR(BYTE *pathname,BYTE *parent,BYTE* list,BOOL app)
 }
 USHORT  exeListFiles(BYTE* baFileList)
 {
-  sysLogCall("exeListFiles");
+  //sysLogCall("exeListFiles");
   USHORT usFileNo;
   USHORT usRet;
   int i;
@@ -195,9 +196,9 @@ USHORT  exeListFiles(BYTE* baFileList)
   
   memset(baFileList,0,sizeof baFileList);
   lsR("/home/ap/pub","pub",baFileList,0);
-  lsR(".","pri",baFileList,0);
+  //lsR(".","pri",baFileList,0);
 
-  sysLogRet("exeListFiles",0);
+  ///sysLogRet("exeListFiles",0);
   return 0;
 }
 
@@ -346,8 +347,7 @@ USHORT  exeSystemTest(BYTE* baTestResult)
   //CTOS_LCDTPrintXY(1, 1, "Please wait\n system testing is running\n");
   BYTE baBuffer[40],str[10];
   USHORT ret;
-  memset(baTestResult,0,sizeof baTestResult);
-  memset(baBuffer,0,sizeof baBuffer);
+  strcpy(baTestResult,"");
 
   ///////////////////////////////////////////////////Test begins here/////////////////////////////////////////////////////////
   //retrieve system memory info 

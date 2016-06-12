@@ -51,6 +51,7 @@
 /*==========================================*
 * P R O T O T Y P E S *
 *==========================================*/
+BYTE manLoadConfig(void);
 USHORT manUp(void);
 USHORT manTest(void);
 USHORT manAppList(void);

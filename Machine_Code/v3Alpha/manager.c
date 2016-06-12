@@ -162,41 +162,52 @@ int getParamsCount(IN BYTE * baRaw)
 	return count;
 }
 
+
+
+BYTE manLoadConfig()
+{
+	sysLogCall("manLoadConfig");
+	USHORT usret=0xFF;
+	double dtime;
+	//read DefaultConfig
+	FILE *config=fopen("TMSConfig.csv","rb");
+	if(config!=NULL)
+	{
+		//first ip
+		fscanf(config,"%[^\n]\n",firstIP);
+		
+
+		//second ip
+		fscanf(config,"%[^\n]\n",secondIP);
+		
+		//ftp user
+		fscanf(config,"%[^\n]\n",ftpUserName);
+		
+		//ftp pass
+		fscanf(config,"%[^\n]\n",ftpPassword);
+		
+		//time
+		fscanf(config,"%llf\n",&dtime);
+		usret= commConfig(firstIP,ftpUserName,ftpPassword);
+		timer=dtime*60;
+		fclose(config);
+	}
+	
+	sysLogRet("manLoadConfig",usret);
+	return usret;
+
+
+}
 USHORT manUp()
 {
 	sysLogCall("manUp");
-	USHORT usCommand,usret,usResult;
+	manLoadConfig();
+	USHORT usCommand,usret,usResult=0;
 	FILE *Config;
 	int i;
 	//char manbuff[100];
 	char *token;
-	char pArr[5][50];
-	BYTE iscorrupted=0;
-	uint16_t u16hostport;
-	/*8if(access("TMSConfig.csv",R_OK)!=-1)
-	{
-		Config=fopen("TMSConfig.csv","rb");
-		i=0;
-		while(fgets(pArr[i],sizeof pArr[i],Config)){
-			pArr[i][strlen(pArr[i])-1]='\0';
-			++i;
-		}
-
-		
-		//commConfig(pArr[0],pArr[2],pArr[3]);
-		//CTOS_LCDTPrint(pArr[0]);
-		//CTOS_LCDTPrint("\n");
-		//CTOS_LCDTPrint(pArr[2]);
-		//CTOS_LCDTPrint("\n");
-		//CTOS_LCDTPrint(pArr[3]);
-		//CTOS_LCDTPrint("\n");
-       
-		sscanf(pArr[4],"%d",&timer);
-		
-		fclose(Config);
-        //CTOS_KBDGet(&i);
-	}
-	*/
+	
 	commInit();
 	strcpy(baResponse,"DEMO");
 	usret=commSendTms(baResponse,PATH_POSUP);
@@ -574,6 +585,7 @@ USHORT manPullFile()
 		{
 			sprintf(baPath,"./%s",paramsList[i]);
 			usResult=commRecieveRoot(paramsList[i],baPath);
+
 		}
 
 		sprintf(baFile,"&Path=%s&Status=%d",paramsList[i],usResult==226?0:usResult);
@@ -678,9 +690,9 @@ USHORT manUpdateApp()
 	pid=fork();
 	if(pid==0)
 	{
-		CTOS_UpdateFromMMCI(pathname,1);//w rabina yostor xD feha khabth xD
+		CTOS_UpdateFromMMCI(pathname,0);//w rabina yostor xD feha khabth xD
 
-		kill(pid, SIGTERM);
+		kill(getpid(), SIGTERM);
 		CTOS_LCDTPrint("tabaaan\n");
 	}
 	sleep(4);
@@ -708,6 +720,6 @@ USHORT manUpdateApp()
 	free(paramsList);
 	//CTOS_LCDTPrint("\nafter free");
 	//CTOS_KBDGet(&key);
-	sysLogRet("manPullFile",0);
+	sysLogRet("manUpdateApp",0);
 	return 0x00;
 }

@@ -40,7 +40,6 @@ OBJECTFILES= \
 	${OBJECTDIR}/appmain.o \
 	${OBJECTDIR}/communication.o \
 	${OBJECTDIR}/util.o \
-	${OBJECTDIR}/httpclient.o \
 	${OBJECTDIR}/execute.o \
 	${OBJECTDIR}/test.o \
 	${OBJECTDIR}/manager.o
@@ -89,10 +88,6 @@ ${OBJECTDIR}/communication.o: communication.c
 ${OBJECTDIR}/util.o: util.c 
 	${MKDIR} -p ${OBJECTDIR}
 	$(COMPILE.c) -g -I/cygdrive/C/Program\ Files/Castles/VEGA3000/include -I/cygdrive/C/Program\ Files\ \(x86\)/Castles/VEGA3000/include -o ${OBJECTDIR}/util.o util.c
-
-${OBJECTDIR}/httpclient.o: httpclient.c 
-	${MKDIR} -p ${OBJECTDIR}
-	$(COMPILE.c) -g -I/cygdrive/C/Program\ Files/Castles/VEGA3000/include -I/cygdrive/C/Program\ Files\ \(x86\)/Castles/VEGA3000/include -o ${OBJECTDIR}/httpclient.o httpclient.c
 
 ${OBJECTDIR}/execute.o: execute.c 
 	${MKDIR} -p ${OBJECTDIR}

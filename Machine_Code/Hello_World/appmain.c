@@ -20,7 +20,7 @@ int main(int argc,char *argv[])
 	// TODO: Add your program here //
 	CTOS_LCDTClearDisplay();
             
-        CTOS_LCDTPrintXY(1, 1, "Hello");
+        CTOS_LCDTPrintXY(1, 1, "Hello V2");
             
         CTOS_KBDGet(&key);
 	

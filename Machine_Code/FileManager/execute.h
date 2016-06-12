@@ -1,26 +1,26 @@
 /**
-******************************************************************************
-* file          common.h
-* author        
-* component     common
-* description   common file contains constants and variable 
-*               that maybe used by different components in application.
-******************************************************************************
-* copyright POS_GP_TEAM_2016
-*
-******************************************************************************
-*/
+  ******************************************************************************
+  * file          execute.h
+  * author        
+  * component     execute
+  * description   header file of execute
+  *               execute module executes actions on device
+  ******************************************************************************
+  * copyright POS_GP_TEAM_2016
+  *
+  ******************************************************************************
+  */
 /* Define to prevent recursive inclusions ------------------------------------*/
+#ifndef EXECUTE_H
+#define EXECUTE_H
 
-#ifndef COMMON_H
-#define COMMON_H
 
 /*========================================*
 * I N C L U D E S *
 *========================================*/
-#include <string.h>
-#include <ctosapi.h>
-#include <stdint.h>
+//#include "common.h"
+#include "logger.h"
+
 
 /*==========================================*
 ****************P U B L I C ****************
@@ -29,7 +29,7 @@
 /*==========================================*
 * D E F I N E S *
 *==========================================*/
-
+	
 /*==========================================*
 * C O N S T A N T S *
 *==========================================*/
@@ -41,29 +41,19 @@
 /*==========================================*
 * V A R I A B L E S *
 *==========================================*/
-//first ip
-char firstIP[15];
-//second ip
-char secondIP[15];
-//time interval
-uint32_t timer;//sec
-char ftpUserName[128];
-char ftpPassword[128];
-
-BYTE baSerialNumber[40];
 
 /*==========================================*
 * M A C R O S *
 *==========================================*/
 
 /*==========================================*
-* F U N C T I O N S *
+* P R O T O T Y P E S *
 *==========================================*/
-
-
-
-
-
-
-
+USHORT  exeListApps(BYTE* baAppList);
+USHORT  exeListFiles(BYTE* baFileList);
+//USHORT  exeDeleteFiles(IN BYTE * fileNames[],IN int length,OUT USHORT  deleteResults[]);
+USHORT  exeDeleteFiles(IN BYTE * fileNames[],IN int length,OUT BYTE  deleteResults[]);
+USHORT  exeSystemTest(BYTE* baTestResult);
+void ls(BYTE *pathname,BYTE* baNames,BOOL app);
+USHORT lsl(BYTE *pathname,CTOS_FILE_ATTRIB fileInfo[],BOOL app);
 #endif
