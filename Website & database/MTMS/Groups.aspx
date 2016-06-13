@@ -39,7 +39,7 @@
                             <ul class="widget widget-menu unstyled">
                                 <li><a href="groups.aspx"><i class="menu-icon icon-group"></i>Groups <b class="label green pull-right"> <%= Methods.getGroupsCount() %> </b></a></li>
                                 <li><a href="terminals.aspx"><i class="menu-icon icon-hdd"></i>Terminals<b class="label orange pull-right"> <%= Methods.getTerminalsCount() %> </b></a></li>
-                                <li><a href="config.aspx"><i class="menu-icon icon-hdd"></i>Configuration<b class="label orange pull-right"></b></a></li>
+                                <li><a href="config.aspx"><i class="menu-icon icon-cog"></i>Configuration<b class="label orange pull-right"></b></a></li>
                             </ul>
                             <!--/.widget-nav-->
                         </div>
@@ -94,38 +94,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="module" id="groups_module">
-                            <div class="module-head">
-                                <h3>Create New Group</h3>
-                            </div>
-                            <div class="module-body" runat="server">
-                                <div class="control-group">
-									<div class="controls">
-										<asp:TextBox runat="server" id="NewNameTxt" placeholder="Group Name" CssClass="span3" />
-										<asp:RequiredFieldValidator runat="server" ErrorMessage="*" ControlToValidate="NewNameTxt" ForeColor="Red" ValidationGroup="CreateGroup" />
-                                    </div>
-                                    <div class="controls">
-										<asp:TextBox runat="server" id="NewBranchTxt" placeholder="Branch" CssClass="span3" />
-                                        <asp:RequiredFieldValidator runat="server" ErrorMessage="*" ControlToValidate="NewBranchTxt" ForeColor="Red" ValidationGroup="CreateGroup" />
-                                    </div>
-                                    <div class="controls">
-										<asp:TextBox runat="server" id="ContactNumTxt" placeholder="Contact Number" CssClass="span3" />
-										<asp:RequiredFieldValidator runat="server" ErrorMessage="*" ControlToValidate="ContactNumTxt" ForeColor="Red" ValidationGroup="CreateGroup" />
-                                        <asp:RegularExpressionValidator ID="ContactNumValidator" runat="server" ErrorMessage="Invalid Phone Number"
-                                            ValidationExpression="^01[0-2]{1}[0-9]{8}"
-                                            ControlToValidate="ContactNumTxt"
-                                            ForeColor="Red" ValidationGroup="CreateGroup" />
-                                    </div>
-                                    <div class="controls">
-										<asp:TextBox runat="server" id="ContactPersonTxt" placeholder="Contact Person" CssClass="span3" />
-										<span class="help-inline">Leave empty if not specified</span>
-									</div>
-                                    <div class="align-right">
-                                        <asp:Button ID="CreateGroupBtn" runat="server" CssClass="btn btn-primary btn-large" Text="Create" OnClick="CreateGroupBtn_Click" ValidationGroup="CreateGroup"></asp:Button>
-                                    </div>
-								</div>
-							</div>
                         </div>
                         <div class="module">
                             <div class="module-head">
@@ -202,6 +170,39 @@
                                     <asp:Button ID="GroupSubmitBtn" runat="server" CssClass="btn btn-primary btn-large" Text="Submit" OnClick="GroupSubmitBtn_Click" ></asp:Button>
                                     <asp:Button ID="GroupClearBtn" runat="server" CssClass="btn btn-large" Text="Clear" OnClick="GroupClearBtn_Click"></asp:Button>
                                 </div>
+							</div>
+                        </div>
+                       
+                        <div class="module" id="groups_module">
+                            <div class="module-head">
+                                <h3>Create New Group</h3>
+                            </div>
+                            <div class="module-body" runat="server">
+                                <div class="control-group">
+									<div class="controls">
+										<asp:TextBox runat="server" id="NewNameTxt" placeholder="Group Name" CssClass="span3" />
+										<asp:RequiredFieldValidator runat="server" ErrorMessage="*" ControlToValidate="NewNameTxt" ForeColor="Red" ValidationGroup="CreateGroup" />
+                                    </div>
+                                    <div class="controls">
+										<asp:TextBox runat="server" id="NewBranchTxt" placeholder="Branch" CssClass="span3" />
+                                        <asp:RequiredFieldValidator runat="server" ErrorMessage="*" ControlToValidate="NewBranchTxt" ForeColor="Red" ValidationGroup="CreateGroup" />
+                                    </div>
+                                    <div class="controls">
+										<asp:TextBox runat="server" id="ContactNumTxt" placeholder="Contact Number" CssClass="span3" />
+										<asp:RequiredFieldValidator runat="server" ErrorMessage="*" ControlToValidate="ContactNumTxt" ForeColor="Red" ValidationGroup="CreateGroup" />
+                                        <asp:RegularExpressionValidator ID="ContactNumValidator" runat="server" ErrorMessage="Invalid Phone Number"
+                                            ValidationExpression="^01[0-2]{1}[0-9]{8}"
+                                            ControlToValidate="ContactNumTxt"
+                                            ForeColor="Red" ValidationGroup="CreateGroup" />
+                                    </div>
+                                    <div class="controls">
+										<asp:TextBox runat="server" id="ContactPersonTxt" placeholder="Contact Person" CssClass="span3" />
+										<span class="help-inline">Leave empty if not specified</span>
+									</div>
+                                    <div class="align-right">
+                                        <asp:Button ID="CreateGroupBtn" runat="server" CssClass="btn btn-primary btn-large" Text="Create" OnClick="CreateGroupBtn_Click" ValidationGroup="CreateGroup"></asp:Button>
+                                    </div>
+								</div>
 							</div>
                         </div>
                         <!--/.content-->

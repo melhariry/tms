@@ -28,7 +28,7 @@ public partial class Terminal : System.Web.UI.Page
         mtmsFiles = terminalFileList.Select("ParentFolder='MTMS'").Length == 0 ? new DataTable() : terminalFileList.Select("ParentFolder='MTMS'").CopyToDataTable();
         pubFiles = terminalFileList.Select("ParentFolder='pub'").Length == 0 ? new DataTable() : terminalFileList.Select("ParentFolder='pub'").CopyToDataTable();
         priFiles = terminalFileList.Select("ParentFolder='pri'").Length == 0 ? new DataTable() : terminalFileList.Select("ParentFolder='pri'").CopyToDataTable();
-        Schedule.Checked = Convert.ToBoolean(commandToSend["isScheduled"]);
+        
         if (terminalInfo["Vendor"].ToString().Equals("Castles"))
         {
             AppSource.InnerText = "Cap Source:";
@@ -64,6 +64,7 @@ public partial class Terminal : System.Web.UI.Page
             terminalHistory = ModifyCommandHistory();
             CommandsRep.DataSource = terminalHistory;
             CommandsRep.DataBind();
+            Schedule.Checked = Convert.ToBoolean(commandToSend["isScheduled"]);
         }
     }
 
@@ -391,6 +392,7 @@ public partial class Terminal : System.Web.UI.Page
                 rawHTMLSuccess += "<li>Commands submitted successfully</li>";
             ClearCheckBoxes();
             commandToSend = DB.Instance.GetCommandToSend(posId);
+            Schedule.Checked = Convert.ToBoolean(commandToSend["isScheduled"]);
         }
         catch (WebException ex)
         {
@@ -420,11 +422,12 @@ public partial class Terminal : System.Web.UI.Page
     }
     protected void DownloadFtpBtn_Click(object sender, EventArgs e)
     {
-        string localPath = string.Empty, fileName = string.Empty;
-        string ftpPath = "Terminals/" + terminalInfo["Vendor"] + '/' + terminalInfo["SerialNumber"] + '/' + "pub/MTMS/";
-        string[] filePath;
+        string localPath = string.Empty, fileName = string.Empty, ftpPath = string.Empty;
+        string[] filePath = ((sender as Button).Parent.Controls[5] as HtmlTableCell).InnerHtml.Trim().Split('/');
 
-        filePath = ((sender as Button).Parent.Controls[5] as HtmlTableCell).InnerHtml.Trim().Split('/');
+        ftpPath = "Terminals/" + terminalInfo["Vendor"] + '/' + terminalInfo["SerialNumber"] + '/';
+        for (int i = 0; i < filePath.Length - 1; i++)
+            ftpPath += filePath[i] + '/';
         fileName = filePath[filePath.Length - 1].Replace(".", "_" + terminalInfo["SerialNumber"].ToString() + ".");
         localPath = Server.MapPath("~/Dump/" + fileName);
         if (Methods.DownloadFromFtp(filePath[filePath.Length - 1], localPath, ftpPath))

@@ -39,7 +39,7 @@
                             <ul class="widget widget-menu unstyled">
                                 <li><a href="groups.aspx"><i class="menu-icon icon-group"></i>Groups <b class="label green pull-right"> <%= Methods.getGroupsCount() %> </b></a></li>
                                 <li><a href="terminals.aspx"><i class="menu-icon icon-hdd"></i>Terminals<b class="label orange pull-right"> <%= Methods.getTerminalsCount() %> </b></a></li>
-                                <li><a href="config.aspx"><i class="menu-icon icon-hdd"></i>Configuration<b class="label orange pull-right"></b></a></li>
+                                <li><a href="config.aspx"><i class="menu-icon icon-cog"></i>Configuration<b class="label orange pull-right"></b></a></li>
                             </ul>
                             <!--/.widget-nav-->
                         </div>
@@ -58,7 +58,7 @@
                                     <h5>This form generates the configuration file for the TMS app and forces all the terminals to pull the generated file</h5>
                                     <div class="control-group">
 									    <div class="controls">
-										    <asp:TextBox runat="server" id="FirstIpTxt" placeholder="First IP" CssClass="span3" />
+										    <asp:TextBox runat="server" id="FirstIpTxt" placeholder="Primary Server IP" CssClass="span3" />
 										    <asp:RequiredFieldValidator runat="server" ErrorMessage="*" ControlToValidate="FirstIpTxt" ForeColor="Red" /> 
                                             <asp:RegularExpressionValidator ID="IPValidator" runat="server" ErrorMessage="Invalid IP address"
                                             ValidationExpression="([0-9]{1,3}\.|\*\.){3}([0-9]{1,3}|\*){1}"
@@ -66,7 +66,7 @@
                                             ForeColor="Red" />
                                         </div>
                                         <div class="controls">
-										    <asp:TextBox runat="server" id="SecondIpTxt" placeholder="Second IP" CssClass="span3" />
+										    <asp:TextBox runat="server" id="SecondIpTxt" placeholder="Secondary Server IP" CssClass="span3" />
                                             <asp:RequiredFieldValidator runat="server" ErrorMessage="*" ControlToValidate="SecondIpTxt" ForeColor="Red"  />
                                             <asp:RegularExpressionValidator ID="IP2Validator" runat="server" ErrorMessage="Invalid IP address"
                                             ValidationExpression="([0-9]{1,3}\.|\*\.){3}([0-9]{1,3}|\*){1}"
@@ -74,10 +74,10 @@
                                             ForeColor="Red" />
                                         </div>
                                         <div class="controls">
-										    <asp:TextBox runat="server" id="IntervalTxt" TextMode="Number" placeholder="Time Interval" CssClass="span3" />
+										    <asp:TextBox runat="server" id="IntervalTxt" placeholder="Schedule Interval" CssClass="span3" TextMode="Number" step="0.1" min="0.3" max="60" />
 										    <asp:DropDownList runat="server" ID="TimeList" CssClass="span2"  />
                                             <asp:RequiredFieldValidator runat="server" ErrorMessage="*" ControlToValidate="IntervalTxt" ForeColor="Red"  />
-                                         </div>
+                                        </div>
                                         <div class="controls">
 										    <asp:TextBox runat="server" id="FTPUserTxt" placeholder="FTP Username" CssClass="span3" />
 										    <asp:RequiredFieldValidator runat="server" ErrorMessage="*" ControlToValidate="FTPUserTxt" ForeColor="Red"  />

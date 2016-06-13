@@ -12,7 +12,7 @@ using System.IO;
 public static class Methods
 {
     private static string username = "MTMS_FTP";
-    private static string password = "1234";
+    private static string password = "MobiWire1234";
     public static string GetUserIP(HttpContext context)
     {
         string VisitorsIPAddr = string.Empty;

@@ -44,7 +44,7 @@ public partial class Config : System.Web.UI.Page
     {
         string filePath = Server.MapPath("~/Dump/TMSConfig.csv"), param = string.Empty;
         bool commandSuccess = true;
-        int interval = Convert.ToInt32(IntervalTxt.Text);
+        double interval = Convert.ToDouble(IntervalTxt.Text);
         if (interval < 0)
         {
             rawHTMLError = "Please Enter a valid interval";
