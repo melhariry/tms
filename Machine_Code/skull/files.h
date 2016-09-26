@@ -67,8 +67,8 @@ USHORT listAllFiles(FILETYPE *stFA,USHORT *pusFileNumber)
  
   if (usRet != d_OK) return usRet;
 
-  for (i=0; i<usFileNo; i++){
-    //stFA[i]=stAttrib[i];
+  for (i=0; i<usFileNo; i++)
+  {
     strcpy(stFA[i].Filename,stAttrib[i].Filename);
     stFA[i].FileAttrib=stAttrib[i].FileAttrib;
     stFA[i].UID=stAttrib[i].UID;
@@ -80,14 +80,12 @@ USHORT packingFilesInfo(FILETYPE* stFA,USHORT usFileNo,BYTE *baBuffer,ULONG *ulB
     int i,cr=0;
     CTOS_LCDTClearDisplay (); 
     if(sizeof(FILETYPE)*usFileNo>*ulBuffLen) return 1;//F_ERROR_MEM;
-     for (i=0; i<usFileNo; i++){
-        //sprintf(baBuffer+cr,"Name: %s\nSize: %d\nAttrib: %s\n",stFA[i].Filename,(int )stFA[i].Filesize,
-        //    (stFA[i].FileAttrib==d_FA_PRIVATE?"d_FA_PRIVATE":"d_FA_PUBLIC"));
-        sprintf(baBuffer+cr,"%cfile[%d][name]=%s&file[%d][size]=%d&file[%d][attrib]=%s",((i==0)?'&':'&'),i,stFA[i].Filename,i,(int )stFA[i].Filesize,
-            i,(stFA[i].FileAttrib==d_FA_PRIVATE?"d_FA_PRIVATE":"d_FA_PUBLIC"));
-        CTOS_LCDTPrint(baBuffer);
-        cr=strlen(baBuffer);
-    }
+        for (i=0; i<usFileNo; i++)
+        {
+            sprintf(baBuffer+cr,"%cfile[%d][name]=%s&file[%d][size]=%d&file[%d][attrib]=%s",((i==0)?'&':'&'),i,stFA[i].Filename,i,(int )stFA[i].Filesize,i,(stFA[i].FileAttrib==d_FA_PRIVATE?"d_FA_PRIVATE":"d_FA_PUBLIC"));
+            CTOS_LCDTPrint(baBuffer);
+            cr=strlen(baBuffer);
+        }
     return d_OK;//0;//FS_OK;success
 }
 void printFilesInfo(FILETYPE* stFA,USHORT usFileNo){
@@ -228,7 +226,7 @@ USHORT FileWrite(BYTE *pcaString,BYTE *baFileName)
     
     
     /* Open the selected file */
-        ret = CTOS_FileReopen(baFileName ,d_STORAGE_FLASH ,&ulHandle);
+    ret = CTOS_FileReopen(baFileName ,d_STORAGE_FLASH ,&ulHandle);
         
     /* Move the file pointer to a specific position. 
      * Move backward from the end of the file. */

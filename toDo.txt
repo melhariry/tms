@@ -1,0 +1,6 @@
+1- Add model on Castles at create POSRecord
+2 - double check command names sent in Castle to request command parameters (some parameters don't exist in database, some written differently )
+3- add missing commandParameters to database (pull file,etc)
+4- double check paramters names sent in Castle
+5- add missing commands handlers to submitCommandResult
+6- make app version on server string not int

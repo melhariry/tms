@@ -69,14 +69,25 @@ void ls(){
 int main(int argc,char *argv[])
 {
 	BYTE key;
+    BYTE out[1000];
     ULONG ulHandle,ulBuffLen;
     USHORT ret,usFileNo;
-    chdir("/");
+    //execl("/bin/su","su", "appdebug","123456",NULL);
+    getlogin_r(out, 1000);
+    CTOS_LCDTClearDisplay();
+    CTOS_LCDTPrint(out);
+    CTOS_KBDGet(&key);
+    chdir("/home");
     ls();
-    chdir("/media");
+    chdir("/home/ap");
     ls();
-    chdir("/");
+    chdir("/home/ap/1/");
     ls();
+    chdir("/home/ap/pub");
+    ls();
+    CTOS_LCDTClearDisplay();
+    fgets(out,1000,stdout);
+    CTOS_KBDGet(&key);
     exit(0);
 	// TODO: Add your program here //
 	CTOS_LCDTClearDisplay();

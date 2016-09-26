@@ -1,3 +1,16 @@
+/**
+  ******************************************************************************
+  * file          httpclient.h
+  * author        
+  * component     httpclient
+  * description   header file of httpclient
+  *               client that build http requests 
+  ******************************************************************************
+  * copyright POS_GP_TEAM_2016
+  *
+  ******************************************************************************
+  */
+/* Define to prevent recursive inclusions ------------------------------------*/
 #ifndef HTTPCLIENT_H
 #define HTTPCLIENT_H
 /*========================================*
@@ -10,44 +23,43 @@
 #include <ctosapi.h>
 
 /*========================================*
-* D E F I N E S *
+* I N C L U D E S *
 *========================================*/
-BYTE baSerialNumber[40];
-BYTE baHeader[200];
-BYTE baExtraParam[200];
-BYTE baMessage[300];
-BYTE baResponse[100];
-BYTE baPayload[100];
-BYTE baReply[400];
+//#include "common.h"
 
-/*========================================*
-* Functions
-*========================================*/
-USHORT HTTP_BuildHeader(OUT BYTE* Header,IN BYTE* Path,IN BYTE* Method,IN BYTE* ExtraPar){
-	memset(Header,0,sizeof Header);
-	//sprintf(Header,"%s %s HTTP/1.1\nContent-Type: application/x-www-form-urlencoded\nAccept: */*\n%s\n\n",Method,Path,ExtraPar);
-	sprintf(Header,"%s %s HTTP/1.1\nContent-Type: application/x-www-form-urlencoded\nAccept: */*\nAccept-Encoding: gzip, deflate\nAccept-Language: en-US,en;q=0.8,ar;q=0.6,es;q=0.4\n%s\n\n",Method,Path,ExtraPar);
-	return 0;
-}
-USHORT HTTP_BuildMessage(OUT BYTE* Message,IN BYTE* Header,IN BYTE* MSG_Content){
-	memset(Message,0,sizeof Message);
+
+
+
+/*==========================================*
+****************P U B L I C ****************
+*==========================================*/
+
+/*==========================================*
+* D E F I N E S *
+*==========================================*/
 	
-	sprintf(Message,"%s%s",Header,MSG_Content);
-	
-	return 0;
-}
-USHORT HTTP_GetReply(OUT BYTE* Reply,IN BYTE* Response){
-	memset(Reply,0,sizeof Reply);
-	USHORT i;
-	//BYTE Header[200];
-	for(i=0;i<strlen(Response)-4;++i){
-	 	if(Response[i]=='\r'&&Response[i+2]=='\r'&&Response[i+1]=='\n'&&Response[i+3]=='\n'){
-	 		strcpy(Reply,Response+i+4);	
-	 	}
-	 		
-	 }
-	
-	return 0;
-}
+/*==========================================*
+* C O N S T A N T S *
+*==========================================*/
+
+/*==========================================*
+* T Y P E S *
+*==========================================*/
+
+/*==========================================*
+* V A R I A B L E S *
+*==========================================*/
+
+/*==========================================*
+* M A C R O S *
+*==========================================*/
+
+/*==========================================*
+* F U N C T I O N S *
+*==========================================*/
+USHORT HTTP_BuildHeader(OUT BYTE* Header,IN BYTE* Path,IN BYTE* Method,IN BYTE* ExtraPar);
+USHORT HTTP_BuildRequest(OUT BYTE* Request,IN BYTE* Header,IN BYTE* Message);
+USHORT HTTP_GetMessage(OUT BYTE* Message,IN BYTE* Request);
+
 
 #endif

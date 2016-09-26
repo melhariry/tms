@@ -35,7 +35,10 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/appmain.o
+	${OBJECTDIR}/GPRS.o \
+	${OBJECTDIR}/appmain.o \
+	${OBJECTDIR}/communication.o \
+	${OBJECTDIR}/httpclient.o
 
 
 # C Compiler Flags
@@ -62,9 +65,21 @@ dist/V3/Debug/skull.exe: ${OBJECTFILES}
 	${MKDIR} -p dist/V3/Debug
 	arm-brcm-linux-gnueabi-g++ -L . "-L${SDKV3LIB}" "-L${SDKV3LIBN}" -o dist/V3/Debug/skull  ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
+${OBJECTDIR}/GPRS.o: GPRS.c 
+	${MKDIR} -p ${OBJECTDIR}
+	$(COMPILE.c) -g -I/cygdrive/C/Program\ Files/Castles/VEGA3000/include -I/cygdrive/C/Program\ Files\ \(x86\)/Castles/VEGA3000/include -o ${OBJECTDIR}/GPRS.o GPRS.c
+
 ${OBJECTDIR}/appmain.o: appmain.c 
 	${MKDIR} -p ${OBJECTDIR}
 	$(COMPILE.c) -g -I/cygdrive/C/Program\ Files/Castles/VEGA3000/include -I/cygdrive/C/Program\ Files\ \(x86\)/Castles/VEGA3000/include -o ${OBJECTDIR}/appmain.o appmain.c
+
+${OBJECTDIR}/communication.o: communication.c 
+	${MKDIR} -p ${OBJECTDIR}
+	$(COMPILE.c) -g -I/cygdrive/C/Program\ Files/Castles/VEGA3000/include -I/cygdrive/C/Program\ Files\ \(x86\)/Castles/VEGA3000/include -o ${OBJECTDIR}/communication.o communication.c
+
+${OBJECTDIR}/httpclient.o: httpclient.c 
+	${MKDIR} -p ${OBJECTDIR}
+	$(COMPILE.c) -g -I/cygdrive/C/Program\ Files/Castles/VEGA3000/include -I/cygdrive/C/Program\ Files\ \(x86\)/Castles/VEGA3000/include -o ${OBJECTDIR}/httpclient.o httpclient.c
 
 # Subprojects
 .build-subprojects:
