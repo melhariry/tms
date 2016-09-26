@@ -13,7 +13,7 @@
 /** 
 ** The main entry of the terminal application 
 **/
-BYTE baIP[]="197.34.97.36";
+BYTE baIP[]="41.47.131.29";
 BYTE baRxBuff[1024];
 USHORT usRxBuffLen;
 int main(int argc,char *argv[])

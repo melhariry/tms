@@ -35,7 +35,6 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/GPRS.o \
 	${OBJECTDIR}/appmain.o
 
 
@@ -62,10 +61,6 @@ LDLIBSOPTIONS=-lcaethernet -lcafont -lcafs -lcakms -lcalcd -lcamodem -lcapmodem 
 dist/V3/Debug/gprsTestModule.exe: ${OBJECTFILES}
 	${MKDIR} -p dist/V3/Debug
 	arm-brcm-linux-gnueabi-g++ -L . "-L${SDKV3LIB}" "-L${SDKV3LIBN}" -o dist/V3/Debug/gprsTestModule  ${OBJECTFILES} ${LDLIBSOPTIONS} 
-
-${OBJECTDIR}/GPRS.o: GPRS.c 
-	${MKDIR} -p ${OBJECTDIR}
-	$(COMPILE.c) -g -I/cygdrive/C/Program\ Files/Castles/VEGA3000/include -I/cygdrive/C/Program\ Files\ \(x86\)/Castles/VEGA3000/include -o ${OBJECTDIR}/GPRS.o GPRS.c
 
 ${OBJECTDIR}/appmain.o: appmain.c 
 	${MKDIR} -p ${OBJECTDIR}

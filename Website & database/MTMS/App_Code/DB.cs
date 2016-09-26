@@ -9,6 +9,12 @@ using System.Configuration;
 /// Database class
 /// </summary>
 
+<<<<<<< HEAD
+public class DB
+{
+    SqlConnection Conn = new SqlConnection(ConfigurationManager.ConnectionStrings["DbConnectionString"].ToString());
+    
+=======
 public sealed class DB
 {
     SqlConnection Conn = new SqlConnection(ConfigurationManager.ConnectionStrings["DbConnectionString"].ToString());
@@ -32,6 +38,7 @@ public sealed class DB
         }
     }
 
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
     public bool PosExists(string posSerialNumber, string posLastConnectionIp, out int posId)
     {
         try
@@ -57,10 +64,13 @@ public sealed class DB
         {
             throw (EX);
         }
+<<<<<<< HEAD
+=======
         finally
         {
             Conn.Close();
         }
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
     }
 
     public bool CreatePosRecord(string serialNumber, string vendor, string model, string ip, Int64 diskCapacity, Int64 ramSize, out int PosId)
@@ -82,7 +92,11 @@ public sealed class DB
             cmd.ExecuteNonQuery();
             Conn.Close();
             PosId = Int32.Parse((Id.Value.ToString()));
+<<<<<<< HEAD
+            if ( PosId != -1)
+=======
             if (PosId != -1)
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
                 return true;
             else
                 return false;
@@ -91,6 +105,11 @@ public sealed class DB
         {
             throw (EX);
         }
+<<<<<<< HEAD
+    }
+
+    public bool SubmitHealthTestResults(string serialNumber, int crypto, int printer, int timer, int buzzer, int led, int rtc, int memory, Int64 usedDiskSize, Int64 usedRamSize)
+=======
         finally
         {
             Conn.Close();
@@ -98,6 +117,7 @@ public sealed class DB
     }
 
     public bool SubmitHealthTestResults(string serialNumber, int crypto, int printer, int timer, int buzzer, int led, int rtc, Int64 usedDiskSize, Int64 usedRamSize)
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
     {
         try
         {
@@ -111,6 +131,10 @@ public sealed class DB
             cmd.Parameters.AddWithValue("@Buzzer", buzzer);
             cmd.Parameters.AddWithValue("@Led", led);
             cmd.Parameters.AddWithValue("@Rtc", rtc);
+<<<<<<< HEAD
+            cmd.Parameters.AddWithValue("@Memory", memory);
+=======
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
             cmd.Parameters.AddWithValue("@UsedDiskSize", usedDiskSize);
             cmd.Parameters.AddWithValue("@UsedRamSize", usedRamSize);
             SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
@@ -127,10 +151,13 @@ public sealed class DB
         {
             throw (EX);
         }
+<<<<<<< HEAD
+=======
         finally
         {
             Conn.Close();
         }
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
     }
 
     public DataTable GetTerminals()
@@ -150,10 +177,13 @@ public sealed class DB
         {
             throw (EX);
         }
+<<<<<<< HEAD
+=======
         finally
         {
             Conn.Close();
         }
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
     }
 
     public DataRow GetCommandToSend(int posId)
@@ -177,6 +207,11 @@ public sealed class DB
         {
             throw (EX);
         }
+<<<<<<< HEAD
+    }
+
+    public bool UpdateCommandToSend(int id, int command)
+=======
         finally
         {
             Conn.Close();
@@ -184,6 +219,7 @@ public sealed class DB
     }
 
     public bool UpdateCommandToSend(int id, int command, string updateFileParams, string updateAppParams, string deleteFileParams, string pushFileParams, string pullFileParams, bool isScheduled)
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
     {
         try
         {
@@ -192,12 +228,15 @@ public sealed class DB
 
             cmd.Parameters.AddWithValue("@Id", id);
             cmd.Parameters.AddWithValue("@Command", command);
+<<<<<<< HEAD
+=======
             cmd.Parameters.AddWithValue("@UpdateFileParams", updateFileParams);
             cmd.Parameters.AddWithValue("@UpdateAppParams", updateAppParams);
             cmd.Parameters.AddWithValue("@DeleteFileParams", deleteFileParams);
             cmd.Parameters.AddWithValue("@PushFileParams", pushFileParams);
             cmd.Parameters.AddWithValue("@PullFileParams", pullFileParams);
             cmd.Parameters.AddWithValue("@IsScheduled", isScheduled);
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
             SqlParameter rowCount = cmd.Parameters.Add("@RETURN_VALUE", SqlDbType.Int);
             rowCount.Direction = ParameterDirection.ReturnValue;
             Conn.Open();
@@ -212,10 +251,13 @@ public sealed class DB
         {
             throw (EX);
         }
+<<<<<<< HEAD
+=======
         finally
         {
             Conn.Close();
         }
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
     }
 
     public DataRow GetCommandParameters(string serialNumber)
@@ -239,10 +281,13 @@ public sealed class DB
         {
             throw (EX);
         }
+<<<<<<< HEAD
+=======
         finally
         {
             Conn.Close();
         }
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
     }
 
     public DataRow GetTerminalInfo(int posId)
@@ -266,10 +311,13 @@ public sealed class DB
         {
             throw (EX);
         }
+<<<<<<< HEAD
+=======
         finally
         {
             Conn.Close();
         }
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
     }
 
     public DataTable GetTerminalFileList(int posId)
@@ -290,6 +338,8 @@ public sealed class DB
         {
             throw (EX);
         }
+<<<<<<< HEAD
+=======
         finally
         {
             Conn.Close();
@@ -1000,5 +1050,6 @@ public sealed class DB
         {
             Conn.Close();
         }
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
     }
 }

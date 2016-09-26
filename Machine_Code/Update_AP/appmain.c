@@ -88,27 +88,28 @@ int main(int argc,char *argv[])
     CTOS_LCDTClearDisplay();
     fgets(out,1000,stdout);
     CTOS_KBDGet(&key);
-    exit(0);
+   // exit(0);
 	// TODO: Add your program here //
 	CTOS_LCDTClearDisplay();
-	DeleteFile("HELLO.CAP");
-    NewFile("HELLO.CAP", &ulHandle,0,d_FA_PUBLIC);
-    FileWriteLen(APCAP,"HELLO.CAP", sizeof(APCAP) / sizeof(APCAP[0]));
-    sprintf(baBuffer,"\nret write=%04x\n",ret);
-	CTOS_LCDTPrint(baBuffer);
-    listAllFiles(stFA,&usFileNo);
-    printFilesInfo(stFA,usFileNo);
-    CTOS_KBDGet(&key);
-    ulBuffLen=100;
+	//DeleteFile("HELLO.CAP");
+   // NewFile("HELLO.CAP", &ulHandle,0,d_FA_PUBLIC);
+    //FileWriteLen(APCAP,"HELLO.CAP", sizeof(APCAP) / sizeof(APCAP[0]));
+    //sprintf(baBuffer,"\nret write=%04x\n",ret);
+//	CTOS_LCDTPrint(baBuffer);
+ //   listAllFiles(stFA,&usFileNo);
+  //  printFilesInfo(stFA,usFileNo);
+  //  CTOS_KBDGet(&key);
+  /*  ulBuffLen=100;
     FileRead("HELLO.CAP",baBuffer, &ulBuffLen);
     CTOS_LCDTClearDisplay();
     CTOS_LCDTPrint(baBuffer);
     CTOS_KBDGet(&key);
+    */
     //create mci
     CTOS_LCDTClearDisplay();
 	DeleteFile("app.mci");
     NewFile("app.mci", &ulHandle,0,d_FA_PUBLIC);
-    FileWrite("HELLO.CAP","app.mci");
+    FileWrite("HelloWorld.CAP","app.mci");
     sprintf(baBuffer,"\nret write=%04x\n",ret);
 	CTOS_LCDTPrint(baBuffer);
 	listAllFiles(stFA,&usFileNo);

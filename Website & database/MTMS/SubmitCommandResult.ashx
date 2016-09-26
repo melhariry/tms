@@ -6,6 +6,41 @@ using System.Web;
 public class SubmitCommandResult : IHttpHandler {
     
     public void ProcessRequest (HttpContext context) {
+<<<<<<< HEAD
+        context.Response.ContentType = "text/plain";
+        try
+        {
+            DB db = new DB();
+            string command = context.Request.Params["Command"];
+            switch(command)
+            { 
+                case "TestHealth":
+                    if (db.SubmitHealthTestResults(
+                    context.Request.Headers["SerialNumber"],
+                    Int32.Parse(context.Request.Params["Crypto"]),
+                    Int32.Parse(context.Request.Params["Printer"]),
+                    Int32.Parse(context.Request.Params["Timer"]),
+                    Int32.Parse(context.Request.Params["Buzzer"]),
+                    Int32.Parse(context.Request.Params["Led"]),
+                    Int32.Parse(context.Request.Params["Rtc"]),
+                    Int32.Parse(context.Request.Params["Memory"]),
+                    Int64.Parse(context.Request.Params["UsedDiskSize"]),
+                    Int64.Parse(context.Request.Params["UsedRamSize"])
+                    ))
+                    {
+                        context.Response.StatusCode = 200;
+                        context.Response.Write("Success");
+                    }
+                    else
+                    {
+                        context.Response.StatusCode = 500;
+                        context.Response.StatusDescription = "An error occurred while submitting health test results";
+                    }
+                    break;
+        }
+    }
+        
+=======
         string status = string.Empty, parameters = string.Empty;
         context.Response.ContentType = "text/plain";
         string[] commandParams, commandStatus, parentFolders;
@@ -151,11 +186,15 @@ public class SubmitCommandResult : IHttpHandler {
             }
         }
 
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
         catch (Exception EX)
         {
             context.Response.StatusCode = 500;
             context.Response.StatusDescription = EX.Message;
+<<<<<<< HEAD
+=======
             context.Response.Write(EX.Message);
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
         }
     }
  

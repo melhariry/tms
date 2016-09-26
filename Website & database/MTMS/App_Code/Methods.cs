@@ -3,16 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Net;
+<<<<<<< HEAD
+=======
 using System.Data;
 using System.IO;
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
 
 /// <summary>
 /// Summary description for Methods
 /// </summary>
 public static class Methods
 {
+<<<<<<< HEAD
+=======
     private static string username = "MTMS_FTP";
     private static string password = "MobiWire1234";
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
     public static string GetUserIP(HttpContext context)
     {
         string VisitorsIPAddr = string.Empty;
@@ -26,6 +32,16 @@ public static class Methods
         return VisitorsIPAddr;
     }
 
+<<<<<<< HEAD
+    public static void CreateFtpDirectory(string serialNumber)
+    {
+        WebRequest request = WebRequest.Create("ftp://localhost/MTMS_FTP/" + serialNumber + "/");
+        request.Method = WebRequestMethods.Ftp.MakeDirectory;
+        request.Credentials = new NetworkCredential("anonymous", "ibrahim@mail.com");
+        FtpWebResponse response = (FtpWebResponse)request.GetResponse();
+        response.Close();
+    }
+=======
     public static void CreateFtpDirectory(string serialNumber, string vendor)
     {
         WebRequest request = WebRequest.Create("ftp://localhost/Terminals/" + vendor + "/" + serialNumber + "/");
@@ -211,4 +227,5 @@ public static class Methods
         return message;
     }
 
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
 }
