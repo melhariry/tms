@@ -201,7 +201,7 @@ BYTE manLoadConfig()
 USHORT manUp()
 {
 	sysLogCall("manUp");
-	manLoadConfig();
+	//manLoadConfig();
 	USHORT usCommand,usret,usResult=0;
 	FILE *Config;
 	int i;
@@ -585,6 +585,7 @@ USHORT manPullFile()
 		{
 			sprintf(baPath,"./%s",paramsList[i]);
 			usResult=commRecieveRoot(paramsList[i],baPath);
+			manLoadConfig();
 
 		}
 

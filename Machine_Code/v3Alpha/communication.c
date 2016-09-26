@@ -61,12 +61,13 @@ USHORT Retry;
 BYTE baTmsUrl[50]="193.227.38.138";
 //BYTE ftpUser[100]="Administrator";
 //BYTE ftpPass[100]="Elgp2.com";
+//BYTE baTmsUrl[50]="41.47.139.80";
 BYTE ftpUser[100]="MTMS_FTP";
 BYTE ftpPass[100]="MobiWire1234";
 
 
 USHORT usTmsPort=80;
-//BYTE baTmsUrl[50]="41.47.137.50";
+
 //BYTE ftpUser[100]="MTMS_FTP"; //moneer
 //BYTE ftpUser[100]="MTMS_USER";
 

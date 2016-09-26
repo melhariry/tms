@@ -12,6 +12,7 @@ public class PosUp : IHttpHandler {
         context.Response.ContentType = "text/plain";
         try
         {
+<<<<<<< HEAD
             DB db = new DB();
             int posId = -1;
             context.Response.StatusCode = 200;
@@ -23,6 +24,19 @@ public class PosUp : IHttpHandler {
             }
             else
                 context.Response.Write("CreatePosRecord; ");
+=======
+            int posId = -1;
+
+            if (DB.Instance.PosExists(context.Request.Headers["SerialNumber"], Methods.GetUserIP(context), out posId))
+            {
+                //send commands
+                DataRow commandToSend = DB.Instance.GetCommandToSend(posId);
+                context.Response.StatusCode = 200;
+                context.Response.Write("0" + commandToSend["Command"]);
+            }
+            else
+                context.Response.Write("0128");
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
         }
         catch (Exception EX)
         {

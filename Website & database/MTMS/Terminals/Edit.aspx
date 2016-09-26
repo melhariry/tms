@@ -19,7 +19,14 @@
     </asp:GridView>
     <asp:Button ID="Submit" runat="server" Text="Submit" OnClick="Submit_Click" />
     <asp:FileUpload ID="FileUpload1" runat="server" />
+<<<<<<< HEAD
     <asp:Button ID="Test" runat="server" Text="Test FTP" OnClick="Test_Click" />
+=======
+    <asp:Button ID="Upload" runat="server" Text="Upload" OnClick="Upload_Click" />
+    <br />
+    <asp:Button ID="Download" runat="server" Text="Download" OnClick="Download_Click" />
+    <asp:Label ID="FtpStatus"  runat="server"/>
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
     </form>
 </body>
 </html>

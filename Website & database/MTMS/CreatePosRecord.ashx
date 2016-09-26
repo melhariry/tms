@@ -18,19 +18,21 @@ public class CreatePosRecord : IHttpHandler
         context.Response.ContentType = "text/plain";        
         try
         {
-            DB db = new DB();
             int PosId = -1;
-            if(db.CreatePosRecord(
+            if (DB.Instance.CreatePosRecord(
                 context.Request.Headers["SerialNumber"],
                 context.Request.Params["Vendor"],
-                "Vega3000",
+                context.Request.Params["Model"],
                 Methods.GetUserIP(context),
                 Int64.Parse(context.Request.Params["TotalDiskCapacity"]),
                 Int64.Parse(context.Request.Params["TotalRamSize"]),
                 out PosId
                 ))
             {
-                Methods.CreateFtpDirectory(context.Request.Headers["SerialNumber"]);
+                Methods.CreateFtpDirectory(context.Request.Headers["SerialNumber"], context.Request.Params["Vendor"]);
+                Methods.CreateFtpInnerDirectory(context.Request.Headers["SerialNumber"], context.Request.Params["Vendor"], "pub");
+                Methods.CreateFtpInnerDirectory(context.Request.Headers["SerialNumber"], context.Request.Params["Vendor"], "pri");
+                Methods.CreateFtpInnerDirectory(context.Request.Headers["SerialNumber"], context.Request.Params["Vendor"], "pub/MTMS");
                 context.Response.StatusCode = 200;
                 context.Response.Write("Success");
             }

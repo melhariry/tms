@@ -206,12 +206,14 @@ int main()
     //logger=fopen("/home/ap/pub/MTMS/daemon_session.txt","rb");
    
 
-    
+    system("echo 'test1'>/home/ap/pub/test1.txt");
+system("echo 'test1'>/home/ap/pub/test1.txt");
     /* Deamonize */
    daemonize(".", "/tmp/daemon2.pid");
     sysLog("Daemon running") ;
    
     timer=30;
+    manLoadConfig();
     while (1)
     {
       

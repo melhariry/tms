@@ -39,7 +39,7 @@
  void print(char list[][255],int offset)
  {
  	int i;
- 	for (i = 0; i < 2; ++i)
+ 	for (i = 0; i < 3; ++i)
  	{
  		CTOS_LCDTPrint(list[i+offset]);
  	}
@@ -79,11 +79,12 @@ extern  int alphasort();
     int app_select();
     int size;
     USHORT key;
+    
     if(app)
       count = scandir(pathname, &files, app_select, alphasort);
     else
       count = scandir(pathname, &files, file_select, alphasort);
-   
+   if(count==-1)return 0;
     for (i=0;i<count;++i)
     {
       if(files[i]->d_type==8) {
@@ -99,19 +100,17 @@ extern  int alphasort();
       
       //sprintf(bufStr,"&Name=%s&Type=%d&Parent=%s&Size=%d",files[i]->d_name,files[i]->d_type,parent,size);
       sprintf(bufStr,"Name=%s\nType=%d\nParent=%s\nSize=%d\n----------\n",files[i]->d_name,files[i]->d_type,parent,size);
-     // sprintf(bufStr,"%s\n",files[i]->d_name);//|%d|%s|%d,files[i]->d_type,parent,size);
       //CTOS_LCDTClearDisplay();
-      //CTOS_LCDTPrint(bufStr);
-      //strcat(list,bufStr);
-      
+     
 	  strcpy(list[i+offset],bufStr);
 	  //strcpy(list[0],"taban");
-      //CTOS_KBDGet(&key);
+      
       if(files[i]->d_type==1)
       {
         sprintf(bufStr,"%s/%s",pathname,files[i]->d_name);
-
-        chcount+=lsR(bufStr,files[i]->d_name,list,app,offset+count);
+       
+        chcount+=lsR(bufStr,files[i]->d_name,list,app,offset+count+chcount);
+        
         //offset+=chcount;
       }
 
@@ -124,12 +123,14 @@ int main(int argc,char *argv[])
     CTOS_LCDTSelectFontSize(0x101E);
     //CTOS_LCDTPrint("Name|Type|Parent|Size");
     //exeListFiles(list);
-    int count=lsR("/home/ap/pub/","pub",xfiles,0,0);
+    int i,count=lsR("/home/ap/pub","pub",xfiles,0,0);
+    char buff[100];
+    sprintf(buff,"count=%d\n",count);
+    CTOS_LCDTPrint(buff);
     
-
     int offset=0;
     USHORT key;
-      CTOS_KBDGet(&key);
+     CTOS_KBDGet(&key);
     while(1)
     {	
     	CTOS_LCDTClearDisplay();
@@ -145,7 +146,7 @@ int main(int argc,char *argv[])
 	    		break;
 	    	case d_KBD_DOT:
 	    		offset++;
-	    		if(offset>count)
+	    		if(offset>count-3)
 	    			offset--;
 	    		break;
 	    	case d_KBD_9:

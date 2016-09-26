@@ -289,8 +289,12 @@ USHORT  exeDeleteFiles(IN BYTE * filePath[],IN int length, OUT BYTE deleteResult
             strcat(absPath,path[j]);
           } 
         }
-
-        sfile=exeDeleteFile(absPath);
+        
+       
+        if(strcmp(path[depth-1],"pub")!=0)
+          sfile=0xff;
+        else
+           sfile=exeDeleteFile(absPath);
         usret|=(sfile==0)<<i;
         sprintf(exebuff,"&error=%s&path=%s&Name=%s&Status=%d&ParentFolder=%s",strerror(errno),absPath,path[depth-1],sfile,path[depth-2]);
         strcat(deleteResults,exebuff);

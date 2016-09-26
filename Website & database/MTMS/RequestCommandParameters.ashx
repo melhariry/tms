@@ -13,6 +13,7 @@ public class RequestCommandParameters : IHttpHandler {
         context.Response.ContentType = "text/plain";
         try
         {
+<<<<<<< HEAD
             DataRow parameters = (new DB()).GetCommandParameters(context.Request.Headers["SerialNumber"]);
             string command = context.Request.Params["Command"];
             string selectedParameter = string.Empty;
@@ -41,6 +42,11 @@ public class RequestCommandParameters : IHttpHandler {
             
             context.Response.StatusCode = 200;
             context.Response.Write(selectedParameter);
+=======
+            DataRow parameters = DB.Instance.GetCommandParameters(context.Request.Headers["SerialNumber"]);
+            context.Response.StatusCode = 200;
+            context.Response.Write(parameters[context.Request.Params["Command"] + "Parameters"].ToString());
+>>>>>>> 0750e108d81bcc258ea5450c4233212a647e8222
 
         }
         catch (Exception ex)

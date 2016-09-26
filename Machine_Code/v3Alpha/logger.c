@@ -24,7 +24,7 @@
 /*==========================================*
 * D E F I N E S *
 *==========================================*/
-
+//#define LCDLOG
 /*==========================================*
 * C O N S T A N T S *
 *==========================================*/
@@ -56,7 +56,7 @@ int16_t dLogOpen()
 
 int16_t sysLogOpen()
 {
-    fpSysLog=fopen("/home/ap/pub/sysLog.txt","a");
+    fpSysLog=fopen("/home/ap/pub/MTMS/sysLog.txt","a");
     if(fpSysLog==NULL)return -1;
     return 0;
 }
@@ -83,8 +83,10 @@ int16_t sysLog(char *str)
 }
 int16_t sysLogCall(char *str)
 {
-    //CTOS_LCDTPrint("\n");
-    //CTOS_LCDTPrint(str);
+    #ifdef LCDLOG
+    CTOS_LCDTPrint("\n");
+    CTOS_LCDTPrint(str);
+    #endif
     strcpy(logBuff,"Call ");
     strcat(logBuff,str);
     return sysLog(logBuff);
@@ -92,8 +94,10 @@ int16_t sysLogCall(char *str)
 int16_t sysLogRet(char *str,int32_t value)
 {
     sprintf(logBuff,"%s return %d",str,value);
-    //CTOS_LCDTPrint("\n");
-    //CTOS_LCDTPrint(logBuff);
+    #ifdef LCDLOG
+    CTOS_LCDTPrint("\n");
+    CTOS_LCDTPrint(logBuff);
+    #endif
     return sysLog(logBuff);
 }
 
